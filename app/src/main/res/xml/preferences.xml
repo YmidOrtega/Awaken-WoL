@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <SwitchPreferenceCompat
+        android:key="pref_require_auth"
+        android:title="@string/pref_require_auth_title"
+        android:summary="@string/pref_require_auth_summary"
+        android:defaultValue="true" />
+
+    <PreferenceCategory
+        android:title="@string/pref_auth_network_category">
+        <Preference
+            android:key="pref_scan_wifi"
+            android:title="@string/pref_scan_wifi_title"
+            android:summary="@string/pref_scan_wifi_summary" />
+
+        <Preference
+            android:key="pref_trusted_ssids"
+            android:title="@string/pref_trusted_ssids_title"
+            android:summary="@string/pref_trusted_ssids_summary" />
+    </PreferenceCategory>
+</PreferenceScreen>

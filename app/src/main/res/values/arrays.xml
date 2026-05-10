@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="shutdown_os_options">
+        <item>Linux</item>
+        <item>Windows</item>
+        <item>macOS</item>
+    </string-array>
+    <string-array name="empty_array" />
+</resources>

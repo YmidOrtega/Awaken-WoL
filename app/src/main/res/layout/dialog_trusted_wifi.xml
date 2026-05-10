@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/bg_wifi_dialog"
+    android:padding="20dp">
+
+    <TextView
+        android:id="@+id/trusted_wifi_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/pref_trusted_ssids_title"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textColor="@color/primaryTextColor"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/trusted_wifi_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
+        android:clipToPadding="false"
+        app:layout_constrainedHeight="true"
+        app:layout_constraintBottom_toTopOf="@id/trusted_wifi_done"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintHeight_max="400dp"
+        app:layout_constraintTop_toBottomOf="@id/trusted_wifi_title" />
+
+    <TextView
+        android:id="@+id/trusted_wifi_empty"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/wifi_scan_empty"
+        android:textAppearance="?attr/textAppearanceBody2"
+        android:textColor="@color/primaryTextColorMuted"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/trusted_wifi_title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/trusted_wifi_done"
+        style="@style/Widget.App.Button.ActionPill"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/trusted_wifi_done"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+</androidx.constraintlayout.widget.ConstraintLayout>
+

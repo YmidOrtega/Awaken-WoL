@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<actions>
+    <!-- App Actions mapping: maps assistant intents to app deep links handled by DeepLinkHandlerActivity -->
+    <!-- Note: register these actions in the Actions Console and test with App Actions Test Tool -->
+
+    <!-- Wake device: assistant should provide device name -> opens wakeonlan://action/wake?name={device} -->
+    <action intentName="actions.intent.OPEN_APP_FEATURE">
+        <fulfillment urlTemplate="wakeonlan://action/wake?name={device}">
+            <parameter-mapping intentParameter="feature" urlParameter="device" />
+        </fulfillment>
+    </action>
+
+    <!-- Shutdown device: assistant should provide device name -> opens wakeonlan://action/shutdown?name={device} -->
+    <action intentName="actions.intent.OPEN_APP_FEATURE">
+        <fulfillment urlTemplate="wakeonlan://action/shutdown?name={device}">
+            <parameter-mapping intentParameter="feature" urlParameter="device" />
+        </fulfillment>
+    </action>
+
+</actions>

@@ -1,0 +1,35 @@
+# IDE / editor metadata
+.idea/
+*.iml
+.vscode/
+
+# Local agent/tool state
+.agents/
+.claude/
+.codex/
+
+# Gradle / Android generated files
+.gradle/
+**/build/
+**/release/
+/captures/
+.externalNativeBuild/
+.cxx/
+
+# Local machine configuration
+local.properties
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary diagnostics and local artifacts
+*.log
+crash.txt
+*.hprof
+*.apk
+*.aab
+*.ap_
+*.jpg
+*.jpeg
+*.png

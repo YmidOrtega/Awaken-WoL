@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission
+        android:name="android.permission.NEARBY_WIFI_DEVICES"
+        android:usesPermissionFlags="neverForLocation" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher_off"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_off_round"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.WakeOnLan">
+        <activity
+            android:name=".ui.MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main">
+        </activity>
+        <activity-alias
+            android:name=".ui.MainActivityLauncherOff"
+            android:enabled="true"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_off"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_off_round"
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
+        <activity-alias
+            android:name=".ui.MainActivityLauncherOn"
+            android:enabled="false"
+            android:exported="true"
+            android:icon="@mipmap/ic_launcher_on"
+            android:label="@string/app_name"
+            android:roundIcon="@mipmap/ic_launcher_on_round"
+            android:targetActivity=".ui.MainActivity" />
+        <activity
+            android:name=".ui.modify.AddDeviceActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_device"
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+        <activity
+            android:name=".ui.modify.EditDeviceActivity"
+            android:exported="false"
+            android:label="@string/title_activity_edit_device"
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+        <activity
+            android:name=".ui.modify.AddNetworkScanDeviceActivity"
+            android:exported="false"
+            android:label="@string/title_activity_add_device"
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+
+        <activity
+            android:name=".shortcuts.WakeDeviceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".shortcuts.ShutdownDeviceActivity"
+            android:exported="false" />
+        <activity
+            android:name=".security.AuthenticatedDeviceActionActivity"
+            android:exported="false"
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+
+        <service
+            android:name=".quicksettings.DeviceOneTileService"
+            android:label="@string/tile_name_device_one"
+            android:icon="@drawable/ic_tile_icon"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".quicksettings.DeviceTwoTileService"
+            android:label="@string/tile_name_device_two"
+            android:icon="@drawable/ic_tile_icon"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".quicksettings.DeviceThreeTileService"
+            android:label="@string/tile_name_device_three"
+            android:icon="@drawable/ic_tile_icon"
+            android:exported="true"
+            android:permission="android.permission.BIND_QUICK_SETTINGS_TILE">
+            <intent-filter>
+                <action android:name="android.service.quicksettings.action.QS_TILE" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".wear.WearDeviceClickedService"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.google.android.gms.wearable.MESSAGE_RECEIVED" />
+                <data
+                    android:scheme="wear"
+                    android:host="*"
+                    android:pathPrefix="/device_clicked" />
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".quickaccess.QuickAccessProviderService"
+            android:label="@string/app_name"
+            android:exported="true"
+            android:permission="android.permission.BIND_CONTROLS">
+            <intent-filter>
+                <action android:name="android.service.controls.ControlsProviderService" />
+            </intent-filter>
+        </service>
+
+        <!-- Receivers para Samsung Routines / intents externos -->
+        <receiver
+                android:name=".receivers.WakeDeviceReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="com.ymid.wakeonlan.ACTION_WAKE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+                android:name=".receivers.ShutdownDeviceReceiver"
+                android:exported="true">
+            <intent-filter>
+                <action android:name="com.ymid.wakeonlan.ACTION_SHUTDOWN" />
+            </intent-filter>
+        </receiver>
+
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.actions"
+            android:resource="@xml/actions" />
+
+        <activity
+        android:name="com.ymid.wakeonlan.appactions.DeepLinkHandlerActivity"
+        android:exported="true">
+        <intent-filter android:autoVerify="true">
+            <action android:name="android.intent.action.VIEW" />
+
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.BROWSABLE" />
+
+            <data android:scheme="wakeonlan" android:host="action" />
+        </intent-filter>
+    </activity>
+
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:exported="false" />
+
+</application>
+
+</manifest>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primaryColor">#3A345F</color>
+    <color name="primaryLightColor">#4C4A7A</color>
+    <color name="primaryDarkColor">#25243A</color>
+    <color name="secondaryColor">#4A90E2</color>
+    <color name="secondaryColorDark">#3578C8</color>
+    <color name="secondaryLightColor">#73B3FF</color>
+    <color name="secondaryVariantColor">#6C63FF</color>
+    <color name="secondaryVariantDarkColor">#4C43C6</color>
+
+    <color name="primaryTextColor">#F2F2F7</color>
+    <color name="primaryTextColorLight">#F2F2F7</color>
+    <color name="primaryTextColorMuted">#B3B5C8</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <color name="backgroundColor">#1B1C29</color>
+    <color name="surfaceColor">#2B2E45</color>
+    <color name="surfaceVariantColor">#343851</color>
+    <color name="cardBackgroundColor">#2C2F46</color>
+    <color name="cardStrokeColor">#3A3D55</color>
+    <color name="backgroundGradientStart">#3A2D6A</color>
+    <color name="backgroundGradientEnd">#1B1C29</color>
+    <color name="actionEditColor">#7D6BFF</color>
+    <color name="actionWakeColor">#43D9A3</color>
+    <color name="actionShutdownColor">#F06B7E</color>
+
+    <color name="ic_launcher_background_on">#43D9A3</color>
+    <color name="ic_launcher_background_off">#2B2E45</color>
+    <color name="ic_launcher_foreground_color">#F2F2F7</color>
+
+    <color name="result_error">#FF5252</color>
+    <color name="errorColor">#FF5252</color>
+</resources>
