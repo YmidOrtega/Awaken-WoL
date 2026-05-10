@@ -4,8 +4,6 @@
 -dontwarn org.slf4j.**
 -dontwarn sun.security.x509.**
 
--keep class com.ymid.wakeonlan.models.DeviceDto { *; }
-
 -keep class org.bouncycastle.jcajce.provider.** { *; }
 -keep class org.bouncycastle.jce.provider.** { *; }
 

@@ -10,17 +10,14 @@ App name: Mi PC. Base package/applicationId: `com.ymid.wakeonlan`.
 - Search for `database-name` and `DatabaseInstanceManager` before modifying persistence logic — DB encryption migration runs on startup.
 
 2) Big-picture architecture (what to know)
-- Multi-module Android app: modules included in `settings.gradle` are `:app`, `:wear`, `:shared-models`, `:ping`.
+- Multi-module Android app: modules included in `settings.gradle` are `:app`, `:ping`.
 - `:app` is the primary Android application (UI, persistence, WOL, shortcuts, shutdown flows).
-- `:wear` is the Wear OS companion app bundled as a dependent module (see `app/build.gradle` and `shared-build.gradle`).
-- `:shared-models` contains shared POJOs used to communicate with Wear and other modules (example: `DeviceDto`).
 - `:ping` is a small library implementing raw ICMP ping (`Ping`, `EchoPacketBuilder`) used by the app for reachability checks.
 
 3) Data flow and important boundaries
 - Persistence: Room DB entities in `app/src/main/java/com/ymid/wakeonlan/persistence/entities` -> DAO `DeviceDao` -> `DeviceRepository` (maps entities to `persistence.models.Device`).
-  - `DeviceRepository.getAllAsObservable()` exposes LiveData; `MainActivity` subscribes and pushes updates to the `WearClient` and `DynamicShortcutManager`.
+  - `DeviceRepository.getAllAsObservable()` exposes LiveData; `MainActivity` subscribes and pushes updates to the `DynamicShortcutManager`.
 - Wake-on-LAN: `WolSender` (uses `PacketBuilder`) sends UDP magic packets off the UI thread using a single-thread executor.
-- Wear sync: `WearClient` converts `Device` list to `DeviceDto` JSON and writes via Google Wearable Data Layer (`DataClient.putDataItem`).
 - Remote shutdown: `ShutdownModelFactory` assembles SSH-based shutdown parameters from `Device` properties (SSH fields were added by migrations; see `persistence/migrations`).
 
 4) Notable implementation details and gotchas
@@ -35,7 +32,7 @@ App name: Mi PC. Base package/applicationId: `com.ymid.wakeonlan`.
 
 5) Build, signing, runtime environment hints
 - SDK & compile target: compileSdk 34, targetSdk 34, minSdk 24 (see `shared-build.gradle`).
-- Java compatibility: Java 11 for Android modules; `shared-models` uses Java 8 for the standalone Java module.
+- Java compatibility: Java 17 for Android modules.
 - Native SQLCipher libs are pulled from Maven (`net.zetetic:android-database-sqlcipher`). Ensure the Android SDK and NDK are available on the build machine if you run instrumentation tests or build native artifacts.
 - Release signing: `shared-build.gradle` reads signing properties via Gradle properties: `UPLOAD_KEYSTORE_PATH`, `KEYSTORE_PASSWORD`, `KEY_ALIAS`, `KEY_PASSWORD`. Provide them in your environment or `gradle.properties` for `assembleRelease`.
 
@@ -51,12 +48,11 @@ App name: Mi PC. Base package/applicationId: `com.ymid.wakeonlan`.
 - Logging and error handling: most network I/O swallows exceptions and logs errors (e.g., `WolSender` logs and continues). Tests should mock or stub network interactions rather than rely on side effects.
 
 8) Key files & examples to inspect first
-- App entry & wiring: `app/src/main/java/com/ymid/wakeonlan/ui/MainActivity.java` (shows LiveData subscription -> WearClient, shortcuts)
+- App entry & wiring: `app/src/main/java/com/ymid/wakeonlan/ui/MainActivity.java` (shows LiveData subscription -> shortcuts)
 - Persistence wiring: `app/src/main/java/com/ymid/wakeonlan/persistence/DatabaseInstanceManager.java` and `DeviceDao.java`, `DeviceEntity.java`, `DeviceRepository.java`, `persistence/mapper/DeviceEntityMapper.java`.
 - DB migrations: `app/src/main/java/com/ymid/wakeonlan/persistence/migrations/*` (look at `MigrationFrom3To4` which adds SSH columns).
 - Wake-on-LAN: `app/src/main/java/com/ymid/wakeonlan/wol/WolSender.java` and `PacketBuilder.java`.
 - Ping implementation: `ping/src/main/java/com/ymid/wakeonlan/ping/Ping.java` (low-level ICMP usage; sensitive to Android API levels).
-- Wear sync example: `app/src/main/java/com/ymid/wakeonlan/wear/WearClient.java` and `shared-models/src/main/java/com/ymid/wakeonlan/models/DeviceDto.java`.
 
 9) Suggested first automated tasks for an agent
 - Add or update a small Room migration: create a migration class and add it to `DatabaseInstanceManager`.

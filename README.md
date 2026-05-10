@@ -2,7 +2,7 @@
 
 Mi PC is an Android Wake-on-LAN controller that lets you turn on devices, check their online status,
 and (optionally) execute remote shutdown via SSH. It also includes quick settings tiles, shortcuts,
-Quick Access controls, and a Wear OS companion app for controlling devices from your watch.
+and Quick Access controls.
 
 ### Features
 
@@ -10,13 +10,10 @@ Quick Access controls, and a Wear OS companion app for controlling devices from 
 - Live online/offline status with optional ping latency.
 - Remote shutdown over SSH (Linux targets).
 - Network scan to find devices on your LAN.
-- Wear OS companion with synced device list.
 
 ### Modules
 
 - **app**: main Android application (UI, persistence, WOL, shortcuts, shutdown).
-- **wear**: Wear OS companion app.
-- **shared-models**: shared DTOs between phone and watch.
 - **ping**: low-level ICMP ping library.
 
 ### Build
