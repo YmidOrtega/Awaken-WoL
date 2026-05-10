@@ -17,11 +17,11 @@
         <item name="android:windowLightStatusBar">false</item>
         <!-- Customize your theme here. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
-        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.WakeOnLan.NoDrawerActivity" parent="Theme.WakeOnLan">
-        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.WakeOnLan.NoActionBar">

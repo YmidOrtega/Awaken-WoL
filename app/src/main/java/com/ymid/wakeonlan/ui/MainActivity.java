@@ -1,6 +1,7 @@
 package com.ymid.wakeonlan.ui;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -40,23 +41,33 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        // Let the system apply window insets (status bar) to our content
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+        // Allow content to draw behind the status bar (edge-to-edge)
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
 
-        // Set status bar color to match toolbar
-        getWindow().setStatusBarColor(getResources().getColor(R.color.surfaceVariantColor, getTheme()));
+        // Transparent so the AppBarLayout background shows through the status bar
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(binding.getRoot());
+
+        // Prevent DrawerLayout from painting its own dark scrim over the status bar
+        binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT);
 
         setVersionInformation();
 
         setSupportActionBar(binding.toolbar);
 
-        // Ensure app bar respects status bar insets on devices like Samsung S24+
-        ViewCompat.setOnApplyWindowInsetsListener(binding.appBarLayout, (v, insets) -> {
+        // Intercept insets at the DrawerLayout level so its internal onApplyWindowInsets
+        // never runs — that's what was pushing the AppBarLayout below the status bar.
+        // We manually apply the status bar height as top padding on the AppBarLayout so
+        // its green background still covers the status bar area while toolbar content
+        // stays below the status bar icons.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout, (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            v.setPadding(v.getPaddingLeft(), topInset, v.getPaddingRight(), v.getPaddingBottom());
-            return insets;
+            binding.appBarLayout.setPadding(
+                    binding.appBarLayout.getPaddingLeft(), topInset,
+                    binding.appBarLayout.getPaddingRight(), binding.appBarLayout.getPaddingBottom());
+            ViewCompat.dispatchApplyWindowInsets(binding.navigationView, insets);
+            return WindowInsetsCompat.CONSUMED;
         });
 
         initializeNavController();
@@ -77,7 +88,6 @@ public class MainActivity extends AppCompatActivity {
                     headerView.getPaddingRight(), headerView.getPaddingBottom());
             return insets;
         });
-        ViewCompat.requestApplyInsets(binding.navigationView);
 
         versionView.setText(getString(R.string.drawer_menu_header_version, BuildConfig.VERSION_NAME));
     }
@@ -100,7 +110,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void setGithubShortcut() {
         binding.navigationView.getMenu().findItem(R.id.githubShortcut).setOnMenuItemClickListener(item -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/YmidOrtega"));
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues"));
             startActivity(browserIntent);
 
             return false;

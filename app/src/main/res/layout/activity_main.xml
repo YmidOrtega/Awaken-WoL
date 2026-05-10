@@ -28,8 +28,7 @@
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
-                android:fitsSystemWindows="true"
-                android:background="@android:color/transparent"
+                android:background="@drawable/toolbar_background"
                 app:navigationIconTint="@color/primaryTextColor"
                 app:popupTheme="@style/Theme.WakeOnLan.PopupOverlay"
                 app:titleTextColor="@color/primaryTextColor" />

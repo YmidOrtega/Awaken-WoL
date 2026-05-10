@@ -10,9 +10,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
 import com.google.android.material.button.MaterialButton;
 
@@ -38,6 +42,8 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
     public static final int MODE_VIEW = 1;  // Show only saved networks with delete buttons
 
     private Callback callback;
+    private View contentView;
+    private int originalContentBottomPadding;
 
     public static TrustedWifiDialogFragment newInstance(String[] entries, String[] values, ArrayList<String> selected, int mode) {
         TrustedWifiDialogFragment fragment = new TrustedWifiDialogFragment();
@@ -71,6 +77,8 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.dialog_trusted_wifi, container, false);
+        contentView = view;
+        originalContentBottomPadding = view.getPaddingBottom();
 
         TextView titleView = view.findViewById(R.id.trusted_wifi_title);
         TextView emptyView = view.findViewById(R.id.trusted_wifi_empty);
@@ -112,22 +120,88 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
         return view;
     }
 
+    @NonNull
     @Override
-    public void onStart() {
-        super.onStart();
-        Dialog dialog = getDialog();
-        if (dialog == null) {
-            return;
-        }
+    public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
+        BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 
+        // 1. Hacemos la ventana edge-to-edge y transparente desde el inicio
         if (dialog.getWindow() != null) {
+            androidx.core.view.WindowCompat.setDecorFitsSystemWindows(dialog.getWindow(), false);
+            dialog.getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
+        // 2. Esperamos a que el diálogo esté 100% mostrado en pantalla para aplicar los insets
+        dialog.setOnShowListener(dialogInterface -> {
+            BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
+            View bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
+
+            if (bottomSheet != null) {
+                bottomSheet.setBackgroundResource(android.R.color.transparent);
+
+                // 3. Controlamos los insets
+                ViewCompat.setOnApplyWindowInsetsListener(bottomSheet, (v, insets) -> {
+                    int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
+
+                    // Anulamos el padding de Material Design en el contenedor externo
+                    v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), 0);
+
+                    // Aplicamos el padding a TU vista para empujar el botón "Done"
+                    if (contentView != null) {
+                        contentView.setPadding(
+                                contentView.getPaddingLeft(),
+                                contentView.getPaddingTop(),
+                                contentView.getPaddingRight(),
+                                originalContentBottomPadding + navBarHeight
+                        );
+                    }
+
+                    return WindowInsetsCompat.CONSUMED;
+                });
+
+                // 4. Forzamos la actualización. Como estamos en onShow, esto funcionará el 100% de las veces.
+                ViewCompat.requestApplyInsets(bottomSheet);
+            }
+        });
+
+        return dialog;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        BottomSheetDialog dialog = (BottomSheetDialog) getDialog();
+        if (dialog == null) return;
+
         View bottomSheet = dialog.findViewById(com.google.android.material.R.id.design_bottom_sheet);
-        if (bottomSheet != null) {
-            bottomSheet.setBackgroundResource(android.R.color.transparent);
-        }
+        if (bottomSheet == null) return;
+
+        bottomSheet.setBackgroundResource(android.R.color.transparent);
+
+        // 2. Controlamos los insets y forzamos el padding en tu vista (contentView)
+        ViewCompat.setOnApplyWindowInsetsListener(bottomSheet, (v, insets) -> {
+            int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+
+            // Anulamos el padding que Material Design intenta forzar en el contenedor externo
+            v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), 0);
+
+            // Le inyectamos el padding a TU diseño rosado para empujar el botón "Done"
+            if (contentView != null) {
+                contentView.setPadding(
+                        contentView.getPaddingLeft(),
+                        contentView.getPaddingTop(),
+                        contentView.getPaddingRight(),
+                        originalContentBottomPadding + navBarHeight
+                );
+            }
+
+            // Retornamos CONSUMED para que BottomSheetBehavior no sobreescriba nuestra orden
+            return WindowInsetsCompat.CONSUMED;
+        });
+
+        // 3. Forzamos la aplicación inmediata de los insets para evitar la "condición de carrera"
+        ViewCompat.requestApplyInsets(bottomSheet);
     }
 
     private List<WifiItem> buildItems(ArrayList<String> selected, int mode) {

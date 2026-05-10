@@ -26,6 +26,7 @@
     <color name="actionEditColor">#7D6BFF</color>
     <color name="actionWakeColor">#43D9A3</color>
     <color name="actionShutdownColor">#F06B7E</color>
+    <color name="toolbarColor">#2a3d5b</color>
 
     <color name="ic_launcher_background_on">#43D9A3</color>
     <color name="ic_launcher_background_off">#2B2E45</color>

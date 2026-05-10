@@ -84,11 +84,8 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         binding = ActivityModifyDeviceBinding.inflate(getLayoutInflater());
-        // Ensure system bars are handled correctly on devices like Samsung S24+
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
-
-        // Set status bar color to match toolbar
-        getWindow().setStatusBarColor(getResources().getColor(R.color.surfaceVariantColor, getTheme()));
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(binding.getRoot());
 
@@ -112,13 +109,24 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         sshTestShutdownButton = binding.device.deviceButtonTestShutdown;
 
         setSupportActionBar(binding.toolbar);
+
+        // Intercept insets at the CoordinatorLayout root so its fitsSystemWindows handling
+        // never offsets the AppBarLayout below the status bar.
+        ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
+            int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
+            binding.appBarLayout.setPadding(
+                    binding.appBarLayout.getPaddingLeft(), topInset,
+                    binding.appBarLayout.getPaddingRight(), binding.appBarLayout.getPaddingBottom());
+            ViewCompat.dispatchApplyWindowInsets(binding.device.getRoot(), insets);
+            return WindowInsetsCompat.CONSUMED;
+        });
+
         ViewCompat.setOnApplyWindowInsetsListener(binding.device.getRoot(), (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
             int actionBarSize = resolveActionBarSize();
             v.setPadding(v.getPaddingLeft(), actionBarSize + topInset, v.getPaddingRight(), v.getPaddingBottom());
             return insets;
         });
-        ViewCompat.requestApplyInsets(binding.device.getRoot());
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close);
 
