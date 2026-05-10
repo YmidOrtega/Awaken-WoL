@@ -4,10 +4,9 @@ import android.content.Context;
 import android.util.Log;
 
 import androidx.room.Room;
-import androidx.sqlite.db.SupportSQLiteOpenHelper;
 
-import net.sqlcipher.database.SQLiteDatabase;
-import net.sqlcipher.database.SupportFactory;
+import net.zetetic.database.sqlcipher.SQLiteDatabase;
+import net.zetetic.database.sqlcipher.SupportOpenHelperFactory;
 
 import java.io.File;
 
@@ -26,12 +25,14 @@ public class DatabaseInstanceManager {
 
     public static synchronized AppDatabase getInstance(final Context context) {
         if (INSTANCE == null) {
-            SQLiteDatabase.loadLibs(context);
+            System.loadLibrary("sqlcipher");
+
             migrateToEncryptedIfNeeded(context);
 
             String passphrase = DatabaseKeyManager.getOrCreatePassphrase(context);
             byte[] passphraseBytes = passphrase.getBytes();
-            SupportFactory factory = new SupportFactory(passphraseBytes);
+
+            SupportOpenHelperFactory factory = new SupportOpenHelperFactory(passphraseBytes);
 
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_NAME)
                     .allowMainThreadQueries()
@@ -48,10 +49,6 @@ public class DatabaseInstanceManager {
         return INSTANCE;
     }
 
-    /**
-     * Si la BD existe y es texto plano (no cifrada), la cifra in-place con SQLCipher.
-     * Esto corre una sola vez — en instalaciones nuevas no hace nada.
-     */
     private static void migrateToEncryptedIfNeeded(Context context) {
         File dbFile = context.getDatabasePath(DB_NAME);
         if (!dbFile.exists()) return;
@@ -66,14 +63,14 @@ public class DatabaseInstanceManager {
             String passphrase = DatabaseKeyManager.getOrCreatePassphrase(context);
             File tempFile = new File(dbFile.getParent(), DB_NAME + "_temp_encrypted");
 
-            // Abre la BD en texto plano y exporta una copia cifrada
-            SQLiteDatabase plainDb = SQLiteDatabase.openDatabase(
-                    dbFile.getAbsolutePath(), "", null, SQLiteDatabase.OPEN_READWRITE);
-            plainDb.rawExecSQL(String.format(
+            SQLiteDatabase plainDb = SQLiteDatabase.openOrCreateDatabase(
+                    dbFile, "", null, null, null);
+
+            plainDb.execSQL(String.format(
                     "ATTACH DATABASE '%s' AS encrypted KEY '%s'",
                     tempFile.getAbsolutePath(), passphrase));
-            plainDb.rawExecSQL("SELECT sqlcipher_export('encrypted')");
-            plainDb.rawExecSQL("DETACH DATABASE encrypted");
+            plainDb.execSQL("SELECT sqlcipher_export('encrypted')");
+            plainDb.execSQL("DETACH DATABASE encrypted");
             plainDb.close();
 
             // Reemplaza la BD original con la cifrada
@@ -91,10 +88,6 @@ public class DatabaseInstanceManager {
         }
     }
 
-    /**
-     * Detecta si la BD ya está cifrada intentando abrirla sin clave.
-     * Una BD SQLite en texto plano empieza con el header "SQLite format 3".
-     */
     private static boolean isAlreadyEncrypted(File dbFile) {
         try (java.io.RandomAccessFile raf = new java.io.RandomAccessFile(dbFile, "r")) {
             byte[] header = new byte[16];
