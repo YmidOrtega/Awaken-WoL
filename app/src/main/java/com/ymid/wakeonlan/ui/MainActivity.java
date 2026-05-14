@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
             return WindowInsetsCompat.CONSUMED;
         });
 
+        LauncherIconManager.ensureValidState(this);
         initializeNavController();
         initializeShortcuts();
     }
@@ -120,6 +121,18 @@ public class MainActivity extends AppCompatActivity {
 
     private Set<Integer> getMenuIds() {
         return Sets.newHashSet(R.id.deviceListFragment, R.id.backupFragment, R.id.networkScanFragment);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        LauncherIconManager.setAppInForeground(this, true);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        LauncherIconManager.setAppInForeground(this, false);
     }
 
     @Override

@@ -45,22 +45,31 @@
             android:icon="@mipmap/ic_launcher_on"
             android:label="@string/app_name"
             android:roundIcon="@mipmap/ic_launcher_on_round"
-            android:targetActivity=".ui.MainActivity" />
+            android:targetActivity=".ui.MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity-alias>
         <activity
             android:name=".ui.modify.AddDeviceActivity"
             android:exported="false"
             android:label="@string/title_activity_add_device"
-            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.modify.EditDeviceActivity"
             android:exported="false"
             android:label="@string/title_activity_edit_device"
-            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.modify.AddNetworkScanDeviceActivity"
             android:exported="false"
             android:label="@string/title_activity_add_device"
-            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity"
+            android:windowSoftInputMode="adjustResize" />
 
         <activity
             android:name=".shortcuts.WakeDeviceActivity"

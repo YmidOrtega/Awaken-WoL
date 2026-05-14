@@ -12,6 +12,7 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.util.TypedValue;
+import android.widget.AdapterView;
 import android.widget.Spinner;
 
 import androidx.annotation.NonNull;
@@ -77,6 +78,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     protected TextInputEditText deviceSshPasswordInput;
     protected TextInputEditText deviceSshCommandInput;
     protected Spinner deviceSshOsSpinner;
+    protected TextView deviceSshOsSuggestion;
     protected Button sshTestShutdownButton;
 
     @Override
@@ -105,6 +107,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceSshPasswordInput = binding.device.deviceShutdownPassword;
         deviceSshCommandInput = binding.device.deviceShutdownCommand;
         deviceSshOsSpinner = binding.device.deviceShutdownOs;
+        deviceSshOsSuggestion = binding.device.deviceShutdownOsSuggestion;
 
         sshTestShutdownButton = binding.device.deviceButtonTestShutdown;
 
@@ -124,7 +127,12 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         ViewCompat.setOnApplyWindowInsetsListener(binding.device.getRoot(), (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
             int actionBarSize = resolveActionBarSize();
-            v.setPadding(v.getPaddingLeft(), actionBarSize + topInset, v.getPaddingRight(), v.getPaddingBottom());
+            int imeInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
+            int navInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
+            // Use the larger of keyboard height or navigation bar so the ScrollView always
+            // has enough room to scroll the focused field above the keyboard.
+            int bottomPadding = Math.max(imeInset, navInset);
+            v.setPadding(v.getPaddingLeft(), actionBarSize + topInset, v.getPaddingRight(), bottomPadding);
             return insets;
         });
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -134,7 +142,35 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         addValidators();
         addAutofillClickHandler();
         setRemoteDeviceShutdownSwitchListener();
+        setOsSpinnerSuggestionListener();
         setOnTestSshShutdownListenerClickedListener();
+    }
+
+    private void setOsSpinnerSuggestionListener() {
+        deviceSshOsSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String os = getSelectedOs(deviceSshOsSpinner);
+                String suggested = getSuggestedCommandForOs(os);
+                deviceSshOsSuggestion.setText(getString(R.string.add_device_shutdown_os_suggestion, suggested));
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                deviceSshOsSuggestion.setText("");
+            }
+        });
+    }
+
+    private String getSuggestedCommandForOs(String os) {
+        switch (os) {
+            case "windows":
+                return "shutdown /s /t 0";
+            case "macos":
+                return "sudo shutdown -h now";
+            default: // linux
+                return "sudo shutdown -h now";
+        }
     }
 
     private void addAutofillClickHandler() {

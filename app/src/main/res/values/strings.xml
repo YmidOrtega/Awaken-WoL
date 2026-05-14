@@ -1,7 +1,7 @@
 <resources>
     <!-- Titles -->
-    <string name="app_name">Mi PC</string>
-    <string name="title_activity_main">Mi PC</string>
+    <string name="app_name">Aweken</string>
+    <string name="title_activity_main">Aweken</string>
     <string name="title_activity_add_device">Add Device</string>
     <string name="title_activity_edit_device">Edit Device</string>
     <string name="title_fragment_device_list">Devices</string>
@@ -32,6 +32,7 @@
     <string name="add_device_shutdown_command">Shutdown Command</string>
     <string name="add_device_shutdown_command_helper">Command must be executable without triggering Interactive authentication (sudo password-prompt)</string>
     <string name="add_device_shutdown_os">Target OS</string>
+    <string name="add_device_shutdown_os_suggestion">Suggested: %1$s</string>
     <string name="add_device_menu_save">Save</string>
     <string name="add_device_menu_delete">Delete</string>
     <string name="action_delete">Delete</string>
