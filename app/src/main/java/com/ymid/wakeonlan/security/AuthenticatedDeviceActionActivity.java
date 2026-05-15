@@ -28,7 +28,9 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import com.ymid.wakeonlan.R;
+import com.ymid.wakeonlan.persistence.entities.ActionType;
 import com.ymid.wakeonlan.persistence.models.Device;
+import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.shutdown.ShutdownExecutor;
 import com.ymid.wakeonlan.shutdown.listener.IgnoringShutdownExecutorListener;
@@ -181,6 +183,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
                 return;
             }
             ShutdownExecutor.shutdownDevice(device, device.shutdownOs == null ? "linux" : device.shutdownOs, new IgnoringShutdownExecutorListener());
+            ActionLogRepository.getInstance(this).log(device.name, ActionType.SHUTDOWN);
             Toast.makeText(this, getString(R.string.remote_shutdown_send_command, device.name), Toast.LENGTH_LONG).show();
             NotificationHelper.INSTANCE.sendShutdownSentNotification(this, device.name);
             return;
@@ -192,6 +195,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
         }
 
         WolSender.sendWolPacket(device);
+        ActionLogRepository.getInstance(this).log(device.name, ActionType.WAKE);
         Toast.makeText(this, getString(R.string.wol_toast_sending_packet, device.name), Toast.LENGTH_LONG).show();
         NotificationHelper.INSTANCE.sendWakeSentNotification(this, device.name);
     }

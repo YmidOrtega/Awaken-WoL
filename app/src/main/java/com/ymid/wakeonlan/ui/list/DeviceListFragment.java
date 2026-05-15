@@ -16,9 +16,7 @@ import java.util.List;
 
 import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.databinding.FragmentListDevicesBinding;
-import com.ymid.wakeonlan.persistence.entities.ActionType;
 import com.ymid.wakeonlan.persistence.models.Device;
-import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.rating.RatingHelper;
 import com.ymid.wakeonlan.ui.list.layoutmanager.GridLayoutManagerWrapper;
@@ -103,8 +101,6 @@ public class DeviceListFragment extends Fragment {
             if (coordinatorView != null) {
                 Snackbar.make(coordinatorView, snackbarText, Snackbar.LENGTH_SHORT).show();
             }
-
-            ActionLogRepository.getInstance(ctx).log(deviceName, ActionType.WAKE);
 
             try {
                 RatingHelper.INSTANCE.recordWakeAndMaybeRequestReview(activity);
