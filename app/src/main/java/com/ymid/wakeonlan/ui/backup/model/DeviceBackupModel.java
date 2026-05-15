@@ -54,6 +54,15 @@ public class DeviceBackupModel {
     @SerializedName(value = "shutdown_os")
     public String shutdownOs;
 
+    @SerializedName(value = "group_name")
+    public String groupName;
+
+    @SerializedName(value = "wan_ip")
+    public String wanIp;
+
+    @SerializedName(value = "wan_port")
+    public Integer wanPort;
+
     public DeviceBackupModel(Device device) {
         this.id = device.id;
         this.name = device.name;
@@ -69,15 +78,21 @@ public class DeviceBackupModel {
         this.sshPassword = device.sshPassword;
         this.sshCommand = device.sshCommand;
         this.shutdownOs = device.shutdownOs;
+        this.groupName = device.groupName;
+        this.wanIp = device.wanIp;
+        this.wanPort = device.wanPort;
     }
 
     public Device toModel() {
-        return new Device(this.id, this.name, this.macAddress, this.broadcastAddress, this.port, this.statusIp, this.secureOnPassword,
-                this.remoteShutdownEnabled, this.sshAddress, this.sshPort, this.sshUsername, this.sshPassword, this.sshCommand, this.shutdownOs == null ? "linux" : this.shutdownOs);
+        return new Device(
+                this.id, this.name, this.macAddress, this.broadcastAddress, this.port,
+                this.statusIp, this.secureOnPassword, this.remoteShutdownEnabled,
+                this.sshAddress, this.sshPort, this.sshUsername, this.sshPassword,
+                this.sshCommand, this.shutdownOs == null ? "linux" : this.shutdownOs,
+                "password", null, this.groupName, this.wanIp, this.wanPort);
     }
 
     @SuppressWarnings("unused")
     public DeviceBackupModel() {
     }
-
 }

@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
+import com.ymid.wakeonlan.security.AndroidKeyStoreKeyProvider;
 import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
 
@@ -54,7 +55,12 @@ public class ShutdownRunnable implements Runnable {
             sshClient.connect(shutdownModel.getSshAddress(), shutdownModel.getSshPort());
             shutdownExecutorListener.onTargetHostReached();
 
-            sshClient.authPassword(shutdownModel.getUsername(), shutdownModel.getPassword());
+            if (shutdownModel.isKeyAuth()) {
+                sshClient.authPublickey(shutdownModel.getUsername(),
+                        new AndroidKeyStoreKeyProvider(shutdownModel.getSshKeyAlias()));
+            } else {
+                sshClient.authPassword(shutdownModel.getUsername(), shutdownModel.getPassword());
+            }
             shutdownExecutorListener.onLoginSuccessful();
 
             Session session = sshClient.startSession();
@@ -63,7 +69,6 @@ public class ShutdownRunnable implements Runnable {
             session.allocateDefaultPTY();
 
             if (blockDangerousCommands && isDangerousCommand(shutdownModel.getCommand(), os)) {
-                // Prevent executing real shutdown commands during a test run.
                 shutdownExecutorListener.onDangerousCommandDetected(shutdownModel);
                 return;
             }
@@ -98,52 +103,25 @@ public class ShutdownRunnable implements Runnable {
     }
 
     private boolean isDangerousCommand(String command, String os) {
-        if (command == null) {
-            return false;
-        }
+        if (command == null) return false;
         String lower = command.toLowerCase();
         String osNorm = os == null ? "linux" : os.toLowerCase();
 
         if (osNorm.contains("linux")) {
-            // quick contains checks
-            if (lower.contains("poweroff") || lower.contains("halt") || lower.contains("init 0")) {
-                return true;
-            }
-            // patterns for shutdown now or shutdown -h
-            Pattern p = Pattern.compile("\\bshutdown\\b.*(now|\\-h|\\-P)", Pattern.CASE_INSENSITIVE);
-            if (p.matcher(command).find()) {
-                return true;
-            }
-            // systemctl poweroff/halt/reboot
-            Pattern p2 = Pattern.compile("systemctl\\s+(poweroff|halt|reboot)", Pattern.CASE_INSENSITIVE);
-            if (p2.matcher(command).find()) {
-                return true;
-            }
+            if (lower.contains("poweroff") || lower.contains("halt") || lower.contains("init 0")) return true;
+            if (Pattern.compile("\\bshutdown\\b.*(now|\\-h|\\-P)", Pattern.CASE_INSENSITIVE).matcher(command).find()) return true;
+            if (Pattern.compile("systemctl\\s+(poweroff|halt|reboot)", Pattern.CASE_INSENSITIVE).matcher(command).find()) return true;
             return false;
         } else if (osNorm.contains("windows")) {
-            // Windows shutdown commands: shutdown /s /t 0, shutdown -s -t 0, shutdown /p
             if (lower.contains("shutdown") && (lower.contains("/s") || lower.contains("-s") || lower.contains("/p") || lower.contains("-p"))) {
-                // immediate shutdown if /t 0 or -t 0 present or /p/-p
-                if (lower.contains("/t 0") || lower.contains("-t 0") || lower.contains("/p") || lower.contains("-p")) {
-                    return true;
-                }
+                if (lower.contains("/t 0") || lower.contains("-t 0") || lower.contains("/p") || lower.contains("-p")) return true;
             }
-            if (lower.contains("poweroff") || lower.contains("shutdown.exe")) {
-                return true;
-            }
-            return false;
+            return lower.contains("poweroff") || lower.contains("shutdown.exe");
         } else if (osNorm.contains("mac") || osNorm.contains("osx") || osNorm.contains("darwin")) {
-            // macOS: shutdown -h now, sudo shutdown -h now, osascript shutdown commands
-            if (lower.contains("shutdown") && (lower.contains("-h") || lower.contains("now"))) {
-                return true;
-            }
-            if (lower.contains("osascript") && lower.contains("shut down")) {
-                return true;
-            }
-            return false;
+            if (lower.contains("shutdown") && (lower.contains("-h") || lower.contains("now"))) return true;
+            return lower.contains("osascript") && lower.contains("shut down");
         }
 
-        // default fallback: be conservative
         return isDangerousCommand(command, "linux");
     }
 

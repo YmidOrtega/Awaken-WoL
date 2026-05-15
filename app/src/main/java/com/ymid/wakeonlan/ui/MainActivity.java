@@ -27,6 +27,7 @@ import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.databinding.ActivityMainBinding;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.shortcuts.DynamicShortcutManager;
+import com.ymid.wakeonlan.ui.onboarding.OnboardingActivity;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -37,27 +38,24 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        // Allow content to draw behind the status bar (edge-to-edge)
-        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
+        if (!OnboardingActivity.isComplete(this)) {
+            startActivity(new Intent(this, OnboardingActivity.class));
+            finish();
+            return;
+        }
 
-        // Transparent so the AppBarLayout background shows through the status bar
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(binding.getRoot());
 
-        // Prevent DrawerLayout from painting its own dark scrim over the status bar
         binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT);
 
         setVersionInformation();
 
         setSupportActionBar(binding.toolbar);
 
-        // Intercept insets at the DrawerLayout level so its internal onApplyWindowInsets
-        // never runs — that's what was pushing the AppBarLayout below the status bar.
-        // We manually apply the status bar height as top padding on the AppBarLayout so
-        // its green background still covers the status bar area while toolbar content
-        // stays below the status bar icons.
         ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout, (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
             binding.appBarLayout.setPadding(
@@ -76,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
         View headerView = binding.navigationView.getHeaderView(0);
 
         TextView versionView = headerView.findViewById(R.id.navigation_header_version);
-        TextView headerTitleView = headerView.findViewById(R.id.navigation_header_title);
 
         ViewCompat.setOnApplyWindowInsetsListener(binding.navigationView, (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
@@ -102,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
         binding.navigationView.getMenu().findItem(R.id.githubShortcut).setOnMenuItemClickListener(item -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues"));
             startActivity(browserIntent);
-
             return false;
         });
 
@@ -120,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private Set<Integer> getMenuIds() {
-        return Sets.newHashSet(R.id.deviceListFragment, R.id.backupFragment, R.id.networkScanFragment);
+        return Sets.newHashSet(R.id.deviceListFragment, R.id.backupFragment, R.id.networkScanFragment, R.id.historyFragment);
     }
 
     @Override

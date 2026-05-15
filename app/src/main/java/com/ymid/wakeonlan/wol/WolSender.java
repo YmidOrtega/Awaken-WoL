@@ -17,31 +17,36 @@ public class WolSender {
     public static final Executor EXECUTOR = Executors.newSingleThreadExecutor();
 
     public static void sendWolPacket(Device device) {
-        Runnable sendWolRunnable = new Runnable() {
+        EXECUTOR.execute(() -> {
+            // Send to the device's configured broadcast/IP address
+            sendPacket(device, device.broadcastAddress);
 
-            @Override
-            public void run() {
-                sendPacket(device.broadcastAddress);
-                new BroadcastHelper().getBroadcastAddress().ifPresent(inetAddress -> sendPacket(inetAddress.getHostAddress()));
+            // Also send to the local network broadcast (auto-detected)
+            new BroadcastHelper().getBroadcastAddress()
+                    .ifPresent(addr -> sendPacket(device, addr.getHostAddress()));
+
+            // If a WAN IP is configured, also send there (WOL over Internet via port forward)
+            if (!Strings.isNullOrEmpty(device.wanIp)) {
+                int wanPort = (device.wanPort != null && device.wanPort > 0) ? device.wanPort : device.port;
+                sendPacketToAddress(device, device.wanIp, wanPort);
             }
-
-            private void sendPacket(String broadcastAddress) {
-                if (Strings.isNullOrEmpty(broadcastAddress)) {
-                    return;
-                }
-
-                try {
-                    DatagramPacket packet = PacketBuilder.buildMagicPacket(broadcastAddress, device.macAddress, device.port, device.secureOnPassword);
-                    DatagramSocket socket = new DatagramSocket();
-                    socket.send(packet);
-                    socket.close();
-                } catch (Exception e) {
-                    Log.e(this.getClass().getName(), "Error while sending magic packet: ", e);
-                }
-            }
-        };
-
-        EXECUTOR.execute(sendWolRunnable);
+        });
     }
 
+    private static void sendPacket(Device device, String broadcastAddress) {
+        if (Strings.isNullOrEmpty(broadcastAddress)) return;
+        sendPacketToAddress(device, broadcastAddress, device.port);
+    }
+
+    private static void sendPacketToAddress(Device device, String address, int port) {
+        if (Strings.isNullOrEmpty(address)) return;
+        try {
+            DatagramPacket packet = PacketBuilder.buildMagicPacket(address, device.macAddress, port, device.secureOnPassword);
+            DatagramSocket socket = new DatagramSocket();
+            socket.send(packet);
+            socket.close();
+        } catch (Exception e) {
+            Log.e(WolSender.class.getName(), "Error while sending magic packet to " + address, e);
+        }
+    }
 }

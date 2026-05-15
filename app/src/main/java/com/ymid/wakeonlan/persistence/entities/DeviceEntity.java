@@ -50,9 +50,26 @@ public class DeviceEntity {
     @ColumnInfo(name = "shutdown_os", defaultValue = "'linux'")
     public String shutdownOs;
 
+    @ColumnInfo(name = "ssh_auth_type", defaultValue = "'password'")
+    public String sshAuthType;
+
+    @ColumnInfo(name = "ssh_key_alias")
+    public String sshKeyAlias;
+
+    @ColumnInfo(name = "group_name")
+    public String groupName;
+
+    @ColumnInfo(name = "wan_ip")
+    public String wanIp;
+
+    @ColumnInfo(name = "wan_port")
+    public Integer wanPort;
+
     @Ignore
-    public DeviceEntity(int id, String name, String macAddress, String broadcastAddress, int port, String statusIp, String secureOnPassword,
-                        boolean enableRemoteShutdown, String sshAddress, Integer sshPort, String sshUsername, String sshPassword, String sshCommand, String shutdownOs) {
+    public DeviceEntity(int id, String name, String macAddress, String broadcastAddress, int port, String statusIp,
+                        String secureOnPassword, boolean enableRemoteShutdown, String sshAddress, Integer sshPort,
+                        String sshUsername, String sshPassword, String sshCommand, String shutdownOs,
+                        String sshAuthType, String sshKeyAlias, String groupName, String wanIp, Integer wanPort) {
         this.id = id;
         this.name = name;
         this.macAddress = macAddress;
@@ -67,8 +84,12 @@ public class DeviceEntity {
         this.sshPassword = sshPassword;
         this.sshCommand = sshCommand;
         this.shutdownOs = shutdownOs;
+        this.sshAuthType = sshAuthType;
+        this.sshKeyAlias = sshKeyAlias;
+        this.groupName = groupName;
+        this.wanIp = wanIp;
+        this.wanPort = wanPort;
     }
-
 
     public DeviceEntity() {
     }

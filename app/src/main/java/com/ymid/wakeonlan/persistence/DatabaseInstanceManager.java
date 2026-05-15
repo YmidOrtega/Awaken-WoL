@@ -15,6 +15,8 @@ import com.ymid.wakeonlan.persistence.migrations.MigrationFrom2To3;
 import com.ymid.wakeonlan.persistence.migrations.MigrationFrom3To4;
 import com.ymid.wakeonlan.persistence.migrations.MigrationFrom4To5;
 import com.ymid.wakeonlan.persistence.migrations.MigrationFrom5To6;
+import com.ymid.wakeonlan.persistence.migrations.MigrationFrom6To7;
+import com.ymid.wakeonlan.persistence.migrations.MigrationFrom7To8;
 
 public class DatabaseInstanceManager {
 
@@ -42,7 +44,9 @@ public class DatabaseInstanceManager {
                             new MigrationFrom2To3(),
                             new MigrationFrom3To4(),
                             new MigrationFrom4To5(),
-                            new MigrationFrom5To6()
+                            new MigrationFrom5To6(),
+                            new MigrationFrom6To7(),
+                            new MigrationFrom7To8()
                     )
                     .build();
         }
@@ -73,7 +77,6 @@ public class DatabaseInstanceManager {
             plainDb.execSQL("DETACH DATABASE encrypted");
             plainDb.close();
 
-            // Reemplaza la BD original con la cifrada
             if (!dbFile.delete()) {
                 throw new RuntimeException("Could not delete plaintext database");
             }

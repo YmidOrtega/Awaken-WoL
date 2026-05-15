@@ -18,4 +18,13 @@
             android:title="@string/pref_trusted_ssids_title"
             android:summary="@string/pref_trusted_ssids_summary" />
     </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_monitoring_category">
+        <SwitchPreferenceCompat
+            android:key="pref_monitoring_enabled"
+            android:title="@string/pref_monitoring_enabled_title"
+            android:summary="@string/pref_monitoring_enabled_summary"
+            android:defaultValue="true" />
+    </PreferenceCategory>
 </PreferenceScreen>

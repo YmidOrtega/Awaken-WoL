@@ -1,44 +1,50 @@
--dontobfuscate
 -keepattributes SourceFile,LineNumberTable
+-keepattributes Signature
+-keepattributes *Annotation*
+
 -keep class com.ymid.wakeonlan.BuildConfig { *; }
 -dontwarn org.slf4j.**
 -dontwarn sun.security.x509.**
+-dontwarn javax.naming.**
+-dontwarn sun.misc.**
 
+# BouncyCastle
 -keep class org.bouncycastle.jcajce.provider.** { *; }
 -keep class org.bouncycastle.jce.provider.** { *; }
 
--dontwarn javax.naming.**
+# Room — keep entities and DAOs so R8 doesn't strip generated _Impl classes
+-keep class * extends androidx.room.RoomDatabase
+-keepclassmembers class * extends androidx.room.RoomDatabase { *; }
+-keep @androidx.room.Entity class * { *; }
+-keep @androidx.room.Dao interface * { *; }
 
+# WorkManager — constructors must be kept so the factory can instantiate workers
+-keep class * extends androidx.work.Worker
+-keep class * extends androidx.work.ListenableWorker
+-keepclassmembers class * extends androidx.work.ListenableWorker {
+    public <init>(android.content.Context, androidx.work.WorkerParameters);
+}
 
-##---------------Begin: proguard configuration for Gson  ----------
-# Gson uses generic type information stored in a class file when working with fields. Proguard
-# removes such information by default, so configure it to keep all of it.
--keepattributes Signature
+# sshj
+-keep class net.schmizz.sshj.** { *; }
+-dontwarn net.schmizz.sshj.**
 
-# For using GSON @Expose annotation
--keepattributes *Annotation*
+# Kotlin coroutines
+-keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
+-keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
+-keepclassmembernames class kotlinx.** { volatile <fields>; }
 
-# Gson specific classes
--dontwarn sun.misc.**
-#-keep class com.google.gson.stream.** { *; }
+# Google Play Review
+-keep class com.google.android.play.core.** { *; }
 
-# Application classes that will be serialized/deserialized over Gson
+##--- Gson -------------------------------------------------------------------
 -keep class com.google.gson.examples.android.model.** { <fields>; }
-
-# Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
-# JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
 -keep class * extends com.google.gson.TypeAdapter
 -keep class * implements com.google.gson.TypeAdapterFactory
 -keep class * implements com.google.gson.JsonSerializer
 -keep class * implements com.google.gson.JsonDeserializer
-
-# Prevent R8 from leaving Data object members always null
 -keepclassmembers,allowobfuscation class * {
-  @com.google.gson.annotations.SerializedName <fields>;
+    @com.google.gson.annotations.SerializedName <fields>;
 }
-
-# Retain generic signatures of TypeToken and its subclasses with R8 version 3.0 and higher.
 -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
-
-##---------------End: proguard configuration for Gson  ----------

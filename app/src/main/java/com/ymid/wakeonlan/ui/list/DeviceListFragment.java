@@ -16,8 +16,11 @@ import java.util.List;
 
 import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.databinding.FragmentListDevicesBinding;
+import com.ymid.wakeonlan.persistence.entities.ActionType;
 import com.ymid.wakeonlan.persistence.models.Device;
+import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
+import com.ymid.wakeonlan.rating.RatingHelper;
 import com.ymid.wakeonlan.ui.list.layoutmanager.GridLayoutManagerWrapper;
 import com.ymid.wakeonlan.ui.list.layoutmanager.LinearLayoutManagerWrapper;
 import com.ymid.wakeonlan.ui.list.status.pool.PingStatusTesterPool;
@@ -93,8 +96,11 @@ public class DeviceListFragment extends Fragment {
         return deviceName -> {
             String snackbarText = getContext().getString(R.string.wol_toast_sending_packet, deviceName);
             View coordinatorView = getActivity().findViewById(R.id.device_list_coordinator_layout);
-
             Snackbar.make(coordinatorView, snackbarText, Snackbar.LENGTH_SHORT).show();
+
+            ActionLogRepository.getInstance(getContext()).log(deviceName, ActionType.WAKE);
+
+            RatingHelper.INSTANCE.recordWakeAndMaybeRequestReview(getActivity());
         };
     }
 
