@@ -143,8 +143,11 @@
     <string name="widget_label">Gerät wecken</string>
     <string name="widget_device_none">Kein Gerät</string>
     <string name="widget_wake">Einschalten</string>
+    <string name="widget_configure_title">Gerät auswählen</string>
+    <string name="widget_configure_no_devices">Keine Geräte konfiguriert. Füge zuerst ein Gerät hinzu.</string>
 
     <!-- SSH-Schlüssel -->
+    <string name="ssh_auth_type">SSH-Authentifizierung</string>
     <string name="ssh_auth_password">Passwort</string>
     <string name="ssh_auth_key">SSH-Schlüssel</string>
     <string name="ssh_key_generate">SSH-Schlüssel generieren</string>

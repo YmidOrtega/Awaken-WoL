@@ -90,8 +90,11 @@
     <string name="widget_label">Despertar dispositivo</string>
     <string name="widget_device_none">Sin dispositivo</string>
     <string name="widget_wake">Encender</string>
+    <string name="widget_configure_title">Seleccionar dispositivo</string>
+    <string name="widget_configure_no_devices">No hay dispositivos configurados. Agrega uno primero.</string>
     <string name="pref_monitoring_enabled_title">Monitoreo en segundo plano</string>
     <string name="pref_monitoring_enabled_summary">Verifica el estado del dispositivo periódicamente y envía notificaciones</string>
+    <string name="ssh_auth_type">Autenticación SSH</string>
     <string name="ssh_auth_password">Contraseña</string>
     <string name="ssh_auth_key">Clave SSH</string>
     <string name="ssh_key_generate">Generar clave SSH</string>

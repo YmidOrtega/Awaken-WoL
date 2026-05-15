@@ -145,6 +145,14 @@
                 android:resource="@xml/widget_device_info" />
         </receiver>
 
+        <activity
+            android:name=".widget.WidgetConfigureActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+            </intent-filter>
+        </activity>
+
         <receiver
             android:name=".receivers.PackageReplacedReceiver"
             android:exported="false">
