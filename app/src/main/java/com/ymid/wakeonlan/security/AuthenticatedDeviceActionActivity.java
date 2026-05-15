@@ -34,6 +34,7 @@ import com.ymid.wakeonlan.shutdown.ShutdownExecutor;
 import com.ymid.wakeonlan.shutdown.listener.IgnoringShutdownExecutorListener;
 import com.ymid.wakeonlan.shutdown.ShutdownModelFactory;
 import com.ymid.wakeonlan.ui.modify.EditDeviceActivity;
+import com.ymid.wakeonlan.ui.notifications.NotificationHelper;
 import com.ymid.wakeonlan.wol.WolSender;
 
 public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
@@ -181,6 +182,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
             }
             ShutdownExecutor.shutdownDevice(device, device.shutdownOs == null ? "linux" : device.shutdownOs, new IgnoringShutdownExecutorListener());
             Toast.makeText(this, getString(R.string.remote_shutdown_send_command, device.name), Toast.LENGTH_LONG).show();
+            NotificationHelper.INSTANCE.sendShutdownSentNotification(this, device.name);
             return;
         }
 
@@ -191,6 +193,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
 
         WolSender.sendWolPacket(device);
         Toast.makeText(this, getString(R.string.wol_toast_sending_packet, device.name), Toast.LENGTH_LONG).show();
+        NotificationHelper.INSTANCE.sendWakeSentNotification(this, device.name);
     }
 
     private void showActionError() {

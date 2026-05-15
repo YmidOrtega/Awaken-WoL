@@ -14,16 +14,24 @@ import com.ymid.wakeonlan.R
 object NotificationHelper {
 
     const val CHANNEL_DEVICE_STATUS = "device_status"
+    const val CHANNEL_ACTIONS = "actions"
 
     fun createChannels(context: Context) {
-        val channel = NotificationChannel(
-            CHANNEL_DEVICE_STATUS,
-            context.getString(R.string.notification_channel_device_status),
-            NotificationManager.IMPORTANCE_DEFAULT
-        ).apply {
-            description = context.getString(R.string.notification_channel_device_status_desc)
-        }
-        NotificationManagerCompat.from(context).createNotificationChannel(channel)
+        val manager = NotificationManagerCompat.from(context)
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_DEVICE_STATUS,
+                context.getString(R.string.notification_channel_device_status),
+                NotificationManager.IMPORTANCE_DEFAULT
+            ).apply { description = context.getString(R.string.notification_channel_device_status_desc) }
+        )
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ACTIONS,
+                context.getString(R.string.notification_channel_actions),
+                NotificationManager.IMPORTANCE_LOW
+            ).apply { description = context.getString(R.string.notification_channel_actions_desc) }
+        )
     }
 
     fun sendDeviceOnlineNotification(context: Context, deviceName: String) {
@@ -46,6 +54,28 @@ object NotificationHelper {
             .setAutoCancel(true)
             .build()
         NotificationManagerCompat.from(context).notify(deviceName.hashCode(), n)
+    }
+
+    fun sendWakeSentNotification(context: Context, deviceName: String) {
+        if (!hasPostNotificationsPermission(context)) return
+        val n = NotificationCompat.Builder(context, CHANNEL_ACTIONS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notification_wake_sent_title))
+            .setContentText(context.getString(R.string.notification_wake_sent_body, deviceName))
+            .setAutoCancel(true)
+            .build()
+        NotificationManagerCompat.from(context).notify(("wake_$deviceName").hashCode(), n)
+    }
+
+    fun sendShutdownSentNotification(context: Context, deviceName: String) {
+        if (!hasPostNotificationsPermission(context)) return
+        val n = NotificationCompat.Builder(context, CHANNEL_ACTIONS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(R.string.notification_shutdown_sent_title))
+            .setContentText(context.getString(R.string.notification_shutdown_sent_body, deviceName))
+            .setAutoCancel(true)
+            .build()
+        NotificationManagerCompat.from(context).notify(("shutdown_$deviceName").hashCode(), n)
     }
 
     private fun hasPostNotificationsPermission(context: Context): Boolean {

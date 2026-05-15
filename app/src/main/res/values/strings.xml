@@ -178,6 +178,14 @@
     <string name="notification_device_offline_title">%1$s went offline</string>
     <string name="notification_device_offline_body">Your device is no longer reachable on the network</string>
 
+    <!-- Action notifications -->
+    <string name="notification_channel_actions">Actions</string>
+    <string name="notification_channel_actions_desc">Confirmations when Wake-on-LAN or shutdown commands are sent</string>
+    <string name="notification_wake_sent_title">Wake packet sent</string>
+    <string name="notification_wake_sent_body">Magic packet sent to %1$s</string>
+    <string name="notification_shutdown_sent_title">Shutdown command sent</string>
+    <string name="notification_shutdown_sent_body">Shutdown command sent to %1$s</string>
+
     <!-- Onboarding -->
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_next">Next</string>
