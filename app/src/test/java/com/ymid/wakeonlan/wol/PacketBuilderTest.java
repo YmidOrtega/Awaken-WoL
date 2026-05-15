@@ -5,6 +5,7 @@ import static org.junit.Assert.*;
 import org.junit.Test;
 
 import java.net.DatagramPacket;
+import java.net.Inet6Address;
 
 public class PacketBuilderTest {
 
@@ -99,5 +100,27 @@ public class PacketBuilderTest {
         // SecureOn as MAC address (6 bytes appended)
         DatagramPacket packet = PacketBuilder.buildMagicPacket(BROADCAST, MAC, PORT, "AA:BB:CC:DD:EE:FF");
         assertEquals(108, packet.getLength()); // 102 + 6
+    }
+
+    // ── IPv6 multicast (ff02::1) ──────────────────────────────────────────────
+
+    @Test
+    public void buildMagicPacket_ipv6AllNodes_resolvesToMulticastInet6Address() throws Exception {
+        DatagramPacket packet = PacketBuilder.buildMagicPacket("ff02::1", MAC, PORT, null);
+        assertTrue(packet.getAddress() instanceof Inet6Address);
+        assertTrue(packet.getAddress().isMulticastAddress());
+    }
+
+    @Test
+    public void buildMagicPacket_ipv6AllNodes_hasCorrectPayloadSize() throws Exception {
+        DatagramPacket packet = PacketBuilder.buildMagicPacket("ff02::1", MAC, PORT, null);
+        assertEquals(102, packet.getLength());
+    }
+
+    @Test
+    public void buildMagicPacket_bracketedIpv6AllNodes_resolves() throws Exception {
+        DatagramPacket packet = PacketBuilder.buildMagicPacket("[ff02::1]", MAC, PORT, null);
+        assertTrue(packet.getAddress() instanceof Inet6Address);
+        assertTrue(packet.getAddress().isMulticastAddress());
     }
 }
