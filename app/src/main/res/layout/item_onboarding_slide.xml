@@ -18,7 +18,8 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="32dp"
         android:gravity="center"
-        android:textAppearance="?attr/textAppearanceHeadlineMedium" />
+        android:textAppearance="?attr/textAppearanceHeadlineMedium"
+        android:textColor="@color/primaryTextColor" />
 
     <TextView
         android:id="@+id/onboarding_description"
@@ -27,6 +28,7 @@
         android:layout_marginTop="16dp"
         android:gravity="center"
         android:textAppearance="?attr/textAppearanceBodyLarge"
+        android:textColor="@color/primaryTextColor"
         android:alpha="0.7" />
 
 </LinearLayout>

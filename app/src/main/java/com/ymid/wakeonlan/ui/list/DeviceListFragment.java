@@ -94,13 +94,22 @@ public class DeviceListFragment extends Fragment {
     @NonNull
     private DeviceClickedCallback buildDeviceClickedCallback() {
         return deviceName -> {
-            String snackbarText = getContext().getString(R.string.wol_toast_sending_packet, deviceName);
-            View coordinatorView = getActivity().findViewById(R.id.device_list_coordinator_layout);
-            Snackbar.make(coordinatorView, snackbarText, Snackbar.LENGTH_SHORT).show();
+            android.app.Activity activity = getActivity();
+            android.content.Context ctx = getContext();
+            if (activity == null || ctx == null) return;
 
-            ActionLogRepository.getInstance(getContext()).log(deviceName, ActionType.WAKE);
+            String snackbarText = ctx.getString(R.string.wol_toast_sending_packet, deviceName);
+            View coordinatorView = activity.findViewById(R.id.device_list_coordinator_layout);
+            if (coordinatorView != null) {
+                Snackbar.make(coordinatorView, snackbarText, Snackbar.LENGTH_SHORT).show();
+            }
 
-            RatingHelper.INSTANCE.recordWakeAndMaybeRequestReview(getActivity());
+            ActionLogRepository.getInstance(ctx).log(deviceName, ActionType.WAKE);
+
+            try {
+                RatingHelper.INSTANCE.recordWakeAndMaybeRequestReview(activity);
+            } catch (Exception ignored) {
+            }
         };
     }
 
