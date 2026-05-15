@@ -36,6 +36,7 @@
 
 # Google Play Review
 -keep class com.google.android.play.core.** { *; }
+-dontwarn com.google.android.gms.common.annotation.NoNullnessRewrite
 
 ##--- Gson -------------------------------------------------------------------
 -keep class com.google.gson.examples.android.model.** { <fields>; }

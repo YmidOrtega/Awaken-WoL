@@ -3,12 +3,21 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-kapt'
 apply from: "$rootProject.projectDir/shared-build.gradle"
 
+def firebaseConfigured = file("$projectDir/google-services.json").exists()
+
+if (firebaseConfigured) {
+    apply plugin: 'com.google.gms.google-services'
+    apply plugin: 'com.google.firebase.crashlytics'
+}
+
 android {
     defaultConfig {
         versionCode 112
+        buildConfigField 'boolean', 'FIREBASE_CONFIGURED', firebaseConfigured.toString()
     }
     buildFeatures {
         dataBinding true
+        buildConfig true
     }
     packaging {
         resources {
@@ -63,6 +72,10 @@ dependencies {
 
     implementation 'com.google.android.play:review-ktx:2.0.2'
 
+    implementation platform('com.google.firebase:firebase-bom:33.7.0')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+
     implementation project(path: ':ping')
 
     testImplementation 'junit:junit:4.13.2'
@@ -70,12 +83,4 @@ dependencies {
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
 
-    // Firebase Crashlytics — add google-services.json to app/ to activate
-    // buildscript classpath: 'com.google.firebase:firebase-crashlytics-gradle:3.0.2'
-    //                        'com.google.gms:google-services:4.4.2'
-    // apply plugin: 'com.google.gms.google-services'
-    // apply plugin: 'com.google.firebase.crashlytics'
-    // implementation platform('com.google.firebase:firebase-bom:33.7.0')
-    // implementation 'com.google.firebase:firebase-crashlytics-ktx'
-    // implementation 'com.google.firebase:firebase-analytics-ktx'
 }
