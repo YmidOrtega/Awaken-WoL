@@ -5,7 +5,6 @@ import androidx.annotation.Nullable;
 import com.google.common.base.Strings;
 
 import java.net.DatagramPacket;
-import java.net.Inet6Address;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +13,8 @@ import java.util.regex.Pattern;
 class PacketBuilder {
 
     private static final Pattern IPV6_PATTERN = Pattern.compile(".*:.*");
+    private static final Pattern MAC_PATTERN =
+            Pattern.compile("^[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\\1){4}[0-9A-Fa-f]{2}$");
 
     static DatagramPacket buildMagicPacket(String broadcastAddress, String macAddress, int port,
                                            @Nullable String secureOnPassword) throws UnknownHostException {
@@ -38,11 +39,15 @@ class PacketBuilder {
     }
 
     private static InetAddress resolveAddress(String broadcastAddress) throws UnknownHostException {
-        // Strip scope ID from IPv6 link-local addresses (e.g. fe80::1%wlan0 → fe80::1)
-        String cleaned = broadcastAddress.contains("%")
-                ? broadcastAddress.substring(0, broadcastAddress.indexOf('%'))
-                : broadcastAddress;
-        return InetAddress.getByName(cleaned);
+        return InetAddress.getByName(normalizeAddress(broadcastAddress));
+    }
+
+    static String normalizeAddress(String address) {
+        String cleaned = Strings.nullToEmpty(address).trim();
+        if (cleaned.startsWith("[") && cleaned.endsWith("]")) {
+            cleaned = cleaned.substring(1, cleaned.length() - 1);
+        }
+        return cleaned.replace("%25", "%");
     }
 
     static boolean isIpv6(String address) {
@@ -67,7 +72,7 @@ class PacketBuilder {
     }
 
     private static boolean passwordIsMacAddress(String password) {
-        return Pattern.compile("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$").matcher(password).matches();
+        return MAC_PATTERN.matcher(password).matches();
     }
 
     private static boolean passwordIsIpAddress(String password) {
@@ -76,8 +81,9 @@ class PacketBuilder {
 
     private static byte[] getMacBytes(String macStr) throws IllegalArgumentException {
         byte[] bytes = new byte[6];
+        if (!MAC_PATTERN.matcher(macStr).matches()) throw new IllegalArgumentException("Invalid MAC address.");
+
         String[] hex = macStr.split("(\\:|\\-)");
-        if (hex.length != 6) throw new IllegalArgumentException("Invalid MAC address.");
         try {
             for (int i = 0; i < 6; i++) {
                 bytes[i] = (byte) Integer.parseInt(hex[i], 16);

@@ -53,12 +53,39 @@ public class PacketBuilderTest {
         PacketBuilder.buildMagicPacket(BROADCAST, "not-a-mac", PORT, null);
     }
 
+    @Test(expected = IllegalArgumentException.class)
+    public void buildMagicPacket_mixedMacSeparatorsThrows() throws Exception {
+        PacketBuilder.buildMagicPacket(BROADCAST, "AB:12-CD:34:EF:56", PORT, null);
+    }
+
     @Test
     public void isIpv6_detectsIpv6Address() {
         assertTrue(PacketBuilder.isIpv6("2001:db8::1"));
         assertTrue(PacketBuilder.isIpv6("fe80::1%wlan0"));
+        assertTrue(PacketBuilder.isIpv6("[2001:db8::1]"));
         assertFalse(PacketBuilder.isIpv6("192.168.1.255"));
         assertFalse(PacketBuilder.isIpv6(null));
+    }
+
+    @Test
+    public void normalizeAddress_keepsIpv6ScopeId() {
+        assertEquals("fe80::1%wlan0", PacketBuilder.normalizeAddress("fe80::1%wlan0"));
+    }
+
+    @Test
+    public void normalizeAddress_unwrapsBracketedIpv6() {
+        assertEquals("2001:db8::1", PacketBuilder.normalizeAddress("[2001:db8::1]"));
+    }
+
+    @Test
+    public void normalizeAddress_decodesEscapedIpv6ScopeId() {
+        assertEquals("fe80::1%wlan0", PacketBuilder.normalizeAddress("fe80::1%25wlan0"));
+    }
+
+    @Test
+    public void buildMagicPacket_targetsIpv6Address() throws Exception {
+        DatagramPacket packet = PacketBuilder.buildMagicPacket("2001:db8::1", MAC, PORT, null);
+        assertTrue(PacketBuilder.isIpv6(packet.getAddress().getHostAddress()));
     }
 
     @Test

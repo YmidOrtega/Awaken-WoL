@@ -9,7 +9,7 @@ import java.util.regex.Pattern;
 public class MacAddressValidationTest {
 
     private static final Pattern MAC_PATTERN =
-            Pattern.compile("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+            Pattern.compile("^[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\\1){4}[0-9A-Fa-f]{2}$");
 
     private boolean isValidMac(String mac) {
         return MAC_PATTERN.matcher(mac.trim()).matches();

@@ -9,7 +9,7 @@ import com.ymid.wakeonlan.R;
 
 public class MacValidator extends Validator {
 
-    private final Pattern MAC_PATTERN = Pattern.compile("^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$");
+    private final Pattern MAC_PATTERN = Pattern.compile("^[0-9A-Fa-f]{2}([:-])(?:[0-9A-Fa-f]{2}\\1){4}[0-9A-Fa-f]{2}$");
 
     public MacValidator(EditText editTextView) {
         super(editTextView);
