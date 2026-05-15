@@ -1,13 +1,15 @@
 package com.ymid.wakeonlan
 
 import android.app.Application
+import com.ymid.wakeonlan.crash.CrashReporter
 import com.ymid.wakeonlan.monitoring.MonitoringScheduler
 import com.ymid.wakeonlan.ui.notifications.NotificationHelper
 
 class AwekenApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        CrashReporter.initialize()
         NotificationHelper.createChannels(this)
-        MonitoringScheduler.schedule(this)
+        MonitoringScheduler.scheduleIfEnabled(this)
     }
 }

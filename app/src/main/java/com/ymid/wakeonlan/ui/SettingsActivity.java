@@ -26,6 +26,7 @@ import androidx.core.view.WindowInsetsCompat;
 import androidx.preference.MultiSelectListPreference;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
+import androidx.preference.SwitchPreferenceCompat;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -36,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import com.ymid.wakeonlan.R;
+import com.ymid.wakeonlan.monitoring.MonitoringScheduler;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -64,6 +66,7 @@ public class SettingsActivity extends AppCompatActivity {
         private WifiManager wifiManager;
         private Preference trustedSsidsPreference;
         private Preference scanWifiPreference;
+        private SwitchPreferenceCompat monitoringPreference;
         private boolean openDialogAfterScan;
         private boolean receiverRegistered;
         private final Handler handler = new Handler(Looper.getMainLooper());
@@ -109,6 +112,7 @@ public class SettingsActivity extends AppCompatActivity {
             wifiManager = (WifiManager) requireContext().getApplicationContext().getSystemService(Context.WIFI_SERVICE);
             trustedSsidsPreference = findPreference(PREF_TRUSTED_SSIDS);
             scanWifiPreference = findPreference(PREF_SCAN_WIFI);
+            monitoringPreference = findPreference(MonitoringScheduler.PREF_MONITORING_ENABLED);
 
             if (trustedSsidsPreference != null) {
                 updateTrustedSsidsSummary();
@@ -123,6 +127,19 @@ public class SettingsActivity extends AppCompatActivity {
             if (scanWifiPreference != null) {
                 scanWifiPreference.setOnPreferenceClickListener(preference -> {
                     startWifiScanWithPermission(true); // Explicitly requested
+                    return true;
+                });
+            }
+
+            if (monitoringPreference != null) {
+                monitoringPreference.setOnPreferenceChangeListener((preference, newValue) -> {
+                    boolean enabled = Boolean.TRUE.equals(newValue);
+                    Context context = requireContext().getApplicationContext();
+                    if (enabled) {
+                        MonitoringScheduler.schedule(context);
+                    } else {
+                        MonitoringScheduler.cancel(context);
+                    }
                     return true;
                 });
             }

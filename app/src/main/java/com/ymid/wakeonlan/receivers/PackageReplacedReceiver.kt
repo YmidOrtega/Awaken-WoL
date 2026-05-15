@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import com.ymid.wakeonlan.monitoring.MonitoringScheduler
 
 /**
  * Resets activity-alias states to manifest defaults after an APK update.
@@ -17,6 +18,7 @@ class PackageReplacedReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != Intent.ACTION_MY_PACKAGE_REPLACED) return
         resetAliasesToDefault(context)
+        MonitoringScheduler.scheduleIfEnabled(context)
     }
 
     companion object {

@@ -16,21 +16,27 @@ class DeviceMonitorWorker(
 ) : CoroutineWorker(appContext, params) {
 
     override suspend fun doWork(): Result = withContext(Dispatchers.IO) {
+        if (!MonitoringScheduler.isEnabled(appContext)) {
+            return@withContext Result.success()
+        }
+
         val prefs = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
         val devices = DeviceRepository.getInstance(appContext).all
 
         for (device in devices) {
             val ip = device.statusIp?.takeIf { it.isNotBlank() } ?: device.sshAddress ?: continue
             val nowOnline = pingHost(ip)
-            val previouslyOnline = prefs.getBoolean(device.name, false)
+            val stateKey = stateKey(device.id)
+            val hasPreviousState = prefs.contains(stateKey)
+            val previouslyOnline = prefs.getBoolean(stateKey, false)
 
-            if (nowOnline && !previouslyOnline) {
+            if (hasPreviousState && nowOnline && !previouslyOnline) {
                 NotificationHelper.sendDeviceOnlineNotification(appContext, device.name)
-            } else if (!nowOnline && previouslyOnline) {
+            } else if (hasPreviousState && !nowOnline && previouslyOnline) {
                 NotificationHelper.sendDeviceOfflineNotification(appContext, device.name)
             }
 
-            prefs.edit().putBoolean(device.name, nowOnline).apply()
+            prefs.edit().putBoolean(stateKey, nowOnline).apply()
         }
 
         Result.success()
@@ -45,5 +51,7 @@ class DeviceMonitorWorker(
     companion object {
         private const val PREFS_NAME = "device_monitor_state"
         private const val PING_TIMEOUT_MS = 2000
+
+        private fun stateKey(deviceId: Int) = "device_$deviceId"
     }
 }

@@ -161,6 +161,14 @@
             </intent-filter>
         </receiver>
 
+        <receiver
+            android:name=".receivers.BootCompletedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Samsung Routines / external wake intents -->
         <receiver
             android:name=".receivers.WakeDeviceReceiver"
