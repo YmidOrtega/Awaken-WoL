@@ -10,6 +10,7 @@ import java.math.BigInteger
 import java.security.KeyPairGenerator
 import java.security.KeyStore
 import java.security.interfaces.RSAPublicKey
+import java.util.UUID
 
 object SshKeyManager {
 
@@ -17,8 +18,16 @@ object SshKeyManager {
     private const val KEY_SIZE = 2048
     const val ALIAS_PREFIX = "aweken_ssh_"
 
+    @JvmStatic
+    fun generateKeyPair(): String = generateKeyPair("${ALIAS_PREFIX}${UUID.randomUUID()}")
+
+    @JvmStatic
     fun generateKeyPair(deviceId: Int): String {
-        val alias = aliasFor(deviceId)
+        return generateKeyPair(aliasFor(deviceId))
+    }
+
+    @JvmStatic
+    fun generateKeyPair(alias: String): String {
         val spec = KeyGenParameterSpec.Builder(
             alias,
             KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
@@ -35,6 +44,7 @@ object SshKeyManager {
         return alias
     }
 
+    @JvmStatic
     fun getOpenSshPublicKey(alias: String): String? = try {
         val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
         val entry = keyStore.getEntry(alias, null) as? KeyStore.PrivateKeyEntry ?: return null
@@ -43,8 +53,10 @@ object SshKeyManager {
         "ssh-rsa ${Base64.encodeToString(wireBytes, Base64.NO_WRAP)} aweken"
     } catch (_: Exception) { null }
 
+    @JvmStatic
     fun aliasFor(deviceId: Int) = "$ALIAS_PREFIX$deviceId"
 
+    @JvmStatic
     fun deleteKeyPair(alias: String) {
         runCatching {
             val ks = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }

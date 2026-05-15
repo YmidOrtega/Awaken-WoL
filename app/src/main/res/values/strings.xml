@@ -19,8 +19,13 @@
     <string name="add_device_mac_address">MAC Address</string>
     <string name="add_device_default_port" translatable="false">9</string>
     <string name="add_device_port">Port</string>
-    <string name="add_device_broadcast_address">Broadcast Address (optional)</string>
+    <string name="add_device_broadcast_address">Broadcast/IP address (optional)</string>
+    <string name="add_device_broadcast_address_helper">IPv4 broadcast, IPv6 address, or hostname</string>
     <string name="add_device_autofill_broadcast">Autofill Broadcast Address</string>
+    <string name="add_device_wan_address">Internet/WAN address (optional)</string>
+    <string name="add_device_wan_address_helper">Public IP or hostname of your router or relay</string>
+    <string name="add_device_wan_port">WAN Port</string>
+    <string name="add_device_wan_port_helper">Leave empty to use the Wake-on-LAN port above</string>
     <string name="add_device_secure_on">SecureOn Password (optional)</string>
     <string name="add_device_shutdown">Remote Shutdown</string>
     <string name="add_device_shutdown_explanation">Uses SSH to log into the device and execute the specified shutdown command.\nThis feature only works on machines running Linux</string>
@@ -41,6 +46,7 @@
     <string name="add_device_error_port_invalid">Invalid Port</string>
     <string name="add_device_error_name_empty">Name must not be empty</string>
     <string name="add_device_error_ip_invalid">Invalid IP Address</string>
+    <string name="add_device_error_address_invalid">Invalid network address</string>
     <string name="add_device_error_secure_on_password_invalid">Password must be either empty, a valid MAC or IP Address</string>
     <string name="add_device_error_ssh_address_empty">SSH Address must not be empty when no Status IP set</string>
     <string name="add_device_error_ssh_username_empty">Username must not be empty</string>
@@ -205,6 +211,7 @@
     <string name="widget_configure_no_devices">No devices configured. Add a device first.</string>
 
     <!-- SSH Key Auth -->
+    <string name="ssh_auth_type">SSH authentication</string>
     <string name="ssh_auth_password">Password</string>
     <string name="ssh_auth_key">SSH Key</string>
     <string name="ssh_key_generate">Generate SSH key</string>

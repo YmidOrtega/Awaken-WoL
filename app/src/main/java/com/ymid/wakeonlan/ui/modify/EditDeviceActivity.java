@@ -41,6 +41,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
             deviceMacInput.setRealText(device.macAddress);
             deviceBroadcastInput.setRealText(device.broadcastAddress);
             devicePorts.setText(String.valueOf(device.port));
+            deviceWanAddressInput.setRealText(device.wanIp);
+            deviceWanPortInput.setText(device.wanPort == null ? "" : String.valueOf(device.wanPort));
             deviceSecureOnPassword.setText(device.secureOnPassword);
 
             deviceEnableRemoteShutdown.setChecked(device.remoteShutdownEnabled);
@@ -50,6 +52,9 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
             deviceSshUsernameInput.setText(device.sshUsername);
             deviceSshPasswordInput.setText(device.sshPassword);
             deviceSshCommandInput.setText(device.sshCommand);
+            sshKeyAlias = device.sshKeyAlias;
+            setSshAuthType(device.sshAuthType);
+            updateSshAuthUi();
             // set spinner to saved OS
             if (device.shutdownOs != null) {
                 if (deviceSshOsSpinner.getAdapter() != null) {
@@ -105,6 +110,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
                 Strings.nullToEmpty(device.broadcastAddress).equals(getDeviceBroadcastAddressText()) &&
                 Strings.nullToEmpty(device.macAddress).equals(getDeviceMacInputText()) &&
                 Strings.nullToEmpty(device.statusIp).equals(getDeviceStatusIpText()) &&
+                Strings.nullToEmpty(device.wanIp).equals(getDeviceWanAddressText()) &&
+                Objects.equals(device.wanPort, getDeviceWanPort()) &&
                 device.port == getPort() &&
                 Strings.nullToEmpty(device.secureOnPassword).equals(getDeviceSecureOnPassword()) &&
                 device.remoteShutdownEnabled == getDeviceRemoteShutdownEnabled() &&
@@ -112,7 +119,9 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
                 Objects.equals(device.sshPort == null ? -1 : device.sshPort, getDeviceSshPort()) &&
                 Strings.nullToEmpty(device.sshUsername).equals(getDeviceSshUsername()) &&
                 Strings.nullToEmpty(device.sshPassword).equals(getDeviceSshPassword()) &&
-                Strings.nullToEmpty(device.sshCommand).equals(getDeviceSshCommand());
+                Strings.nullToEmpty(device.sshCommand).equals(getDeviceSshCommand()) &&
+                Strings.nullToEmpty(device.sshAuthType == null ? "password" : device.sshAuthType).equals(getDeviceSshAuthType()) &&
+                Strings.nullToEmpty(device.sshKeyAlias).equals(Strings.nullToEmpty(getDeviceSshKeyAlias()));
 
     }
 
@@ -128,6 +137,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
         device.macAddress = getDeviceMacInputText();
         device.broadcastAddress = getDeviceBroadcastAddressText();
         device.port = getPort();
+        device.wanIp = getDeviceWanAddressText();
+        device.wanPort = getDeviceWanPort();
         device.secureOnPassword = getDeviceSecureOnPassword();
         device.remoteShutdownEnabled = getDeviceRemoteShutdownEnabled();
         device.sshAddress = getDeviceSshAddress();
@@ -136,6 +147,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
         device.sshPassword = getDeviceSshPassword();
         device.sshCommand = getDeviceSshCommand();
         device.shutdownOs = getSelectedOs(deviceSshOsSpinner);
+        device.sshAuthType = getDeviceSshAuthType();
+        device.sshKeyAlias = getDeviceSshKeyAlias();
 
         return device;
     }

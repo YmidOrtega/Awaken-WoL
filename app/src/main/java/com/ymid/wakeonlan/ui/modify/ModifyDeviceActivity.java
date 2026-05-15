@@ -1,6 +1,9 @@
 package com.ymid.wakeonlan.ui.modify;
 
 import android.content.res.ColorStateList;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -46,6 +49,7 @@ import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.databinding.ActivityModifyDeviceBinding;
 import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
+import com.ymid.wakeonlan.security.SshKeyManager;
 import com.ymid.wakeonlan.shutdown.ShutdownModel;
 import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
@@ -55,6 +59,7 @@ import com.ymid.wakeonlan.ui.modify.watcher.autocomplete.MacAddressAutocomplete;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.ConditionalInputNotEmptyValidator;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.InputNotEmptyValidator;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.MacValidator;
+import com.ymid.wakeonlan.ui.modify.watcher.validator.NetworkAddressValidator;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.PortValidator;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.SecureOnPasswordValidator;
 
@@ -67,6 +72,8 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     protected TextInputEditText deviceNameInput;
     protected ObfuscatedEditText deviceStatusIpInput;
     protected ObfuscatedEditText deviceBroadcastInput;
+    protected ObfuscatedEditText deviceWanAddressInput;
+    protected TextInputEditText deviceWanPortInput;
     protected TextInputEditText deviceSecureOnPassword;
     protected ImageButton broadcastAutofill;
     protected TextInputEditText devicePorts;
@@ -75,11 +82,19 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     protected ObfuscatedEditText deviceSshAddressInput;
     protected TextInputEditText deviceSshPortInput;
     protected TextInputEditText deviceSshUsernameInput;
+    protected View deviceSshPasswordContainer;
     protected TextInputEditText deviceSshPasswordInput;
     protected TextInputEditText deviceSshCommandInput;
+    protected Spinner deviceSshAuthTypeSpinner;
+    protected Button generateSshKeyButton;
+    protected TextView sshPublicKeyTitle;
+    protected TextView sshPublicKeyHint;
+    protected TextView sshPublicKeyText;
+    protected Button copySshKeyButton;
     protected Spinner deviceSshOsSpinner;
     protected TextView deviceSshOsSuggestion;
     protected Button sshTestShutdownButton;
+    protected String sshKeyAlias;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,6 +111,8 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceNameInput = binding.device.deviceName;
         deviceStatusIpInput = binding.device.deviceStatusIp;
         deviceBroadcastInput = binding.device.deviceBroadcast;
+        deviceWanAddressInput = binding.device.deviceWanAddress;
+        deviceWanPortInput = binding.device.deviceWanPort;
         deviceSecureOnPassword = binding.device.deviceSecureOnPassword;
         broadcastAutofill = binding.device.broadcastAutofill;
 
@@ -104,8 +121,15 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceSshAddressInput = binding.device.deviceShutdownAddress;
         deviceSshPortInput = binding.device.deviceShutdownPort;
         deviceSshUsernameInput = binding.device.deviceShutdownUsername;
+        deviceSshPasswordContainer = binding.device.deviceRemoteShutdownPassword;
         deviceSshPasswordInput = binding.device.deviceShutdownPassword;
         deviceSshCommandInput = binding.device.deviceShutdownCommand;
+        deviceSshAuthTypeSpinner = binding.device.deviceShutdownAuthType;
+        generateSshKeyButton = binding.device.deviceButtonGenerateSshKey;
+        sshPublicKeyTitle = binding.device.deviceSshPublicKeyTitle;
+        sshPublicKeyHint = binding.device.deviceSshPublicKeyHint;
+        sshPublicKeyText = binding.device.deviceSshPublicKey;
+        copySshKeyButton = binding.device.deviceButtonCopySshKey;
         deviceSshOsSpinner = binding.device.deviceShutdownOs;
         deviceSshOsSuggestion = binding.device.deviceShutdownOsSuggestion;
 
@@ -142,6 +166,8 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         addValidators();
         addAutofillClickHandler();
         setRemoteDeviceShutdownSwitchListener();
+        setAuthTypeListener();
+        setSshKeyButtonListeners();
         setOsSpinnerSuggestionListener();
         setOnTestSshShutdownListenerClickedListener();
     }
@@ -191,13 +217,18 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     private void addValidators() {
         deviceMacInput.addTextChangedListener(new MacValidator(deviceMacInput));
         deviceMacInput.addTextChangedListener(new MacAddressAutocomplete());
+        deviceBroadcastInput.addTextChangedListener(new NetworkAddressValidator(deviceBroadcastInput, true));
+        deviceWanAddressInput.addTextChangedListener(new NetworkAddressValidator(deviceWanAddressInput, true));
 
         devicePorts.addTextChangedListener(new PortValidator(devicePorts));
+        deviceWanPortInput.addTextChangedListener(new PortValidator(deviceWanPortInput));
 
         deviceNameInput.addTextChangedListener(new InputNotEmptyValidator(deviceNameInput, R.string.add_device_error_name_empty));
         deviceSecureOnPassword.addTextChangedListener(new SecureOnPasswordValidator(deviceSecureOnPassword));
 
         List<Supplier<Boolean>> remoteShutdownEnabledSupplier = Collections.singletonList(() -> deviceEnableRemoteShutdown.isChecked());
+        List<Supplier<Boolean>> passwordAuthRequiredSupplier =
+                Lists.newArrayList(() -> deviceEnableRemoteShutdown.isChecked(), () -> !isSshKeyAuthSelected());
         List<Supplier<Boolean>> statusIpFallbackAvailable =
                 Lists.newArrayList(() -> deviceEnableRemoteShutdown.isChecked(), () -> isEmpty(deviceStatusIpInput));
 
@@ -206,7 +237,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceSshUsernameInput.addTextChangedListener(new ConditionalInputNotEmptyValidator(deviceSshUsernameInput,
                 R.string.add_device_error_ssh_username_empty, remoteShutdownEnabledSupplier));
         deviceSshPasswordInput.addTextChangedListener(new ConditionalInputNotEmptyValidator(deviceSshPasswordInput,
-                R.string.add_device_error_ssh_password_empty, remoteShutdownEnabledSupplier));
+                R.string.add_device_error_ssh_password_empty, passwordAuthRequiredSupplier));
         deviceSshCommandInput.addTextChangedListener(new ConditionalInputNotEmptyValidator(deviceSshCommandInput,
                 R.string.add_device_error_ssh_command_empty, remoteShutdownEnabledSupplier));
     }
@@ -215,12 +246,16 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         return deviceMacInput.getError() == null && isNotEmpty(deviceMacInput) &&
                 devicePorts.getError() == null &&
                 deviceNameInput.getError() == null && isNotEmpty(deviceNameInput) &&
+                deviceBroadcastInput.getError() == null &&
+                deviceWanAddressInput.getError() == null &&
                 deviceStatusIpInput.getError() == null &&
+                deviceWanPortInput.getError() == null &&
                 deviceSecureOnPassword.getError() == null &&
                 deviceSshAddressInput.getError() == null &&
                 deviceSshUsernameInput.getError() == null &&
                 deviceSshPasswordInput.getError() == null &&
-                deviceSshCommandInput.getError() == null;
+                deviceSshCommandInput.getError() == null &&
+                (!deviceEnableRemoteShutdown.isChecked() || !isSshKeyAuthSelected() || !Strings.isNullOrEmpty(sshKeyAlias));
     }
 
     protected boolean assertShutdownInputsNotEmptyAndValid() {
@@ -229,7 +264,8 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
                 deviceSshAddressInput.getError() == null &&
                 deviceSshUsernameInput.getError() == null &&
                 deviceSshPasswordInput.getError() == null &&
-                deviceSshCommandInput.getError() == null;
+                deviceSshCommandInput.getError() == null &&
+                (!isSshKeyAuthSelected() || !Strings.isNullOrEmpty(sshKeyAlias));
     }
 
     private boolean isNotEmpty(TextInputEditText inputEditText) {
@@ -291,8 +327,10 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceNameInput.setText(deviceNameInput.getText());
         triggerObfuscatedInputValidators(deviceStatusIpInput);
         triggerObfuscatedInputValidators(deviceBroadcastInput);
+        triggerObfuscatedInputValidators(deviceWanAddressInput);
         triggerObfuscatedInputValidators(deviceMacInput);
         devicePorts.setText(devicePorts.getText());
+        deviceWanPortInput.setText(deviceWanPortInput.getText());
         deviceSecureOnPassword.setText(deviceSecureOnPassword.getText());
         triggerShutdownValidators();
     }
@@ -303,6 +341,69 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceSshUsernameInput.setText(deviceSshUsernameInput.getText());
         deviceSshPasswordInput.setText(deviceSshPasswordInput.getText());
         deviceSshCommandInput.setText(deviceSshCommandInput.getText());
+    }
+
+    private void setAuthTypeListener() {
+        deviceSshAuthTypeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                updateSshAuthUi();
+                triggerShutdownValidators();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                updateSshAuthUi();
+            }
+        });
+        updateSshAuthUi();
+    }
+
+    private void setSshKeyButtonListeners() {
+        generateSshKeyButton.setOnClickListener(v -> {
+            sshKeyAlias = SshKeyManager.generateKeyPair();
+            updateSshPublicKeyUi();
+        });
+
+        copySshKeyButton.setOnClickListener(v -> {
+            CharSequence publicKey = sshPublicKeyText.getText();
+            if (publicKey == null || publicKey.length() == 0) return;
+
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            if (clipboard != null) {
+                clipboard.setPrimaryClip(ClipData.newPlainText(getString(R.string.ssh_key_public_title), publicKey));
+                Toast.makeText(this, R.string.ssh_key_copied, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    protected void updateSshAuthUi() {
+        boolean keyAuth = isSshKeyAuthSelected();
+        deviceSshPasswordContainer.setVisibility(keyAuth ? View.GONE : View.VISIBLE);
+        generateSshKeyButton.setVisibility(keyAuth ? View.VISIBLE : View.GONE);
+        updateSshPublicKeyUi();
+    }
+
+    protected void updateSshPublicKeyUi() {
+        String publicKey = null;
+        if (isSshKeyAuthSelected() && !Strings.isNullOrEmpty(sshKeyAlias)) {
+            publicKey = SshKeyManager.getOpenSshPublicKey(sshKeyAlias);
+        }
+
+        boolean showPublicKey = !Strings.isNullOrEmpty(publicKey);
+        sshPublicKeyTitle.setVisibility(showPublicKey ? View.VISIBLE : View.GONE);
+        sshPublicKeyHint.setVisibility(showPublicKey ? View.VISIBLE : View.GONE);
+        sshPublicKeyText.setVisibility(showPublicKey ? View.VISIBLE : View.GONE);
+        copySshKeyButton.setVisibility(showPublicKey ? View.VISIBLE : View.GONE);
+        sshPublicKeyText.setText(Strings.nullToEmpty(publicKey));
+    }
+
+    protected boolean isSshKeyAuthSelected() {
+        return deviceSshAuthTypeSpinner != null && deviceSshAuthTypeSpinner.getSelectedItemPosition() == 1;
+    }
+
+    protected void setSshAuthType(String authType) {
+        deviceSshAuthTypeSpinner.setSelection("key".equalsIgnoreCase(authType) ? 1 : 0);
     }
 
     private void triggerObfuscatedInputValidators(ObfuscatedEditText input) {
@@ -502,6 +603,23 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     }
 
     @NonNull
+    protected String getDeviceWanAddressText() {
+        return getInputText(deviceWanAddressInput);
+    }
+
+    protected Integer getDeviceWanPort() {
+        try {
+            String wanPort = getInputText(deviceWanPortInput);
+            if (Strings.nullToEmpty(wanPort).isEmpty()) {
+                return null;
+            }
+            return Integer.parseInt(wanPort);
+        } catch (NumberFormatException e) {
+            return null;
+        }
+    }
+
+    @NonNull
     protected String getDeviceSecureOnPassword() {
         return getInputText(deviceSecureOnPassword);
     }
@@ -536,6 +654,15 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     @NonNull
     protected String getDeviceSshPassword() {
         return getInputText(deviceSshPasswordInput);
+    }
+
+    @NonNull
+    protected String getDeviceSshAuthType() {
+        return isSshKeyAuthSelected() ? "key" : "password";
+    }
+
+    protected String getDeviceSshKeyAlias() {
+        return isSshKeyAuthSelected() ? sshKeyAlias : null;
     }
 
     @NonNull

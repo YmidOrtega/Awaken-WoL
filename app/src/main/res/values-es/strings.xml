@@ -8,7 +8,12 @@
     <string name="add_device_status_ip">IP de estado (opcional)</string>
     <string name="add_device_mac_address">Dirección MAC</string>
     <string name="add_device_port">Puerto</string>
-    <string name="add_device_broadcast_address">Dirección de broadcast (opcional)</string>
+    <string name="add_device_broadcast_address">Dirección broadcast/IP (opcional)</string>
+    <string name="add_device_broadcast_address_helper">Broadcast IPv4, dirección IPv6 o hostname</string>
+    <string name="add_device_wan_address">Dirección Internet/WAN (opcional)</string>
+    <string name="add_device_wan_address_helper">IP pública o hostname de tu router o relay</string>
+    <string name="add_device_wan_port">Puerto WAN</string>
+    <string name="add_device_wan_port_helper">Déjalo vacío para usar el puerto Wake-on-LAN de arriba</string>
     <string name="add_device_shutdown">Apagado remoto</string>
     <string name="add_device_shutdown_enable">Activar apagado remoto</string>
     <string name="add_device_shutdown_ip">Dirección SSH</string>
@@ -21,6 +26,7 @@
     <string name="add_device_error_mac_invalid">Dirección MAC no válida</string>
     <string name="add_device_error_name_empty">El nombre no puede estar vacío</string>
     <string name="add_device_error_ip_invalid">Dirección IP no válida</string>
+    <string name="add_device_error_address_invalid">Dirección de red no válida</string>
     <string name="add_device_error_ssh_address_empty">La dirección SSH no puede estar vacía</string>
     <string name="add_device_error_ssh_username_empty">El usuario no puede estar vacío</string>
     <string name="add_device_error_ssh_password_empty">La contraseña no puede estar vacía</string>

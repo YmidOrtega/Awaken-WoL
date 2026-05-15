@@ -47,6 +47,8 @@ public class AddDeviceActivity extends ModifyDeviceActivity {
         device.macAddress = getDeviceMacInputText();
         device.broadcastAddress = getDeviceBroadcastAddressText();
         device.port = getPort();
+        device.wanIp = getDeviceWanAddressText();
+        device.wanPort = getDeviceWanPort();
         device.secureOnPassword = getDeviceSecureOnPassword();
         device.remoteShutdownEnabled = getDeviceRemoteShutdownEnabled();
         device.sshAddress = getDeviceSshAddress();
@@ -55,6 +57,8 @@ public class AddDeviceActivity extends ModifyDeviceActivity {
         device.sshPassword = getDeviceSshPassword();
         device.sshCommand = getDeviceSshCommand();
         device.shutdownOs = getSelectedOs(deviceSshOsSpinner);
+        device.sshAuthType = getDeviceSshAuthType();
+        device.sshKeyAlias = getDeviceSshKeyAlias();
 
         return device;
     }
@@ -65,8 +69,10 @@ public class AddDeviceActivity extends ModifyDeviceActivity {
         return getDeviceNameInputText().isEmpty() && getDeviceMacInputText().isEmpty()
                 && getPort() == 9
                 && getDeviceBroadcastAddressText().isEmpty() && getDeviceStatusIpText().isEmpty()
+                && getDeviceWanAddressText().isEmpty() && getDeviceWanPort() == null
                 && getDeviceSecureOnPassword().isEmpty() && !getDeviceRemoteShutdownEnabled() &&
                 getDeviceSshAddress().isEmpty() && getDeviceSshPort() == -1 && getDeviceSshUsername().isEmpty() &&
-                getDeviceSshPassword().isEmpty() && getDeviceSshCommand().isEmpty();
+                getDeviceSshPassword().isEmpty() && getDeviceSshCommand().isEmpty() &&
+                "password".equals(getDeviceSshAuthType()) && getDeviceSshKeyAlias() == null;
     }
 }

@@ -8,6 +8,12 @@
     <string name="add_device_status_ip">Status IP (optional)</string>
     <string name="add_device_mac_address">MAC Adresse</string>
     <string name="add_device_port">Port</string>
+    <string name="add_device_broadcast_address_helper">IPv4-Broadcast, IPv6-Adresse oder Hostname</string>
+    <string name="add_device_error_address_invalid">Ungültige Netzwerkadresse</string>
+    <string name="add_device_wan_address">Internet/WAN-Adresse (optional)</string>
+    <string name="add_device_wan_address_helper">Öffentliche IP oder Hostname Ihres Routers oder Relays</string>
+    <string name="add_device_wan_port">WAN-Port</string>
+    <string name="add_device_wan_port_helper">Leer lassen, um den Wake-on-LAN-Port oben zu verwenden</string>
     <string name="add_device_broadcast_address">Broadcast Adresse (optional)</string>
     <string name="add_device_shutdown">Entferntes Herunterfahren</string>
     <string name="add_device_shutdown_enable">Entferntes Herunterfahren aktivieren</string>
