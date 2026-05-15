@@ -10,7 +10,7 @@
         android:id="@+id/onboarding_icon"
         android:layout_width="100dp"
         android:layout_height="100dp"
-        android:contentDescription="@null" />
+        android:importantForAccessibility="no" />
 
     <TextView
         android:id="@+id/onboarding_title"

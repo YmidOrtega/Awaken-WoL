@@ -13,7 +13,7 @@
         android:layout_height="36dp"
         app:tint="?android:attr/textColorPrimary"
         android:src="@drawable/ic_import_export"
-        android:contentDescription="Import/Export Icon" />
+        android:importantForAccessibility="no" />
 
     <LinearLayout
         android:layout_width="wrap_content"
