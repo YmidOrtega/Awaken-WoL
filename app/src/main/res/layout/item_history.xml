@@ -24,16 +24,17 @@
             android:id="@+id/history_device_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceTitleSmall"
-            android:textColor="@color/primaryTextColor" />
+            android:textColor="@color/primaryTextColor"
+            android:textSize="15sp"
+            android:textStyle="bold" />
 
         <TextView
             android:id="@+id/history_action_label"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBodySmall"
-            android:textColor="@color/primaryTextColor"
-            android:alpha="0.7" />
+            android:layout_marginTop="2dp"
+            android:textColor="@color/primaryTextColorMuted"
+            android:textSize="13sp" />
 
     </LinearLayout>
 
@@ -41,8 +42,7 @@
         android:id="@+id/history_timestamp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?attr/textAppearanceLabelSmall"
-        android:textColor="@color/primaryTextColor"
-        android:alpha="0.6" />
+        android:textColor="@color/primaryTextColorMuted"
+        android:textSize="12sp" />
 
 </LinearLayout>

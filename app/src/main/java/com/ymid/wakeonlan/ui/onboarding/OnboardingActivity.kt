@@ -2,6 +2,7 @@ package com.ymid.wakeonlan.ui.onboarding
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -21,12 +22,12 @@ class OnboardingActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOnboardingBinding
 
-    data class Slide(val iconRes: Int, val titleRes: Int, val descRes: Int)
+    data class Slide(val iconRes: Int, val titleRes: Int, val descRes: Int, val tintColor: Int? = null)
 
     private val slides = listOf(
         Slide(R.drawable.ic_launcher_foreground_on, R.string.onboarding_slide1_title, R.string.onboarding_slide1_description),
-        Slide(R.drawable.ic_power_24, R.string.onboarding_slide2_title, R.string.onboarding_slide2_description),
-        Slide(R.drawable.ic_notification, R.string.onboarding_slide3_title, R.string.onboarding_slide3_description)
+        Slide(R.drawable.ic_power_24, R.string.onboarding_slide2_title, R.string.onboarding_slide2_description, Color.WHITE),
+        Slide(R.drawable.ic_notification, R.string.onboarding_slide3_title, R.string.onboarding_slide3_description, Color.WHITE)
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -87,6 +88,11 @@ class OnboardingActivity : AppCompatActivity() {
         override fun onBindViewHolder(holder: SlideViewHolder, position: Int) {
             val slide = items[position]
             holder.icon.setImageResource(slide.iconRes)
+            if (slide.tintColor != null) {
+                holder.icon.setColorFilter(slide.tintColor)
+            } else {
+                holder.icon.clearColorFilter()
+            }
             holder.title.setText(slide.titleRes)
             holder.desc.setText(slide.descRes)
         }

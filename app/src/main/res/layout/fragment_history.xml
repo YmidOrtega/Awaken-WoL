@@ -27,8 +27,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/history_empty_title"
-            android:textAppearance="?attr/textAppearanceTitleMedium"
             android:textColor="@color/primaryTextColor"
+            android:textSize="18sp"
+            android:textStyle="bold"
             android:gravity="center" />
 
         <TextView
@@ -36,9 +37,8 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:text="@string/history_empty_hint"
-            android:textAppearance="?attr/textAppearanceBodyMedium"
-            android:textColor="@color/primaryTextColor"
-            android:alpha="0.6"
+            android:textColor="@color/primaryTextColorMuted"
+            android:textSize="14sp"
             android:gravity="center" />
 
     </LinearLayout>
