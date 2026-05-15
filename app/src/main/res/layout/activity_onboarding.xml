@@ -32,11 +32,12 @@
 
         <Button
             android:id="@+id/onboarding_skip"
-            android:textColor="@color/primaryTextColor"
-            style="@style/Widget.Material3.Button.TextButton"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/onboarding_skip" />
+            android:text="@string/onboarding_skip"
+            android:textColor="@color/primaryTextColor"
+            android:textSize="15sp" />
 
         <View
             android:layout_width="0dp"
