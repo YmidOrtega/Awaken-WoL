@@ -36,6 +36,7 @@
     <string name="add_device_shutdown_os_suggestion">Sugerido: %1$s</string>
     <string name="add_device_secure_on">Contraseña SecureOn (opcional)</string>
     <string name="add_device_group">Grupo (opcional)</string>
+    <string name="add_device_group_hint">p. ej. Casa, Oficina, Lab</string>
     <string name="device_list_startup">Encender</string>
     <string name="device_list_shutdown">Apagar</string>
     <string name="device_list_empty_title">Sin dispositivos configurados</string>

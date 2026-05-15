@@ -75,6 +75,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     protected ObfuscatedEditText deviceWanAddressInput;
     protected TextInputEditText deviceWanPortInput;
     protected TextInputEditText deviceSecureOnPassword;
+    protected TextInputEditText deviceGroupInput;
     protected ImageButton broadcastAutofill;
     protected TextInputEditText devicePorts;
     protected ConstraintLayout deviceRemoteShutdownContainer;
@@ -114,6 +115,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         deviceWanAddressInput = binding.device.deviceWanAddress;
         deviceWanPortInput = binding.device.deviceWanPort;
         deviceSecureOnPassword = binding.device.deviceSecureOnPassword;
+        deviceGroupInput = binding.device.deviceGroup;
         broadcastAutofill = binding.device.broadcastAutofill;
 
         deviceRemoteShutdownContainer = binding.device.deviceRemoteShutdownContainer;
@@ -622,6 +624,11 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     @NonNull
     protected String getDeviceSecureOnPassword() {
         return getInputText(deviceSecureOnPassword);
+    }
+
+    @NonNull
+    protected String getDeviceGroupInputText() {
+        return getInputText(deviceGroupInput);
     }
 
     protected boolean getDeviceRemoteShutdownEnabled() {

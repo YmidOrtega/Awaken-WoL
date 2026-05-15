@@ -37,6 +37,7 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
             }
 
             deviceNameInput.setText(device.name);
+            deviceGroupInput.setText(com.google.common.base.Strings.nullToEmpty(device.groupName));
             deviceStatusIpInput.setRealText(device.statusIp);
             deviceMacInput.setRealText(device.macAddress);
             deviceBroadcastInput.setRealText(device.broadcastAddress);
@@ -121,7 +122,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
                 Strings.nullToEmpty(device.sshPassword).equals(getDeviceSshPassword()) &&
                 Strings.nullToEmpty(device.sshCommand).equals(getDeviceSshCommand()) &&
                 Strings.nullToEmpty(device.sshAuthType == null ? "password" : device.sshAuthType).equals(getDeviceSshAuthType()) &&
-                Strings.nullToEmpty(device.sshKeyAlias).equals(Strings.nullToEmpty(getDeviceSshKeyAlias()));
+                Strings.nullToEmpty(device.sshKeyAlias).equals(Strings.nullToEmpty(getDeviceSshKeyAlias())) &&
+                Strings.nullToEmpty(device.groupName).equals(getDeviceGroupInputText());
 
     }
 
@@ -149,6 +151,8 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
         device.shutdownOs = getSelectedOs(deviceSshOsSpinner);
         device.sshAuthType = getDeviceSshAuthType();
         device.sshKeyAlias = getDeviceSshKeyAlias();
+        String group = getDeviceGroupInputText();
+        device.groupName = group.isEmpty() ? null : group;
 
         return device;
     }
