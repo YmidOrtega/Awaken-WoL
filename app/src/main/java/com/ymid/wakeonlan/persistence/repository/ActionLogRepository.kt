@@ -25,6 +25,7 @@ class ActionLogRepository private constructor(context: Context) {
 
         @Volatile private var INSTANCE: ActionLogRepository? = null
 
+        @JvmStatic
         fun getInstance(context: Context): ActionLogRepository =
             INSTANCE ?: synchronized(this) {
                 INSTANCE ?: ActionLogRepository(context.applicationContext).also { INSTANCE = it }

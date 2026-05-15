@@ -96,6 +96,7 @@ class OnboardingActivity : AppCompatActivity() {
         private const val PREFS = "onboarding_prefs"
         private const val KEY_DONE = "done"
 
+        @JvmStatic
         fun isComplete(context: Context): Boolean =
             context.getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(KEY_DONE, false)
 
