@@ -37,7 +37,10 @@
             android:layout_height="wrap_content"
             android:text="@string/onboarding_skip"
             android:textColor="@color/primaryTextColor"
-            android:textSize="15sp" />
+            android:textSize="15sp"
+            app:backgroundTint="@android:color/transparent"
+            app:strokeColor="@color/primaryTextColorMuted"
+            app:strokeWidth="1dp" />
 
         <View
             android:layout_width="0dp"
