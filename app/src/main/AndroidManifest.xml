@@ -145,6 +145,14 @@
                 android:resource="@xml/widget_device_info" />
         </receiver>
 
+        <receiver
+            android:name=".receivers.PackageReplacedReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
         <!-- Samsung Routines / external wake intents -->
         <receiver
             android:name=".receivers.WakeDeviceReceiver"

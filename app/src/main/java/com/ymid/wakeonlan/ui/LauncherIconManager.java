@@ -57,13 +57,19 @@ public final class LauncherIconManager {
                 int offState = pm.getComponentEnabledSetting(offAlias);
                 int onState = pm.getComponentEnabledSetting(onAlias);
 
-                boolean offActive = offState != PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
+                boolean offDisabled = offState == PackageManager.COMPONENT_ENABLED_STATE_DISABLED;
                 boolean onActive = onState == PackageManager.COMPONENT_ENABLED_STATE_ENABLED;
 
-                if (!offActive && !onActive) {
-                    Log.w(TAG, "No active launcher alias found — recovering by re-enabling OFF");
+                // Recover if Off is explicitly disabled but On is not active.
+                // This happens when the launcher caches a shortcut to Off after an APK update
+                // while Off was left disabled by a previous LauncherIconManager toggle.
+                if (offDisabled && !onActive) {
+                    Log.w(TAG, "Launcher stuck: Off disabled, On inactive — recovering");
                     pm.setComponentEnabledSetting(offAlias,
                             PackageManager.COMPONENT_ENABLED_STATE_DEFAULT,
+                            PackageManager.DONT_KILL_APP);
+                    pm.setComponentEnabledSetting(onAlias,
+                            PackageManager.COMPONENT_ENABLED_STATE_DISABLED,
                             PackageManager.DONT_KILL_APP);
                     lastAppliedState = null;
                 }
