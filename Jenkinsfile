@@ -6,10 +6,20 @@ pipeline {
     }
 
     stages {
-        stage('Build') {
+        stage('Unit Tests') {
             steps {
                 sh script: 'chmod +x gradlew'
-                sh label: 'Gradle Build', script: './gradlew --parallel --max-workers=8  clean bundleRelease assembleRelease'
+                sh label: 'Unit Tests', script: './gradlew :app:test'
+            }
+            post {
+                always {
+                    junit testResults: 'app/build/test-results/**/*.xml', allowEmptyResults: true
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                sh label: 'Gradle Build', script: './gradlew --parallel --max-workers=8 clean bundleRelease assembleRelease'
             }
         }
         stage('Archive Artifacts') {
