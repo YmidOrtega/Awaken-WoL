@@ -170,4 +170,8 @@
     <string name="pref_monitoring_category">Überwachung</string>
     <string name="pref_monitoring_enabled_title">Hintergrundüberwachung</string>
     <string name="pref_monitoring_enabled_summary">Gerätestatus regelmäßig prüfen und Benachrichtigungen senden</string>
+
+    <!-- Update-Snackbar -->
+    <string name="update_downloaded_message">Update heruntergeladen. Neu starten zum Installieren.</string>
+    <string name="update_downloaded_action">Neu starten</string>
 </resources>

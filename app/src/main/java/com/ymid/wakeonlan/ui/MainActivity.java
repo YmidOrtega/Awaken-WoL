@@ -28,6 +28,7 @@ import com.ymid.wakeonlan.databinding.ActivityMainBinding;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.shortcuts.DynamicShortcutManager;
 import com.ymid.wakeonlan.ui.onboarding.OnboardingActivity;
+import com.ymid.wakeonlan.update.InAppUpdateManager;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -68,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
         LauncherIconManager.ensureValidState(this);
         initializeNavController();
         initializeShortcuts();
+        InAppUpdateManager.attach(this);
+        InAppUpdateManager.checkForUpdate(this);
     }
 
     private void setVersionInformation() {
@@ -123,12 +126,19 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         LauncherIconManager.setAppInForeground(this, true);
+        InAppUpdateManager.resumeIfUpdateDownloaded(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         LauncherIconManager.setAppInForeground(this, false);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        InAppUpdateManager.detach();
     }
 
     @Override

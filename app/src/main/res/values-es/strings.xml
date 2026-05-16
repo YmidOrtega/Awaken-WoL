@@ -110,4 +110,8 @@
     <string name="ssh_key_copy">Copiar al portapapeles</string>
     <string name="ssh_key_copied">Clave pública copiada al portapapeles</string>
     <string name="trusted_wifi_done">Listo</string>
+
+    <!-- Snackbar de actualización -->
+    <string name="update_downloaded_message">Actualización descargada. Reinicia para instalarla.</string>
+    <string name="update_downloaded_action">Reiniciar</string>
 </resources>
