@@ -7,6 +7,7 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.preference.PreferenceManager
+import com.ymid.wakeonlan.config.RemoteConfigManager
 import java.util.concurrent.TimeUnit
 
 object MonitoringScheduler {
@@ -24,9 +25,11 @@ object MonitoringScheduler {
     }
 
     @JvmStatic
-    fun isEnabled(context: Context): Boolean =
-        PreferenceManager.getDefaultSharedPreferences(context)
+    fun isEnabled(context: Context): Boolean {
+        val localPref = PreferenceManager.getDefaultSharedPreferences(context)
             .getBoolean(PREF_MONITORING_ENABLED, true)
+        return localPref && RemoteConfigManager.isMonitoringEnabled()
+    }
 
     @JvmStatic
     fun schedule(context: Context) {

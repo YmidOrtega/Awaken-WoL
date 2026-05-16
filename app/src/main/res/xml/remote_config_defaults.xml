@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Default values used by Firebase Remote Config when no value has been fetched yet
+    (first launch, offline, or Firebase not configured).
+
+    Mirror any change here in the Firebase console under Remote Config.
+-->
+<defaultsMap>
+
+    <!-- Background monitoring kill switch. Set to false to disable all background
+         device-status workers without a Play Store update. -->
+    <entry>
+        <key>monitoring_enabled</key>
+        <value>true</value>
+    </entry>
+
+    <!-- Live ping status indicators on the device list. Disable if the feature
+         causes battery/network complaints on a specific OS version. -->
+    <entry>
+        <key>ping_status_enabled</key>
+        <value>true</value>
+    </entry>
+
+    <!-- Network scan fragment. Set to false to hide the scan tab remotely. -->
+    <entry>
+        <key>network_scan_enabled</key>
+        <value>true</value>
+    </entry>
+
+    <!-- SSH remote shutdown. Kill switch if a security issue is found while a fix
+         is in review. -->
+    <entry>
+        <key>ssh_shutdown_enabled</key>
+        <value>true</value>
+    </entry>
+
+    <!-- In-app update prompts. Set to false to pause update prompts while
+         investigating a bad release. -->
+    <entry>
+        <key>in_app_updates_enabled</key>
+        <value>true</value>
+    </entry>
+
+    <!-- ICMP ping timeout in milliseconds. Increase if users on slow networks
+         report false offline statuses. -->
+    <entry>
+        <key>ping_timeout_ms</key>
+        <value>2000</value>
+    </entry>
+
+</defaultsMap>
