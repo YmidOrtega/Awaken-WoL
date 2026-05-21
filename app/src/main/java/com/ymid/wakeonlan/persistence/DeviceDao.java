@@ -24,6 +24,9 @@ public interface DeviceDao {
     @Query("SELECT * FROM Devices WHERE id = :id")
     DeviceEntity getById(int id);
 
+    @Query("SELECT * FROM Devices WHERE LOWER(name) = LOWER(:name) LIMIT 1")
+    DeviceEntity getByName(String name);
+
     @Insert
     void insertAll(DeviceEntity... devices);
 

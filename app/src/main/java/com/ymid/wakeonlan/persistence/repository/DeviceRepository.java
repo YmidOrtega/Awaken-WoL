@@ -44,6 +44,10 @@ public class DeviceRepository {
         return deviceEntityMapper.entityToModel(deviceDao.getById(id));
     }
 
+    public Device getByName(String name) {
+        return deviceEntityMapper.entityToModel(deviceDao.getByName(name));
+    }
+
     public void insertAll(Device... devices) {
         Arrays.stream(devices)
                 .map(deviceEntityMapper::modelToEntity)
