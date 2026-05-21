@@ -1,0 +1,45 @@
+endpoints {
+  remote {
+    // Wake Device: sends a broadcast to WakeDeviceReceiver with the device name
+    when-select (WakeDevice) {
+      AppControl {
+        type (broadcast)
+        package-name (com.ymid.wakeonlan)
+        action (com.ymid.wakeonlan.ACTION_WAKE)
+        extras {
+          input {
+            key (deviceName)
+            value-path (deviceName)
+          }
+        }
+      }
+      result-binding {
+        result {
+          key (deviceName)
+          path (deviceName)
+        }
+      }
+    }
+
+    // Shutdown Device: sends a broadcast to ShutdownDeviceReceiver with the device name
+    when-select (ShutdownDevice) {
+      AppControl {
+        type (broadcast)
+        package-name (com.ymid.wakeonlan)
+        action (com.ymid.wakeonlan.ACTION_SHUTDOWN)
+        extras {
+          input {
+            key (deviceName)
+            value-path (deviceName)
+          }
+        }
+      }
+      result-binding {
+        result {
+          key (deviceName)
+          path (deviceName)
+        }
+      }
+    }
+  }
+}

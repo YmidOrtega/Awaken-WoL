@@ -1,0 +1,21 @@
+action (WakeDevice) {
+  description (Wake up a device by sending a Wake-on-LAN magic packet)
+  type (Search)
+
+  collect {
+    input (deviceName) {
+      type (DeviceName)
+      min (Required)
+      max (One)
+
+      default-init {
+        intent {
+          goal: DeviceName
+          prompt-behavior: RequireDialogue
+        }
+      }
+    }
+  }
+
+  output (WakeResult)
+}

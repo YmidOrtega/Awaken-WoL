@@ -1,0 +1,11 @@
+dialog (Result) {
+  match: WakeResult
+  template ("Waking up #{value(deviceName)}…")
+}
+
+dialog (Prompt) {
+  match: DeviceName {
+    to-input: WakeDevice (deviceName)
+  }
+  template ("Which device do you want to wake up?")
+}

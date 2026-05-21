@@ -1,0 +1,3 @@
+text (DeviceName) {
+  description (Name of a device configured in Aweken, e.g. "Gaming PC" or "Work Laptop")
+}

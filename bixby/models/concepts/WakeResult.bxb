@@ -1,0 +1,7 @@
+structure (WakeResult) {
+  property (deviceName) {
+    type (DeviceName)
+    min (Required)
+    max (One)
+  }
+}

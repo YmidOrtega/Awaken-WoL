@@ -1,0 +1,11 @@
+dialog (Result) {
+  match: ShutdownResult
+  template ("Sending shutdown command to #{value(deviceName)}…")
+}
+
+dialog (Prompt) {
+  match: DeviceName {
+    to-input: ShutdownDevice (deviceName)
+  }
+  template ("Which device do you want to shut down?")
+}

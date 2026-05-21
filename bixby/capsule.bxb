@@ -1,0 +1,13 @@
+capsule {
+  id (ymid.aweken)
+  version (1.0.0)
+  format (v2)
+
+  targets {
+    target (bixby-mobile-en-US)
+  }
+
+  permissions {
+    remote-endpoint (appcontrol)
+  }
+}

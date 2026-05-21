@@ -1,0 +1,7 @@
+structure (ShutdownResult) {
+  property (deviceName) {
+    type (DeviceName)
+    min (Required)
+    max (One)
+  }
+}

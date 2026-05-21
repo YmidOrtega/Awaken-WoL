@@ -1,0 +1,5 @@
+capsule-info {
+  display-name (Aweken)
+  description (Wake up and shut down your devices using Wake-on-LAN and SSH)
+  icon-image (images/icon.png)
+}

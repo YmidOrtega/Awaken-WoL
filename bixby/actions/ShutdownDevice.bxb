@@ -1,0 +1,21 @@
+action (ShutdownDevice) {
+  description (Remotely shut down a device via SSH)
+  type (Search)
+
+  collect {
+    input (deviceName) {
+      type (DeviceName)
+      min (Required)
+      max (One)
+
+      default-init {
+        intent {
+          goal: DeviceName
+          prompt-behavior: RequireDialogue
+        }
+      }
+    }
+  }
+
+  output (ShutdownResult)
+}
