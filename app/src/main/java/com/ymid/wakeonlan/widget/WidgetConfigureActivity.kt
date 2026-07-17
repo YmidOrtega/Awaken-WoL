@@ -47,7 +47,10 @@ class WidgetConfigureActivity : AppCompatActivity() {
                             .putInt(DeviceWidgetProvider.widgetKey(widgetId), device.id)
                             .apply()
                         val manager = AppWidgetManager.getInstance(this)
-                        DeviceWidgetProvider.updateWidget(this, manager, widgetId, device.id)
+                        val appContext = applicationContext
+                        Executors.newSingleThreadExecutor().execute {
+                            DeviceWidgetProvider.updateWidget(appContext, manager, widgetId, device.id)
+                        }
                         setResult(RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId))
                         finish()
                     }

@@ -9,12 +9,17 @@ import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import com.google.gson.Gson;
 
 import java.io.OutputStream;
 import java.lang.ref.WeakReference;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 import com.ymid.wakeonlan.R;
@@ -48,26 +53,38 @@ public class DataExporter implements ActivityResultCallback<Uri> {
         }
 
         Context context = contextWeakReference.get();
-        try {
-            List<DeviceBackupModel> devices = DeviceRepository.getInstance(context).getAll()
-                    .stream().map(DeviceBackupModel::new)
-                    .collect(Collectors.toList());
-
-            if (!includePasswords) {
-                devices.forEach(device -> {
-                    device.sshPassword = null;
-                    device.secureOnPassword = null;
-                });
-            }
-
-            byte[] content = new Gson().toJson(devices).getBytes(StandardCharsets.UTF_8);
-            writeDevicesToFile(uri, content, context);
-
-            Toast.makeText(context, context.getString(R.string.backup_message_export_success, devices.size()), Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Toast.makeText(context, context.getString(R.string.backup_message_export_error), Toast.LENGTH_SHORT).show();
-            Log.e(getClass().getSimpleName(), "Unable to export devices", e);
+        if (context == null) {
+            return;
         }
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+        boolean exportPasswords = includePasswords;
+
+        executor.execute(() -> {
+            try {
+                List<DeviceBackupModel> devices = DeviceRepository.getInstance(context).getAll()
+                        .stream().map(DeviceBackupModel::new)
+                        .collect(Collectors.toList());
+
+                if (!exportPasswords) {
+                    devices.forEach(device -> {
+                        device.sshPassword = null;
+                        device.secureOnPassword = null;
+                    });
+                }
+
+                byte[] content = new Gson().toJson(devices).getBytes(StandardCharsets.UTF_8);
+                writeDevicesToFile(uri, content, context);
+
+                mainHandler.post(() -> Toast.makeText(context,
+                        context.getString(R.string.backup_message_export_success, devices.size()), Toast.LENGTH_SHORT).show());
+            } catch (Exception e) {
+                mainHandler.post(() -> Toast.makeText(context,
+                        context.getString(R.string.backup_message_export_error), Toast.LENGTH_SHORT).show());
+                Log.e(getClass().getSimpleName(), "Unable to export devices", e);
+            }
+        });
     }
 
     private void writeDevicesToFile(Uri uri, byte[] content, Context context) throws Exception {

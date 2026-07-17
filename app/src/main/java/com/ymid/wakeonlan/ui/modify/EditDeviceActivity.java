@@ -94,7 +94,7 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
                     .setTitle(R.string.edit_device_delete_title)
                     .setMessage(R.string.edit_device_delete_message)
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        deviceRepository.delete(device);
+                        deviceRepository.deleteAsync(device);
                         finish();
                     })
                     .setNegativeButton(android.R.string.no, (dialog, which) -> {
@@ -130,7 +130,7 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
 
     @Override
     protected void persistDevice(Device device) {
-        deviceRepository.update(device);
+        deviceRepository.updateAsync(device);
         forgetPinnedHostKey(device);
     }
 

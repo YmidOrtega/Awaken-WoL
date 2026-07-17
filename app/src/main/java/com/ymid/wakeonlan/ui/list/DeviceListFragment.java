@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.ymid.wakeonlan.R;
@@ -71,7 +72,7 @@ public class DeviceListFragment extends Fragment {
     }
 
     private void instantiateRecyclerView() {
-        List<Device> initialDataset = DeviceRepository.getInstance(getContext()).getAll();
+        List<Device> initialDataset = new ArrayList<>();
         deviceListAdapter = new DeviceListAdapter(initialDataset, buildDeviceClickedCallback(), STATUS_TESTER_POOL);
         deviceListAdapter.setHasStableIds(true);
         RecyclerView devicesRecyclerView = binding.machineList;

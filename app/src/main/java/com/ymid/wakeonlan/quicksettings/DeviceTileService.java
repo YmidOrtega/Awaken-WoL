@@ -35,28 +35,32 @@ public abstract class DeviceTileService extends TileService implements DeviceSta
 
     private void updateTileState() {
         deviceRepository = DeviceRepository.getInstance(this);
-        Optional<Device> optionalMachine = getMachineAtIndex(machineAtIndex());
+        deviceRepository.getAllAsync(devices -> {
+            Optional<Device> optionalMachine = getMachineAtIndex(devices, machineAtIndex());
 
-        Tile tile = getQsTile();
-
-        if (optionalMachine.isPresent()) {
-            Device device = optionalMachine.get();
-            this.device = device;
-            statusTesterPool.schedule(device, this, StatusTestType.TILE);
-
-            tile.setLabel(device.name);
-            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                tile.setSubtitle(getString(R.string.tile_subtitle));
+            Tile tile = getQsTile();
+            if (tile == null) {
+                return;
             }
-        } else {
-            tile.setLabel(getString(R.string.tile_no_device_found));
-            tile.setState(Tile.STATE_UNAVAILABLE);
-        }
-        tile.updateTile();
+
+            if (optionalMachine.isPresent()) {
+                Device device = optionalMachine.get();
+                this.device = device;
+                statusTesterPool.schedule(device, this, StatusTestType.TILE);
+
+                tile.setLabel(device.name);
+                if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    tile.setSubtitle(getString(R.string.tile_subtitle));
+                }
+            } else {
+                tile.setLabel(getString(R.string.tile_no_device_found));
+                tile.setState(Tile.STATE_UNAVAILABLE);
+            }
+            tile.updateTile();
+        });
     }
 
-    private Optional<Device> getMachineAtIndex(int index) {
-        List<Device> machineList = deviceRepository.getAll();
+    private Optional<Device> getMachineAtIndex(List<Device> machineList, int index) {
         if (machineList.size() <= index) {
             return Optional.empty();
         }
@@ -74,6 +78,9 @@ public abstract class DeviceTileService extends TileService implements DeviceSta
 
     @Override
     public void onClick() {
+        if (device == null) {
+            return;
+        }
         if (lastDeviceStatus == DeviceStatus.ONLINE) {
             if (device.remoteShutdownEnabled) {
                 AuthenticatedDeviceActionActivity.startShutdown(this, device.id);

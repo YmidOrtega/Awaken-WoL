@@ -36,7 +36,7 @@ public class AddDeviceActivity extends ModifyDeviceActivity {
 
     @Override
     protected void persistDevice(Device device) {
-        deviceRepository.insertAll(device);
+        deviceRepository.insertAllAsync(device);
     }
 
     @Override

@@ -37,7 +37,6 @@ public class DatabaseInstanceManager {
             SupportOpenHelperFactory factory = new SupportOpenHelperFactory(passphraseBytes);
 
             INSTANCE = Room.databaseBuilder(context.getApplicationContext(), AppDatabase.class, DB_NAME)
-                    .allowMainThreadQueries()
                     .openHelperFactory(factory)
                     .addMigrations(
                             new MigrationFrom1To2(),

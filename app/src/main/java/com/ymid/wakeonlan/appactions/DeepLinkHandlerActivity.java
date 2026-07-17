@@ -42,9 +42,12 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
             return;
         }
 
-        // find device by name (case-insensitive)
-        DeviceRepository repo = DeviceRepository.getInstance(this);
-        List<Device> devices = repo.getAll();
+        String resolvedAction = action;
+        DeviceRepository.getInstance(this).getAllAsync(devices ->
+                handleAction(resolvedAction, name, devices));
+    }
+
+    private void handleAction(String action, String name, List<Device> devices) {
         Device matched = null;
         for (Device d : devices) {
             if (d != null && d.name != null && d.name.equalsIgnoreCase(name)) {

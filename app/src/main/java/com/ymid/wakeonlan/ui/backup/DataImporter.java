@@ -12,12 +12,17 @@ import androidx.fragment.app.Fragment;
 import com.google.common.io.ByteStreams;
 import com.google.gson.Gson;
 
+import android.os.Handler;
+import android.os.Looper;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.persistence.models.Device;
@@ -45,20 +50,30 @@ public class DataImporter implements ActivityResultCallback<Uri> {
             return;
         }
         Context context = contextWeakReference.get();
-
-        try {
-            byte[] bytes = readContentFromFile(uri, context);
-            InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(bytes));
-            Device[] devices = Arrays.stream(new Gson().fromJson(inputStreamReader, DeviceBackupModel[].class))
-                    .map(DeviceBackupModel::toModel)
-                    .toArray(Device[]::new);
-
-            replaceDevicesInDatabase(devices, context);
-            Toast.makeText(context, context.getString(R.string.backup_message_import_success, devices.length), Toast.LENGTH_LONG).show();
-        } catch (Exception e) {
-            Toast.makeText(context, context.getString(R.string.backup_message_import_error), Toast.LENGTH_SHORT).show();
-            Log.e(getClass().getSimpleName(), "Unable to import devices", e);
+        if (context == null) {
+            return;
         }
+
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler mainHandler = new Handler(Looper.getMainLooper());
+
+        executor.execute(() -> {
+            try {
+                byte[] bytes = readContentFromFile(uri, context);
+                InputStreamReader inputStreamReader = new InputStreamReader(new ByteArrayInputStream(bytes));
+                Device[] devices = Arrays.stream(new Gson().fromJson(inputStreamReader, DeviceBackupModel[].class))
+                        .map(DeviceBackupModel::toModel)
+                        .toArray(Device[]::new);
+
+                replaceDevicesInDatabase(devices, context);
+                mainHandler.post(() -> Toast.makeText(context,
+                        context.getString(R.string.backup_message_import_success, devices.length), Toast.LENGTH_LONG).show());
+            } catch (Exception e) {
+                mainHandler.post(() -> Toast.makeText(context,
+                        context.getString(R.string.backup_message_import_error), Toast.LENGTH_SHORT).show());
+                Log.e(getClass().getSimpleName(), "Unable to import devices", e);
+            }
+        });
     }
 
     private void replaceDevicesInDatabase(Device[] devices, Context context) {

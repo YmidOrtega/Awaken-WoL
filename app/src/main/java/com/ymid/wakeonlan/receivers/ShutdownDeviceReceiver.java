@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import java.util.function.Consumer;
+
 import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.security.AuthenticatedDeviceActionActivity;
@@ -19,28 +21,33 @@ public class ShutdownDeviceReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         if (!ACTION_SHUTDOWN.equals(intent.getAction())) return;
 
-        try {
-            Device device = resolveDevice(context, intent);
-            if (device != null && device.remoteShutdownEnabled) {
-                AuthenticatedDeviceActionActivity.startShutdown(context, device.id, true);
-                Log.i("ShutdownDeviceReceiver", "Authentication requested for shutdown: " + device.name);
-            } else {
-                Log.w("ShutdownDeviceReceiver", "Device not found or shutdown not enabled");
+        PendingResult pendingResult = goAsync();
+        Consumer<Device> callback = device -> {
+            try {
+                if (device != null && device.remoteShutdownEnabled) {
+                    AuthenticatedDeviceActionActivity.startShutdown(context, device.id, true);
+                    Log.i("ShutdownDeviceReceiver", "Authentication requested for shutdown: " + device.name);
+                } else {
+                    Log.w("ShutdownDeviceReceiver", "Device not found or shutdown not enabled");
+                }
+            } catch (Exception e) {
+                Log.e("ShutdownDeviceReceiver", "Error sending shutdown command", e);
+            } finally {
+                pendingResult.finish();
             }
-        } catch (Exception e) {
-            Log.e("ShutdownDeviceReceiver", "Error sending shutdown command", e);
-        }
-    }
+        };
 
-    private Device resolveDevice(Context context, Intent intent) {
         DeviceRepository repo = DeviceRepository.getInstance(context);
         int deviceId = intent.getIntExtra(EXTRA_DEVICE_ID, -1);
-        if (deviceId != -1) return repo.getById(deviceId);
-
         String deviceName = intent.getStringExtra(EXTRA_DEVICE_NAME);
-        if (deviceName != null && !deviceName.isEmpty()) return repo.getByName(deviceName);
 
-        Log.w("ShutdownDeviceReceiver", "Received ACTION_SHUTDOWN without deviceId or deviceName");
-        return null;
+        if (deviceId != -1) {
+            repo.getByIdAsync(deviceId, callback);
+        } else if (deviceName != null && !deviceName.isEmpty()) {
+            repo.getByNameAsync(deviceName, callback);
+        } else {
+            Log.w("ShutdownDeviceReceiver", "Received ACTION_SHUTDOWN without deviceId or deviceName");
+            pendingResult.finish();
+        }
     }
 }

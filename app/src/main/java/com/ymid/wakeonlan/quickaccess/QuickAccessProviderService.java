@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.concurrent.Flow;
 import java.util.function.Consumer;
 
-import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.security.AuthenticatedDeviceActionActivity;
 import io.reactivex.Flowable;
 import io.reactivex.processors.ReplayProcessor;
+import io.reactivex.schedulers.Schedulers;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class QuickAccessProviderService extends ControlsProviderService {
@@ -30,7 +30,9 @@ public class QuickAccessProviderService extends ControlsProviderService {
     @NonNull
     @Override
     public Flow.Publisher<Control> createPublisherForAllAvailable() {
-        return FlowAdapters.toFlowPublisher(Flowable.fromIterable(StatelessControlService.createStatelessControls(this)));
+        return FlowAdapters.toFlowPublisher(
+                Flowable.defer(() -> Flowable.fromIterable(StatelessControlService.createStatelessControls(this)))
+                        .subscribeOn(Schedulers.io()));
     }
 
     @NonNull
@@ -39,7 +41,8 @@ public class QuickAccessProviderService extends ControlsProviderService {
         ReplayProcessor<Control> processor = ReplayProcessor.create();
         controlIds.forEach(id -> processorMap.put(id, processor));
 
-        StatefulControlService.createAndUpdateStatefulControls(controlIds, processor, this);
+        Schedulers.io().scheduleDirect(() ->
+                StatefulControlService.createAndUpdateStatefulControls(controlIds, processor, this));
 
         return FlowAdapters.toFlowPublisher(processor);
     }
@@ -60,12 +63,12 @@ public class QuickAccessProviderService extends ControlsProviderService {
 
         consumer.accept(ControlAction.RESPONSE_OK);
 
-        DeviceRepository deviceRepository = DeviceRepository.getInstance(this);
-        Device device = deviceRepository.getById(Integer.parseInt(controlId));
-
-        if (device != null) {
-            AuthenticatedDeviceActionActivity.startWake(this, device.id);
-            StatefulControlService.createAndUpdateStatefulControl(controlId, processor, this);
-        }
+        DeviceRepository.getInstance(this).getByIdAsync(Integer.parseInt(controlId), device -> {
+            if (device != null) {
+                AuthenticatedDeviceActionActivity.startWake(this, device.id);
+                Schedulers.io().scheduleDirect(() ->
+                        StatefulControlService.createAndUpdateStatefulControl(controlId, processor, this));
+            }
+        });
     }
 }

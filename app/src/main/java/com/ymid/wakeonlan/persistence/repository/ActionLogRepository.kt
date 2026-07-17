@@ -8,10 +8,10 @@ import java.util.concurrent.Executors
 
 class ActionLogRepository private constructor(context: Context) {
 
-    private val dao = DatabaseInstanceManager.getInstance(context).actionLogDao()
+    private val dao by lazy { DatabaseInstanceManager.getInstance(context).actionLogDao() }
     private val executor = Executors.newSingleThreadExecutor()
 
-    val allLogs: LiveData<List<ActionLogEntity>> = dao.getAllAsLiveData()
+    val allLogs: LiveData<List<ActionLogEntity>> by lazy { dao.getAllAsLiveData() }
 
     fun log(deviceName: String, actionType: String) {
         executor.execute {

@@ -87,13 +87,26 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        Device device = resolveDevice();
+        int deviceId = getIntent().getIntExtra(EXTRA_DEVICE_ID, -1);
         String action = getIntent().getStringExtra(EXTRA_DEVICE_ACTION);
-        if (device == null || Strings.isNullOrEmpty(action)) {
+        if (deviceId == -1 || Strings.isNullOrEmpty(action)) {
             showErrorAndFinish();
             return;
         }
 
+        DeviceRepository.getInstance(this).getByIdAsync(deviceId, device -> {
+            if (isFinishing() || isDestroyed()) {
+                return;
+            }
+            if (device == null) {
+                showErrorAndFinish();
+                return;
+            }
+            handleDeviceAction(device, action);
+        });
+    }
+
+    private void handleDeviceAction(Device device, String action) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean requireAuth = prefs.getBoolean("pref_require_auth", true);
         boolean externalOrigin = getIntent().getBooleanExtra(EXTRA_EXTERNAL_ORIGIN, false);
@@ -106,14 +119,6 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
         }
 
         authenticate(device, action);
-    }
-
-    private Device resolveDevice() {
-        int deviceId = getIntent().getIntExtra(EXTRA_DEVICE_ID, -1);
-        if (deviceId == -1) {
-            return null;
-        }
-        return DeviceRepository.getInstance(this).getById(deviceId);
     }
 
     private void authenticate(Device device, String action) {
