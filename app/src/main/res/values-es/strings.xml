@@ -114,4 +114,6 @@
     <!-- Snackbar de actualización -->
     <string name="update_downloaded_message">Actualización descargada. Reinicia para instalarla.</string>
     <string name="update_downloaded_action">Reiniciar</string>
+
+    <string name="test_shutdown_error_host_key_mismatch">La identidad SSH de \"%1$s\" ha cambiado. La conexión fue rechazada para proteger tus credenciales. Si el servidor fue reinstalado legítimamente, guarda este dispositivo de nuevo para confiar en su nueva clave.</string>
 </resources>

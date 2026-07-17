@@ -9,7 +9,6 @@ import net.schmizz.sshj.common.LoggerFactory;
 import net.schmizz.sshj.common.StreamCopier;
 import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
-import net.schmizz.sshj.transport.verification.PromiscuousVerifier;
 
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
@@ -17,7 +16,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.ymid.wakeonlan.security.AndroidKeyStoreKeyProvider;
+import com.ymid.wakeonlan.security.TofuHostKeyVerifier;
 import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
+import com.ymid.wakeonlan.shutdown.exception.SshHostKeyMismatchException;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
 
 public class ShutdownRunnable implements Runnable {
@@ -29,20 +30,19 @@ public class ShutdownRunnable implements Runnable {
     private final ShutdownExecutorListener shutdownExecutorListener;
     private final String os;
     private final boolean blockDangerousCommands;
+    private final TofuHostKeyVerifier hostKeyVerifier;
 
     public ShutdownRunnable(ShutdownModel shutdownModel, ShutdownExecutorListener shutdownExecutorListener) {
-        this(shutdownModel, shutdownExecutorListener, "linux", false);
+        this(shutdownModel, shutdownExecutorListener, "linux", false, null);
     }
 
-    public ShutdownRunnable(ShutdownModel shutdownModel, ShutdownExecutorListener shutdownExecutorListener, String os) {
-        this(shutdownModel, shutdownExecutorListener, os, false);
-    }
-
-    public ShutdownRunnable(ShutdownModel shutdownModel, ShutdownExecutorListener shutdownExecutorListener, String os, boolean blockDangerousCommands) {
+    public ShutdownRunnable(ShutdownModel shutdownModel, ShutdownExecutorListener shutdownExecutorListener, String os,
+                            boolean blockDangerousCommands, TofuHostKeyVerifier hostKeyVerifier) {
         this.shutdownModel = shutdownModel;
         this.shutdownExecutorListener = shutdownExecutorListener;
         this.os = os == null ? "linux" : os.toLowerCase();
         this.blockDangerousCommands = blockDangerousCommands;
+        this.hostKeyVerifier = hostKeyVerifier;
     }
 
     @Override
@@ -50,7 +50,10 @@ public class ShutdownRunnable implements Runnable {
         ByteArrayOutputStream commandOutputStream = new ByteArrayOutputStream();
 
         try (SSHClient sshClient = new SSHClient()) {
-            sshClient.addHostKeyVerifier(new PromiscuousVerifier());
+            if (hostKeyVerifier == null) {
+                throw new IllegalStateException("A host key verifier is required to open SSH connections");
+            }
+            sshClient.addHostKeyVerifier(hostKeyVerifier);
             sshClient.setConnectTimeout(CONNECT_TIMEOUT);
             sshClient.connect(shutdownModel.getSshAddress(), shutdownModel.getSshPort());
             shutdownExecutorListener.onTargetHostReached();
@@ -86,6 +89,17 @@ public class ShutdownRunnable implements Runnable {
 
             shutdownExecutorListener.onCommandExecuteSuccessful();
         } catch (Exception e) {
+            // A rejected host key surfaces as a TransportException, so this check must
+            // run before the disconnect-on-shutdown case below treats it as success.
+            TofuHostKeyVerifier.Mismatch mismatch = hostKeyVerifier == null ? null : hostKeyVerifier.getMismatch();
+            if (mismatch != null) {
+                Log.e(ShutdownRunnable.class.getSimpleName(), "SSH host key mismatch, connection rejected");
+                shutdownExecutorListener.onGeneralError(new SshHostKeyMismatchException(
+                        mismatch.getHost(), mismatch.getPort(),
+                        mismatch.getStoredFingerprint(), mismatch.getPresentedFingerprint()), shutdownModel);
+                return;
+            }
+
             if (Throwables.getRootCause(e) instanceof TransportException) {
                 shutdownExecutorListener.onCommandExecuteSuccessful();
                 return;

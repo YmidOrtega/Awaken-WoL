@@ -1,5 +1,6 @@
 package com.ymid.wakeonlan.shutdown;
 
+import android.content.Context;
 import android.util.Log;
 
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
@@ -10,6 +11,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
 import com.ymid.wakeonlan.persistence.models.Device;
+import com.ymid.wakeonlan.security.TofuHostKeyVerifier;
 import com.ymid.wakeonlan.shutdown.listener.IgnoringShutdownExecutorListener;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
 
@@ -23,15 +25,15 @@ public class ShutdownExecutor {
         Security.insertProviderAt(new BouncyCastleProvider(), 1);
     }
 
-    public static void shutdownDevice(Device device, ShutdownExecutorListener shutdownExecutorListener) {
-        shutdownDevice(device, "linux", shutdownExecutorListener, false);
+    public static void shutdownDevice(Context context, Device device, ShutdownExecutorListener shutdownExecutorListener) {
+        shutdownDevice(context, device, "linux", shutdownExecutorListener, false);
     }
 
-    public static void shutdownDevice(Device device, String os, ShutdownExecutorListener shutdownExecutorListener) {
-        shutdownDevice(device, os, shutdownExecutorListener, false);
+    public static void shutdownDevice(Context context, Device device, String os, ShutdownExecutorListener shutdownExecutorListener) {
+        shutdownDevice(context, device, os, shutdownExecutorListener, false);
     }
 
-    public static void shutdownDevice(Device device, String os, ShutdownExecutorListener shutdownExecutorListener, boolean blockDangerousCommands) {
+    public static void shutdownDevice(Context context, Device device, String os, ShutdownExecutorListener shutdownExecutorListener, boolean blockDangerousCommands) {
         Optional<ShutdownModel> optionalShutdownModel = ShutdownModelFactory.fromDevice(device);
 
         if (!optionalShutdownModel.isPresent()) {
@@ -41,20 +43,21 @@ public class ShutdownExecutor {
         }
 
         ShutdownModel shutdownModel = optionalShutdownModel.get();
-        ShutdownRunnable shutdownRunnable = new ShutdownRunnable(shutdownModel, shutdownExecutorListener, os, blockDangerousCommands);
+        ShutdownRunnable shutdownRunnable = new ShutdownRunnable(shutdownModel, shutdownExecutorListener, os,
+                blockDangerousCommands, new TofuHostKeyVerifier(context));
 
         executor.execute(shutdownRunnable);
     }
 
-    public static void shutdownDevice(Device device) {
-        shutdownDevice(device, new IgnoringShutdownExecutorListener());
+    public static void shutdownDevice(Context context, Device device) {
+        shutdownDevice(context, device, new IgnoringShutdownExecutorListener());
     }
 
-    public static void shutdownDeviceForTest(Device device, ShutdownExecutorListener shutdownExecutorListener) {
-        shutdownDevice(device, "linux", shutdownExecutorListener, true);
+    public static void shutdownDeviceForTest(Context context, Device device, ShutdownExecutorListener shutdownExecutorListener) {
+        shutdownDevice(context, device, "linux", shutdownExecutorListener, true);
     }
 
-    public static void shutdownDeviceForTest(Device device, String os, ShutdownExecutorListener shutdownExecutorListener) {
-        shutdownDevice(device, os, shutdownExecutorListener, true);
+    public static void shutdownDeviceForTest(Context context, Device device, String os, ShutdownExecutorListener shutdownExecutorListener) {
+        shutdownDevice(context, device, os, shutdownExecutorListener, true);
     }
 }

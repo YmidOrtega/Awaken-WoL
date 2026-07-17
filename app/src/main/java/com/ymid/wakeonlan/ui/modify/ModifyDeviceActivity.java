@@ -52,6 +52,7 @@ import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.security.SshKeyManager;
 import com.ymid.wakeonlan.shutdown.ShutdownModel;
 import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
+import com.ymid.wakeonlan.shutdown.exception.SshHostKeyMismatchException;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
 import com.ymid.wakeonlan.shutdown.test.ShutdownCommandTester;
 import com.ymid.wakeonlan.ui.ObfuscatedEditText;
@@ -437,7 +438,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
 
                     setInitialDialogTexts(destinationReachedResult, authorizationResult, sessionCreatedResult, commandExecutedResult);
 
-                    new ShutdownCommandTester(new ShutdownExecutorListener() {
+                    new ShutdownCommandTester(ModifyDeviceActivity.this, new ShutdownExecutorListener() {
                         @Override
                         public void onTargetHostReached() {
                             setStepSuccessfullyCompleted(destinationReachedResult, R.string.test_shutdown_successful_destination);
@@ -491,7 +492,9 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
             }
 
             private String getTextByExceptionType(Exception exception, ShutdownModel shutdownModel) {
-                if (exception instanceof ConnectException) {
+                if (exception instanceof SshHostKeyMismatchException) {
+                    return getString(R.string.test_shutdown_error_host_key_mismatch, shutdownModel.getSshAddress());
+                } else if (exception instanceof ConnectException) {
                     return getString(R.string.test_shutdown_error_connect_exception, shutdownModel.getSshAddress(), shutdownModel.getSshPort());
                 } else if (exception instanceof UnknownHostException) {
                     return getString(R.string.test_shutdown_error_unknown_host, shutdownModel.getSshAddress());

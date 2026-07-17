@@ -182,7 +182,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
                 showActionError();
                 return;
             }
-            ShutdownExecutor.shutdownDevice(device, device.shutdownOs == null ? "linux" : device.shutdownOs, new IgnoringShutdownExecutorListener());
+            ShutdownExecutor.shutdownDevice(this, device, device.shutdownOs == null ? "linux" : device.shutdownOs, new IgnoringShutdownExecutorListener());
             ActionLogRepository.getInstance(this).log(device.name, ActionType.SHUTDOWN);
             Toast.makeText(this, getString(R.string.remote_shutdown_send_command, device.name), Toast.LENGTH_LONG).show();
             NotificationHelper.INSTANCE.sendShutdownSentNotification(this, device.name);

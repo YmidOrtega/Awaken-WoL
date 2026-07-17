@@ -107,6 +107,7 @@
     <string name="test_shutdown_error_auth_exception">Benutzer %1$s konnte am Zielsystem %2$s nicht authentifiziert werden</string>
     <string name="test_shutdown_error_execution_exception">Kommando \"%1$s\" wurde mit Status code %2$d beendet (%3$s)</string>
     <string name="test_shutdown_error_unknown_exception">Unbekannte Fehler: %1$s</string>
+    <string name="test_shutdown_error_host_key_mismatch">Die SSH-Identität von \"%1$s\" hat sich geändert. Die Verbindung wurde zum Schutz Ihrer Zugangsdaten abgelehnt. Wurde der Server neu installiert, speichern Sie dieses Gerät erneut, um dem neuen Schlüssel zu vertrauen.</string>
     <string name="execution_error_unknown">Unbekannter Fehler</string>
     <string name="execution_error_command_not_found">Kommando nicht gefunden</string>
     <string name="execution_error_command_not_executable">Kommando nicht ausführbar</string>

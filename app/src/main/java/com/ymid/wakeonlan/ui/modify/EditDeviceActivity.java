@@ -14,6 +14,7 @@ import java.util.Objects;
 
 import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.persistence.models.Device;
+import com.ymid.wakeonlan.security.TofuHostKeyVerifier;
 
 public class EditDeviceActivity extends ModifyDeviceActivity {
 
@@ -130,6 +131,16 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
     @Override
     protected void persistDevice(Device device) {
         deviceRepository.update(device);
+        forgetPinnedHostKey(device);
+    }
+
+    // Re-saving a device is the user's explicit way to re-trust a host whose
+    // SSH key legitimately changed (e.g. after a server reinstall).
+    private void forgetPinnedHostKey(Device device) {
+        if (Strings.isNullOrEmpty(device.sshAddress)) return;
+
+        int sshPort = device.sshPort != null && device.sshPort > 0 ? device.sshPort : 22;
+        TofuHostKeyVerifier.forget(this, device.sshAddress, sshPort);
     }
 
     @Override
