@@ -1,9 +1,5 @@
 package com.ymid.wakeonlan.shutdown.exception;
 
-/**
- * Thrown when a host presents an SSH key that differs from the pinned one.
- * The connection is aborted before any credentials are sent.
- */
 public class SshHostKeyMismatchException extends Exception {
 
     private final String host;

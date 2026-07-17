@@ -70,8 +70,6 @@ public class SettingsActivity extends AppCompatActivity {
         private boolean openDialogAfterScan;
         private boolean receiverRegistered;
         private final Handler handler = new Handler(Looper.getMainLooper());
-
-        // Store scanned entries for later use
         private String[] scannedEntries = new String[0];
         private String[] scannedValues = new String[0];
 
@@ -118,7 +116,6 @@ public class SettingsActivity extends AppCompatActivity {
                 updateTrustedSsidsSummary();
 
                 trustedSsidsPreference.setOnPreferenceClickListener(preference -> {
-                    // Always show custom dialog
                     showTrustedWifiDialog();
                     return true;
                 });
@@ -126,7 +123,7 @@ public class SettingsActivity extends AppCompatActivity {
 
             if (scanWifiPreference != null) {
                 scanWifiPreference.setOnPreferenceClickListener(preference -> {
-                    startWifiScanWithPermission(true); // Explicitly requested
+                    startWifiScanWithPermission(true);
                     return true;
                 });
             }
@@ -326,7 +323,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void showTrustedWifiDialog() {
-            // MODE_VIEW: Show only saved networks with delete buttons
             if (trustedSsidsPreference == null) {
                 return;
             }
@@ -343,7 +339,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         private void showTrustedWifiDialogScanMode() {
-            // MODE_SCAN: Show all scanned networks with checkboxes
             if (trustedSsidsPreference == null) {
                 return;
             }

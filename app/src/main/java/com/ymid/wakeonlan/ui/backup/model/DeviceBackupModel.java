@@ -6,12 +6,6 @@ import com.ymid.wakeonlan.persistence.models.Device;
 
 public class DeviceBackupModel {
 
-    /*
-    Aliases for each field have to be kept for some time because backups exported prior to
-    version 1.6.5 were created using obfuscated classes. This means that each field was written
-    to JSON with its obfuscated name ("a", "b", and so on).
-     */
-
     @SerializedName(value = "id", alternate = "a")
     public int id;
 

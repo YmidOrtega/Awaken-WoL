@@ -13,7 +13,6 @@ import com.ymid.wakeonlan.persistence.models.Device;
 
 public class DynamicShortcutManager {
 
-    // Android permite máximo 4 dynamic shortcuts
     public static final int SHORTCUT_AMOUNT_LIMIT = 4;
 
     public void updateShortcuts(Context context, List<Device> devices) {
@@ -33,12 +32,10 @@ public class DynamicShortcutManager {
         for (Device device : sorted) {
             if (published >= SHORTCUT_AMOUNT_LIMIT) break;
 
-            // Siempre publicar el shortcut de WoL
             ShortcutManagerCompat.pushDynamicShortcut(context,
                     DeviceShortcutMapper.buildWakeShortcut(device, context));
             published++;
 
-            // Publicar el shortcut de shutdown solo si el device lo tiene configurado
             if (device.remoteShutdownEnabled && published < SHORTCUT_AMOUNT_LIMIT) {
                 ShortcutManagerCompat.pushDynamicShortcut(context,
                         DeviceShortcutMapper.buildShutdownShortcut(device, context));

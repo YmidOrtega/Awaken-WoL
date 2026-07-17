@@ -6,15 +6,6 @@ import com.google.firebase.remoteconfig.ktx.remoteConfig
 import com.ymid.wakeonlan.BuildConfig
 import com.ymid.wakeonlan.R
 
-/**
- * Central access point for Firebase Remote Config feature flags.
- *
- * All flags have safe local defaults so the app works correctly when Firebase
- * is not configured (CI builds, forks) or when the device is offline.
- *
- * Flag values propagate after the next cold start once fetchAndActivate()
- * completes — they are never applied mid-session to avoid runtime surprises.
- */
 object RemoteConfigManager {
 
     private val firebaseAvailable = BuildConfig.FIREBASE_CONFIGURED

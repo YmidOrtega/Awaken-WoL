@@ -134,8 +134,6 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
         forgetPinnedHostKey(device);
     }
 
-    // Re-saving a device is the user's explicit way to re-trust a host whose
-    // SSH key legitimately changed (e.g. after a server reinstall).
     private void forgetPinnedHostKey(Device device) {
         if (Strings.isNullOrEmpty(device.sshAddress)) return;
 

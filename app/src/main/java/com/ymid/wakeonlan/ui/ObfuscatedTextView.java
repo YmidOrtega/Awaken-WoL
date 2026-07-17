@@ -57,10 +57,7 @@ public class ObfuscatedTextView extends AppCompatTextView {
             return "";
         }
 
-        // Detect if it's a MAC address (contains colons) or IP address (contains dots)
         if (text.contains(":")) {
-            // MAC address: show last 2 chars only
-            // Example: AB:CD:EF:12:34:56 -> ••:••:••:••:••:56
             String[] parts = text.split(":");
             if (parts.length > 1) {
                 StringBuilder sb = new StringBuilder();
@@ -72,15 +69,12 @@ public class ObfuscatedTextView extends AppCompatTextView {
                 return sb.toString();
             }
         } else if (text.contains(".")) {
-            // IP address: show last octet only
-            // Example: 192.168.1.100 -> •••.•••.•••.100
             String[] parts = text.split("\\.");
             if (parts.length == 4) {
                 return "•••.•••.•••." + parts[3];
             }
         }
 
-        // Generic obfuscation: show last 2 chars only
         if (text.length() > 2) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < text.length() - 2; i++) {
@@ -94,8 +88,6 @@ public class ObfuscatedTextView extends AppCompatTextView {
     }
 
     private void startShimmerAnimation() {
-        // Disable shimmer animation to prevent lag
-        // Just show static obfuscated text
     }
 
     @Override

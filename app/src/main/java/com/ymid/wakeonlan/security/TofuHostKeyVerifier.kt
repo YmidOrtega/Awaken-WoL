@@ -11,17 +11,6 @@ import net.schmizz.sshj.transport.verification.HostKeyVerifier
 import java.security.MessageDigest
 import java.security.PublicKey
 
-/**
- * Trust-on-first-use (TOFU) host key verifier.
- *
- * The first time a host is contacted, the fingerprint of its public key is pinned
- * in encrypted preferences. Later connections are only accepted when the host
- * presents the same key; a changed key is treated as a possible
- * man-in-the-middle attack and the connection is rejected.
- *
- * Saving a device again from the edit screen clears its pinned key, so a
- * legitimately reinstalled server can be re-trusted.
- */
 class TofuHostKeyVerifier(context: Context) : HostKeyVerifier {
 
     class Mismatch(
@@ -32,9 +21,6 @@ class TofuHostKeyVerifier(context: Context) : HostKeyVerifier {
     )
 
     private val appContext = context.applicationContext
-
-    // Created lazily so the verifier can be constructed on the main thread
-    // while the keystore/disk work happens on the SSH executor thread.
     private val prefs: SharedPreferences by lazy { knownHostsPrefs(appContext) }
 
     @Volatile
@@ -93,7 +79,6 @@ class TofuHostKeyVerifier(context: Context) : HostKeyVerifier {
             )
         }
 
-        /** OpenSSH-style fingerprint: SHA256:&lt;base64&gt; over the SSH wire encoding of the key. */
         private fun fingerprint(key: PublicKey): String {
             val wireBytes = Buffer.PlainBuffer().putPublicKey(key).compactData
             val digest = MessageDigest.getInstance("SHA-256").digest(wireBytes)

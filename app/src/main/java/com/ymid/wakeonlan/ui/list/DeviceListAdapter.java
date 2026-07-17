@@ -26,7 +26,6 @@ import com.ymid.wakeonlan.ui.list.viewholder.ListViewType;
 
 public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
-    // Flat list: String = group header label, Device = device row
     private List<Object> items = Collections.emptyList();
     private final DeviceClickedCallback deviceClickedCallback;
     private final StatusTesterPool statusTesterPool;

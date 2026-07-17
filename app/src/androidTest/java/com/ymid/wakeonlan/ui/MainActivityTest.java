@@ -23,16 +23,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
-/**
- * Instrumented tests for MainActivity: onboarding gate, device list, and FAB navigation.
- * Run on a device/emulator: ./gradlew :app:connectedAndroidTest
- */
 @RunWith(AndroidJUnit4.class)
 public class MainActivityTest {
 
     @Before
     public void setUp() {
-        // Mark onboarding as complete so MainActivity doesn't redirect to OnboardingActivity.
         Context ctx = InstrumentationRegistry.getInstrumentation().getTargetContext();
         ctx.getSharedPreferences("onboarding_prefs", Context.MODE_PRIVATE)
                 .edit()

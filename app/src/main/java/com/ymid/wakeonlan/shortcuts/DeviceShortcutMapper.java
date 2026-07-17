@@ -13,7 +13,6 @@ import com.ymid.wakeonlan.persistence.models.Device;
 
 public class DeviceShortcutMapper {
 
-    // Shortcut de encendido (WoL) — igual que antes
     public static ShortcutInfoCompat buildWakeShortcut(Device device, Context context) {
         return new ShortcutInfoCompat.Builder(context, "wake_" + device.id)
                 .setShortLabel(device.name)
@@ -24,7 +23,6 @@ public class DeviceShortcutMapper {
                 .build();
     }
 
-    // Shortcut de apagado (SSH) — nuevo
     public static ShortcutInfoCompat buildShutdownShortcut(Device device, Context context) {
         return new ShortcutInfoCompat.Builder(context, "shutdown_" + device.id)
                 .setShortLabel(device.name + " ↓")

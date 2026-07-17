@@ -14,18 +14,6 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.ymid.wakeonlan.R
 import com.ymid.wakeonlan.config.RemoteConfigManager
 
-/**
- * Manages FLEXIBLE in-app update prompts via the Google Play Core API.
- *
- * Lifecycle:
- *   Activity.onCreate  → attach(activity) + checkForUpdate(activity)
- *   Activity.onResume  → resumeIfUpdateDownloaded(activity)
- *   Activity.onDestroy → detach()
- *
- * FLEXIBLE means: the update downloads silently in the background while the user
- * keeps using the app; a Snackbar prompts to restart once the download is done.
- * The whole flow is skipped when the remote flag `in_app_updates_enabled` is false.
- */
 object InAppUpdateManager {
 
     private const val UPDATE_REQUEST_CODE = 900
@@ -68,16 +56,11 @@ object InAppUpdateManager {
                         UPDATE_REQUEST_CODE
                     )
                 } catch (_: IntentSender.SendIntentException) {
-                    // Play Store not available or update flow already active — skip silently.
                 }
             }
         }
     }
 
-    /**
-     * Call from onResume to catch updates that finished downloading while the app
-     * was in the background or the user dismissed the initial prompt.
-     */
     @JvmStatic
     fun resumeIfUpdateDownloaded(activity: Activity) {
         val manager = appUpdateManager ?: return

@@ -11,13 +11,11 @@ public class MacAddressAutocomplete implements TextWatcher {
 
     @Override
     public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-        // We are deleting when amount of characters (count) will have a length (after) of 0 afterwards
         isDeleting = after == 0 && count >= 0;
     }
 
     @Override
     public void onTextChanged(CharSequence s, int start, int before, int count) {
-        // If maximum length was reached or last digit is a colon
         if (s.length() >= 17 || s.toString().endsWith(":")) {
             shouldAppendColon = false;
             return;
@@ -31,7 +29,6 @@ public class MacAddressAutocomplete implements TextWatcher {
 
         String lastByteSplit = byteSplit[byteSplit.length - 1];
 
-        // if we were just deleting and entered a number without colon
         if (lastByteSplit != null && lastByteSplit.length() == 3) {
             shouldPrependColon = true;
             return;
@@ -42,7 +39,6 @@ public class MacAddressAutocomplete implements TextWatcher {
 
     @Override
     public void afterTextChanged(Editable s) {
-        // Order of insert/append and setting booleans to false is very important!
         if (shouldPrependColon && !isDeleting) {
             shouldPrependColon = false;
             s.insert(s.length() - 1, ":");

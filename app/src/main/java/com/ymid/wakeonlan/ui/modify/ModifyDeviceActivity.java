@@ -140,8 +140,6 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
 
         setSupportActionBar(binding.toolbar);
 
-        // Intercept insets at the CoordinatorLayout root so its fitsSystemWindows handling
-        // never offsets the AppBarLayout below the status bar.
         ViewCompat.setOnApplyWindowInsetsListener(binding.getRoot(), (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
             binding.appBarLayout.setPadding(
@@ -156,8 +154,6 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
             int actionBarSize = resolveActionBarSize();
             int imeInset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom;
             int navInset = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
-            // Use the larger of keyboard height or navigation bar so the ScrollView always
-            // has enough room to scroll the focused field above the keyboard.
             int bottomPadding = Math.max(imeInset, navInset);
             v.setPadding(v.getPaddingLeft(), actionBarSize + topInset, v.getPaddingRight(), bottomPadding);
             return insets;
@@ -197,7 +193,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
                 return "shutdown /s /t 0";
             case "macos":
                 return "sudo shutdown -h now";
-            default: // linux
+            default:
                 return "sudo shutdown -h now";
         }
     }
@@ -323,7 +319,6 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
     }
 
     private void triggerValidators() {
-        // ensure spinner value is touched so data binding updates if needed
         if (deviceSshOsSpinner != null && deviceSshOsSpinner.getSelectedItem() == null) {
             deviceSshOsSpinner.setSelection(0);
         }

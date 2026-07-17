@@ -89,8 +89,6 @@ public class ShutdownRunnable implements Runnable {
 
             shutdownExecutorListener.onCommandExecuteSuccessful();
         } catch (Exception e) {
-            // A rejected host key surfaces as a TransportException, so this check must
-            // run before the disconnect-on-shutdown case below treats it as success.
             TofuHostKeyVerifier.Mismatch mismatch = hostKeyVerifier == null ? null : hostKeyVerifier.getMismatch();
             if (mismatch != null) {
                 Log.e(ShutdownRunnable.class.getSimpleName(), "SSH host key mismatch, connection rejected");

@@ -37,7 +37,6 @@ public class ObfuscatedEditText extends TextInputEditText {
     }
 
     private void init() {
-        // Reveal on focus
         setOnFocusChangeListener((v, hasFocus) -> {
             try {
                 if (hasFocus) {
@@ -59,7 +58,6 @@ public class ObfuscatedEditText extends TextInputEditText {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 try {
                     if (!isUpdatingText && isRevealed) {
-                        // Update realText when user is editing in revealed mode
                         realText = s != null ? s.toString() : "";
                         scheduleHide();
                     }
@@ -76,11 +74,9 @@ public class ObfuscatedEditText extends TextInputEditText {
 
     @Override
     public Editable getText() {
-        // Always return what's actually in the EditText to avoid touch crashes
         return super.getText();
     }
 
-    // Use this method to get the real unobfuscated text
     public String getRealTextValue() {
         if (isRevealed) {
             Editable text = super.getText();
@@ -92,14 +88,10 @@ public class ObfuscatedEditText extends TextInputEditText {
     @Override
     public void setText(CharSequence text, BufferType type) {
         try {
-            // Update realText when setText is called programmatically
             if (!isUpdatingText) {
                 this.realText = text == null ? "" : text.toString();
             }
-
-            // Always call super to maintain normal behavior
             if (!isUpdatingText) {
-                // If we're setting text while not revealed, show obfuscated version
                 if (!isRevealed && this.realText.length() > 0) {
                     isUpdatingText = true;
                     try {
@@ -150,7 +142,6 @@ public class ObfuscatedEditText extends TextInputEditText {
         isUpdatingText = true;
         try {
             super.setText(realText, BufferType.EDITABLE);
-            // Post selection to next UI cycle to ensure text is set first
             post(() -> {
                 try {
                     Editable text = getText();
@@ -218,9 +209,7 @@ public class ObfuscatedEditText extends TextInputEditText {
             return "";
         }
 
-        // Detect if it's a MAC address (contains colons) or IP address (contains dots)
         if (text.contains(":")) {
-            // MAC address: show last 2 chars only
             String[] parts = text.split(":");
             if (parts.length > 1) {
                 StringBuilder sb = new StringBuilder();
@@ -232,14 +221,12 @@ public class ObfuscatedEditText extends TextInputEditText {
                 return sb.toString();
             }
         } else if (text.contains(".")) {
-            // IP address: show last octet only
             String[] parts = text.split("\\.");
             if (parts.length == 4) {
                 return "•••.•••.•••." + parts[3];
             }
         }
 
-        // Generic obfuscation: show last 2 chars only
         if (text.length() > 2) {
             StringBuilder sb = new StringBuilder();
             for (int i = 0; i < text.length() - 2; i++) {

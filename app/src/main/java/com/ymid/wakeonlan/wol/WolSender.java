@@ -30,21 +30,14 @@ public class WolSender {
 
     public static void sendWolPacket(Device device) {
         EXECUTOR.execute(() -> {
-            // Send to the device's configured broadcast/IP address
             sendPacket(device, device.broadcastAddress);
-
-            // IPv4 auto-detected broadcast
             new BroadcastHelper().getBroadcastAddress()
                     .ifPresent(addr -> sendPacket(device, addr.getHostAddress()));
 
-            // IPv6 multicast fallback: send to ff02::1 on every WiFi/eth interface
-            // that has an IPv6 address, so WOL works on IPv6 networks without configuration.
-            // Skipped if ff02::1 is already the configured address to avoid a duplicate send.
             if (!IPV6_ALL_NODES.equalsIgnoreCase(PacketBuilder.normalizeAddress(device.broadcastAddress))) {
                 sendIpv6MulticastFallback(device);
             }
 
-            // WAN / port-forwarded WOL
             if (!Strings.isNullOrEmpty(device.wanIp)) {
                 int wanPort = (device.wanPort != null && device.wanPort > 0) ? device.wanPort : device.port;
                 sendPacketToAddress(device, device.wanIp, wanPort);
@@ -73,9 +66,6 @@ public class WolSender {
         }
     }
 
-    // Used when the user explicitly configures ff02::1 or any IPv6 multicast address.
-    // Sends the packet on every eligible network interface so it reaches the right LAN
-    // segment regardless of which interface the OS would pick by default.
     private static void sendMulticastOnAllInterfaces(DatagramPacket packet) {
         for (NetworkInterface iface : getWolNetworkInterfaces()) {
             try (MulticastSocket socket = new MulticastSocket()) {
@@ -87,9 +77,6 @@ public class WolSender {
         }
     }
 
-    // Automatic IPv6 equivalent of the BroadcastHelper IPv4 fallback.
-    // Sends to ff02::1 (all-nodes link-local multicast) on each interface
-    // that has at least one IPv6 address assigned.
     private static void sendIpv6MulticastFallback(Device device) {
         try {
             DatagramPacket packet = PacketBuilder.buildMagicPacket(

@@ -38,8 +38,8 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
     private static final String ARG_SELECTED = "selected";
     private static final String ARG_MODE = "mode";
 
-    public static final int MODE_SCAN = 0;  // Show all scanned networks with checkboxes
-    public static final int MODE_VIEW = 1;  // Show only saved networks with delete buttons
+    public static final int MODE_SCAN = 0;
+    public static final int MODE_VIEW = 1;
 
     private Callback callback;
     private View contentView;
@@ -88,7 +88,6 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
         ArrayList<String> selected = getArguments() != null ? getArguments().getStringArrayList(ARG_SELECTED) : new ArrayList<>();
         int mode = getArguments() != null ? getArguments().getInt(ARG_MODE, MODE_VIEW) : MODE_VIEW;
 
-        // Set title based on mode
         if (mode == MODE_SCAN) {
             titleView.setText(R.string.pref_scan_wifi_title);
         } else {
@@ -125,14 +124,12 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
     public Dialog onCreateDialog(@Nullable Bundle savedInstanceState) {
         BottomSheetDialog dialog = (BottomSheetDialog) super.onCreateDialog(savedInstanceState);
 
-        // 1. Hacemos la ventana edge-to-edge y transparente desde el inicio
         if (dialog.getWindow() != null) {
             androidx.core.view.WindowCompat.setDecorFitsSystemWindows(dialog.getWindow(), false);
             dialog.getWindow().setNavigationBarColor(android.graphics.Color.TRANSPARENT);
             dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         }
 
-        // 2. Esperamos a que el diálogo esté 100% mostrado en pantalla para aplicar los insets
         dialog.setOnShowListener(dialogInterface -> {
             BottomSheetDialog d = (BottomSheetDialog) dialogInterface;
             View bottomSheet = d.findViewById(com.google.android.material.R.id.design_bottom_sheet);
@@ -140,14 +137,10 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
             if (bottomSheet != null) {
                 bottomSheet.setBackgroundResource(android.R.color.transparent);
 
-                // 3. Controlamos los insets
                 ViewCompat.setOnApplyWindowInsetsListener(bottomSheet, (v, insets) -> {
                     int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom;
-
-                    // Anulamos el padding de Material Design en el contenedor externo
                     v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), 0);
 
-                    // Aplicamos el padding a TU vista para empujar el botón "Done"
                     if (contentView != null) {
                         contentView.setPadding(
                                 contentView.getPaddingLeft(),
@@ -159,8 +152,6 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
 
                     return WindowInsetsCompat.CONSUMED;
                 });
-
-                // 4. Forzamos la actualización. Como estamos en onShow, esto funcionará el 100% de las veces.
                 ViewCompat.requestApplyInsets(bottomSheet);
             }
         });
@@ -179,14 +170,10 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
 
         bottomSheet.setBackgroundResource(android.R.color.transparent);
 
-        // 2. Controlamos los insets y forzamos el padding en tu vista (contentView)
         ViewCompat.setOnApplyWindowInsetsListener(bottomSheet, (v, insets) -> {
             int navBarHeight = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom;
 
-            // Anulamos el padding que Material Design intenta forzar en el contenedor externo
             v.setPadding(v.getPaddingLeft(), v.getPaddingTop(), v.getPaddingRight(), 0);
-
-            // Le inyectamos el padding a TU diseño rosado para empujar el botón "Done"
             if (contentView != null) {
                 contentView.setPadding(
                         contentView.getPaddingLeft(),
@@ -196,11 +183,9 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
                 );
             }
 
-            // Retornamos CONSUMED para que BottomSheetBehavior no sobreescriba nuestra orden
             return WindowInsetsCompat.CONSUMED;
         });
 
-        // 3. Forzamos la aplicación inmediata de los insets para evitar la "condición de carrera"
         ViewCompat.requestApplyInsets(bottomSheet);
     }
 
@@ -212,7 +197,6 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
         Set<String> selectedSet = selected != null ? new HashSet<>(selected) : new HashSet<>();
 
         if (mode == MODE_SCAN) {
-            // Show all scanned networks with checkboxes
             if (entries != null && values != null) {
                 for (int i = 0; i < Math.min(entries.length, values.length); i++) {
                     if (values[i] != null && !values[i].trim().isEmpty()) {
@@ -223,7 +207,6 @@ public class TrustedWifiDialogFragment extends BottomSheetDialogFragment {
                 }
             }
         } else {
-            // MODE_VIEW: Show only saved networks
             if (selected != null) {
                 for (String value : selected) {
                     if (value != null && !value.trim().isEmpty()) {
