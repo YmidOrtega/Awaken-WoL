@@ -1,6 +1,5 @@
 package com.ymid.wakeonlan.security
 
-import android.content.Context
 import android.security.keystore.KeyGenParameterSpec
 import android.security.keystore.KeyProperties
 import android.util.Base64
@@ -9,13 +8,19 @@ import java.io.DataOutputStream
 import java.math.BigInteger
 import java.security.KeyPairGenerator
 import java.security.KeyStore
+import java.security.interfaces.ECPublicKey
 import java.security.interfaces.RSAPublicKey
+import java.security.spec.ECGenParameterSpec
+import java.security.spec.ECPoint
 import java.util.UUID
 
 object SshKeyManager {
 
     private const val KEYSTORE_PROVIDER = "AndroidKeyStore"
-    private const val KEY_SIZE = 2048
+    private const val EC_CURVE = "secp256r1"
+    private const val ECDSA_KEY_TYPE = "ecdsa-sha2-nistp256"
+    private const val ECDSA_CURVE_NAME = "nistp256"
+    private const val EC_COORDINATE_LENGTH = 32
     const val ALIAS_PREFIX = "aweken_ssh_"
 
     @JvmStatic
@@ -32,12 +37,11 @@ object SshKeyManager {
             alias,
             KeyProperties.PURPOSE_SIGN or KeyProperties.PURPOSE_VERIFY
         )
-            .setKeySize(KEY_SIZE)
-            .setDigests(KeyProperties.DIGEST_SHA256, KeyProperties.DIGEST_SHA512)
-            .setSignaturePaddings(KeyProperties.SIGNATURE_PADDING_RSA_PKCS1)
+            .setAlgorithmParameterSpec(ECGenParameterSpec(EC_CURVE))
+            .setDigests(KeyProperties.DIGEST_SHA256)
             .build()
 
-        KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_RSA, KEYSTORE_PROVIDER)
+        KeyPairGenerator.getInstance(KeyProperties.KEY_ALGORITHM_EC, KEYSTORE_PROVIDER)
             .apply { initialize(spec) }
             .generateKeyPair()
 
@@ -47,10 +51,14 @@ object SshKeyManager {
     @JvmStatic
     fun getOpenSshPublicKey(alias: String): String? = try {
         val keyStore = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
-        val entry = keyStore.getEntry(alias, null) as? KeyStore.PrivateKeyEntry ?: return null
-        val pubKey = entry.certificate.publicKey as RSAPublicKey
-        val wireBytes = encodeSshRsa(pubKey)
-        "ssh-rsa ${Base64.encodeToString(wireBytes, Base64.NO_WRAP)} aweken"
+        val entry = keyStore.getEntry(alias, null) as? KeyStore.PrivateKeyEntry
+        when (val pubKey = entry?.certificate?.publicKey) {
+            is ECPublicKey ->
+                "$ECDSA_KEY_TYPE ${Base64.encodeToString(encodeSshEcdsa(pubKey), Base64.NO_WRAP)} aweken"
+            is RSAPublicKey ->
+                "ssh-rsa ${Base64.encodeToString(encodeSshRsa(pubKey), Base64.NO_WRAP)} aweken"
+            else -> null
+        }
     } catch (_: Exception) { null }
 
     @JvmStatic
@@ -62,6 +70,35 @@ object SshKeyManager {
             val ks = KeyStore.getInstance(KEYSTORE_PROVIDER).apply { load(null) }
             if (ks.containsAlias(alias)) ks.deleteEntry(alias)
         }
+    }
+
+    private fun encodeSshEcdsa(key: ECPublicKey): ByteArray {
+        val baos = ByteArrayOutputStream()
+        DataOutputStream(baos).use { dos ->
+            write(dos, ECDSA_KEY_TYPE.toByteArray())
+            write(dos, ECDSA_CURVE_NAME.toByteArray())
+            write(dos, encodeUncompressedPoint(key.w))
+        }
+        return baos.toByteArray()
+    }
+
+    private fun encodeUncompressedPoint(point: ECPoint): ByteArray {
+        return byteArrayOf(0x04) +
+                toFixedLength(point.affineX, EC_COORDINATE_LENGTH) +
+                toFixedLength(point.affineY, EC_COORDINATE_LENGTH)
+    }
+
+    private fun toFixedLength(value: BigInteger, length: Int): ByteArray {
+        val raw = value.toByteArray()
+        if (raw.size == length) return raw
+
+        val result = ByteArray(length)
+        if (raw.size > length) {
+            System.arraycopy(raw, raw.size - length, result, 0, length)
+        } else {
+            System.arraycopy(raw, 0, result, length - raw.size, raw.size)
+        }
+        return result
     }
 
     private fun encodeSshRsa(key: RSAPublicKey): ByteArray {

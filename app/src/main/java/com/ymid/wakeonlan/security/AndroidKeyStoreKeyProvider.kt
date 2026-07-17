@@ -17,5 +17,5 @@ class AndroidKeyStoreKeyProvider(private val alias: String) : KeyProvider {
 
     override fun getPublic(): PublicKey = entry.certificate.publicKey
 
-    override fun getType(): KeyType = KeyType.RSA
+    override fun getType(): KeyType = KeyType.fromKey(entry.certificate.publicKey)
 }
