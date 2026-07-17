@@ -22,7 +22,7 @@ public class ShutdownDeviceReceiver extends BroadcastReceiver {
         try {
             Device device = resolveDevice(context, intent);
             if (device != null && device.remoteShutdownEnabled) {
-                AuthenticatedDeviceActionActivity.startShutdown(context, device.id);
+                AuthenticatedDeviceActionActivity.startShutdown(context, device.id, true);
                 Log.i("ShutdownDeviceReceiver", "Authentication requested for shutdown: " + device.name);
             } else {
                 Log.w("ShutdownDeviceReceiver", "Device not found or shutdown not enabled");

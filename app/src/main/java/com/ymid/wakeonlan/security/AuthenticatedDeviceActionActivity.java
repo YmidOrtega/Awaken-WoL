@@ -43,6 +43,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
 
     public static final String EXTRA_DEVICE_ID = "deviceId";
     public static final String EXTRA_DEVICE_ACTION = "deviceAction";
+    public static final String EXTRA_EXTERNAL_ORIGIN = "externalOrigin";
 
     public static final String ACTION_WAKE = "wake";
     public static final String ACTION_SHUTDOWN = "shutdown";
@@ -52,21 +53,30 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
             | BiometricManager.Authenticators.DEVICE_CREDENTIAL;
 
     public static void startWake(Context context, int deviceId) {
-        start(context, deviceId, ACTION_WAKE);
+        start(context, deviceId, ACTION_WAKE, false);
+    }
+
+    public static void startWake(Context context, int deviceId, boolean externalOrigin) {
+        start(context, deviceId, ACTION_WAKE, externalOrigin);
     }
 
     public static void startShutdown(Context context, int deviceId) {
-        start(context, deviceId, ACTION_SHUTDOWN);
+        start(context, deviceId, ACTION_SHUTDOWN, false);
+    }
+
+    public static void startShutdown(Context context, int deviceId, boolean externalOrigin) {
+        start(context, deviceId, ACTION_SHUTDOWN, externalOrigin);
     }
 
     public static void startEdit(Context context, int deviceId) {
-        start(context, deviceId, ACTION_EDIT);
+        start(context, deviceId, ACTION_EDIT, false);
     }
 
-    private static void start(Context context, int deviceId, String action) {
+    private static void start(Context context, int deviceId, String action, boolean externalOrigin) {
         Intent intent = new Intent(context, AuthenticatedDeviceActionActivity.class);
         intent.putExtra(EXTRA_DEVICE_ID, deviceId);
         intent.putExtra(EXTRA_DEVICE_ACTION, action);
+        intent.putExtra(EXTRA_EXTERNAL_ORIGIN, externalOrigin);
         if (!(context instanceof android.app.Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -84,11 +94,11 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
             return;
         }
 
-        // Check app setting: if authentication is disabled, execute directly
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
         boolean requireAuth = prefs.getBoolean("pref_require_auth", true);
+        boolean externalOrigin = getIntent().getBooleanExtra(EXTRA_EXTERNAL_ORIGIN, false);
         if (!ACTION_EDIT.equals(action)) {
-            if (!requireAuth || shouldSkipAuthentication(prefs)) {
+            if (!requireAuth || (!externalOrigin && shouldSkipAuthentication(prefs))) {
                 executeDeviceAction(device, action);
                 finish();
                 return;

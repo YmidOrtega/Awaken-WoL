@@ -63,9 +63,9 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
         }
 
         if ("wake".equalsIgnoreCase(action)) {
-            AuthenticatedDeviceActionActivity.startWake(this, matched.id);
+            AuthenticatedDeviceActionActivity.startWake(this, matched.id, true);
         } else if ("shutdown".equalsIgnoreCase(action)) {
-            AuthenticatedDeviceActionActivity.startShutdown(this, matched.id);
+            AuthenticatedDeviceActionActivity.startShutdown(this, matched.id, true);
         } else {
             Toast.makeText(this, "Unknown action: " + action, Toast.LENGTH_SHORT).show();
         }

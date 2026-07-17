@@ -22,7 +22,7 @@ public class WakeDeviceReceiver extends BroadcastReceiver {
         try {
             Device device = resolveDevice(context, intent);
             if (device != null && device.macAddress != null && !device.macAddress.isEmpty()) {
-                AuthenticatedDeviceActionActivity.startWake(context, device.id);
+                AuthenticatedDeviceActionActivity.startWake(context, device.id, true);
                 Log.i("WakeDeviceReceiver", "Authentication requested for WoL: " + device.name);
             } else {
                 Log.w("WakeDeviceReceiver", "Device not found or missing MAC");
