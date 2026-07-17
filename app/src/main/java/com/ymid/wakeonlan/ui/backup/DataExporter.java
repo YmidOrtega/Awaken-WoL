@@ -29,12 +29,15 @@ public class DataExporter implements ActivityResultCallback<Uri> {
     private final WeakReference<Context> contextWeakReference;
     private final ActivityResultLauncher<Object> activityResultLauncher;
 
+    private boolean includePasswords = false;
+
     public DataExporter(Fragment fragment) {
         this.contextWeakReference = new WeakReference<>(fragment.getContext());
         activityResultLauncher = fragment.registerForActivityResult(new ChooseSaveFileDestinationContract(), this);
     }
 
-    public void exportDevices() {
+    public void exportDevices(boolean includePasswords) {
+        this.includePasswords = includePasswords;
         activityResultLauncher.launch(null);
     }
 
@@ -49,6 +52,13 @@ public class DataExporter implements ActivityResultCallback<Uri> {
             List<DeviceBackupModel> devices = DeviceRepository.getInstance(context).getAll()
                     .stream().map(DeviceBackupModel::new)
                     .collect(Collectors.toList());
+
+            if (!includePasswords) {
+                devices.forEach(device -> {
+                    device.sshPassword = null;
+                    device.secureOnPassword = null;
+                });
+            }
 
             byte[] content = new Gson().toJson(devices).getBytes(StandardCharsets.UTF_8);
             writeDevicesToFile(uri, content, context);

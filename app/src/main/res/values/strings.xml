@@ -94,13 +94,15 @@
     <!-- Backup Fragment -->
     <string name="backup_description">Export your currently configured devices to a JSON file or import an existing dataset</string>
     <string name="backup_note">Note:</string>
-    <string name="backup_note_content">Exports will contain the password used to authenticate the user for SSH remote shutdown in plain text.\n\nImporting a list of devices will override all currently configured devices</string>
+    <string name="backup_note_content">Passwords are only included in the export if you explicitly choose so, and they are stored in plain text.\n\nImporting a list of devices will override all currently configured devices</string>
     <string name="backup_button_export">Export</string>
     <string name="backup_button_import">Import</string>
     <string name="backup_message_import_success">Successfully imported %1$d devices</string>
     <string name="backup_message_import_error">Error while importing devices</string>
     <string name="backup_message_export_success">Successfully exported %1$d devices</string>
     <string name="backup_message_export_error">Error while exporting devices</string>
+    <string name="backup_export_dialog_title">Export devices</string>
+    <string name="backup_export_include_passwords">Include SSH and SecureOn passwords (saved as plain text)</string>
 
     <!-- Network Scan Fragment -->
     <string name="network_scan_button_add">Add Device</string>

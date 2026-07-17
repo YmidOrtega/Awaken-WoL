@@ -62,13 +62,15 @@
     <string name="title_fragment_device_list">Geräteübersicht</string>
     <string name="backup_description">Exportieren Sie Ihre konfigurierten Geräte in eine JSON Datei oder importieren Sie einen bestehenden Datensatz</string>
     <string name="backup_note">Hinweis:</string>
-    <string name="backup_note_content">Das Passwort, welches zur Authentifizierung von Benutzern während des Entfernten Herunterfahrens per SSH genutzt wird, ist im Klartext in dem exportierten Datensatz enthalten.\n\nBeim Importieren werden alle konfigurierten Geräte überschrieben</string>
+    <string name="backup_note_content">Passwörter werden nur dann exportiert, wenn Sie dies ausdrücklich auswählen, und sind im Klartext enthalten.\n\nBeim Importieren werden alle konfigurierten Geräte überschrieben</string>
     <string name="backup_button_export">Exportieren</string>
     <string name="backup_button_import">Importieren</string>
     <string name="backup_message_import_success">%1$d Geräte erfolgreich importiert</string>
     <string name="backup_message_import_error">Fehler beim Importieren der Geräte</string>
     <string name="backup_message_export_success">%1$d Geräte erfolgreich exportiert</string>
     <string name="backup_message_export_error">Fehler beim Exportieren der Geräte</string>
+    <string name="backup_export_dialog_title">Geräte exportieren</string>
+    <string name="backup_export_include_passwords">SSH- und SecureOn-Passwörter einschließen (im Klartext gespeichert)</string>
     <string name="title_fragment_network_scan">Netzwerk Scan</string>
     <string name="network_scan_button_add">Gerät hinzufügen</string>
     <string name="network_scan_no_devices_found">Keine Geräte gefunden</string>

@@ -69,6 +69,8 @@
     <string name="backup_message_import_error">Error al importar dispositivos</string>
     <string name="backup_message_export_success">%1$d dispositivos exportados correctamente</string>
     <string name="backup_message_export_error">Error al exportar dispositivos</string>
+    <string name="backup_export_dialog_title">Exportar dispositivos</string>
+    <string name="backup_export_include_passwords">Incluir contraseñas SSH y SecureOn (se guardan en texto plano)</string>
     <string name="network_scan_button_add">Agregar dispositivo</string>
     <string name="network_scan_no_devices_found">No se encontraron dispositivos</string>
     <string name="network_scan_empty_title">¿Estás conectado a una red Wi-Fi?</string>
