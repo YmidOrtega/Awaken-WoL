@@ -83,7 +83,7 @@ public class ShutdownRunnable implements Runnable {
 
             exec.join(EXECUTE_TIMEOUT, TimeUnit.MILLISECONDS);
             Integer exitStatus = exec.getExitStatus();
-            if (exitStatus != 0) {
+            if (exitStatus != null && exitStatus != 0) {
                 throw new CommandExecuteException("Command exited with status code " + exitStatus, exitStatus);
             }
 
