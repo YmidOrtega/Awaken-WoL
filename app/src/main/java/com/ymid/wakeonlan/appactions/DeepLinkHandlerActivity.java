@@ -29,13 +29,10 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
             return;
         }
 
-        // Expected deep link formats:
-        // wakeonlan://action/wake?name=My+PC
-        // wakeonlan://action/shutdown?name=My+PC
-        String path = data.getPath(); // e.g., "/wake"
+        String path = data.getPath();
         String action = null;
         if (path != null && path.length() > 1) {
-            action = path.substring(1); // remove leading '/'
+            action = path.substring(1);
         }
 
         String name = data.getQueryParameter("name");
