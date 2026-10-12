@@ -39,6 +39,7 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
     private final StatusTesterPool statusTesterPool;
 
     private Device device;
+    private boolean drivesLauncherIcon;
 
     public DeviceItemViewHolder(View view, DeviceClickedCallback deviceClickedCallback, StatusTesterPool statusTesterPool) {
         super(view);
@@ -54,8 +55,9 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
         this.statusTesterPool = statusTesterPool;
     }
 
-    public synchronized void fromDevice(Device device) {
+    public synchronized void fromDevice(Device device, boolean drivesLauncherIcon) {
         this.device = device;
+        this.drivesLauncherIcon = drivesLauncherIcon;
 
         deviceName.setText(device.name);
         deviceMacAddress.setObfuscatedText(device.macAddress);
@@ -131,8 +133,7 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
     }
 
     private void updateLauncherIconIfNeeded(boolean online) {
-        int position = getBindingAdapterPosition();
-        if (position == RecyclerView.NO_POSITION || position != 0) {
+        if (!drivesLauncherIcon) {
             return;
         }
         LauncherIconManager.updateLauncherIcon(itemView.getContext(), online);

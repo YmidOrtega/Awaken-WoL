@@ -108,11 +108,19 @@ public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         return items.size();
     }
 
+    // The launcher icon mirrors the first device shown, which group headers can push past position 0
+    private int firstDevicePosition() {
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i) instanceof Device) return i;
+        }
+        return RecyclerView.NO_POSITION;
+    }
+
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder viewHolder, int position) {
         int viewType = getItemViewType(position);
         if (viewType == ListViewType.DEVICE.ordinal()) {
-            ((DeviceItemViewHolder) viewHolder).fromDevice((Device) items.get(position));
+            ((DeviceItemViewHolder) viewHolder).fromDevice((Device) items.get(position), position == firstDevicePosition());
         } else if (viewType == ListViewType.GROUP_HEADER.ordinal()) {
             ((GroupHeaderViewHolder) viewHolder).bind((String) items.get(position));
         }
