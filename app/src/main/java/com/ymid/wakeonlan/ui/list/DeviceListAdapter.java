@@ -41,7 +41,15 @@ public class DeviceListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         notifyDataSetChanged();
     }
 
-    private List<Object> buildFlatList(List<Device> devices) {
+    /** The device shown first in the list, which is the one the launcher icon mirrors. */
+    public static Device firstDisplayedDevice(List<Device> devices) {
+        for (Object item : buildFlatList(devices)) {
+            if (item instanceof Device) return (Device) item;
+        }
+        return null;
+    }
+
+    private static List<Object> buildFlatList(List<Device> devices) {
         if (devices == null || devices.isEmpty()) return Collections.emptyList();
 
         boolean anyGrouped = false;

@@ -3,6 +3,7 @@ package com.ymid.wakeonlan
 import android.app.Application
 import com.ymid.wakeonlan.config.RemoteConfigManager
 import com.ymid.wakeonlan.crash.CrashReporter
+import com.ymid.wakeonlan.monitoring.LauncherIconWorker
 import com.ymid.wakeonlan.monitoring.MonitoringScheduler
 import com.ymid.wakeonlan.persistence.DatabaseInstanceManager
 import com.ymid.wakeonlan.ui.LauncherIconManager
@@ -17,6 +18,7 @@ class AwekenApplication : Application() {
         RemoteConfigManager.initialize()
         NotificationHelper.createChannels(this)
         MonitoringScheduler.scheduleIfEnabled(this)
+        LauncherIconWorker.schedule(this)
         Executors.newSingleThreadExecutor().execute {
             runCatching { DatabaseInstanceManager.getInstance(this) }
         }

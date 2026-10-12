@@ -6,6 +6,7 @@ import android.widget.Toast;
 import com.google.common.base.Strings;
 
 import com.ymid.wakeonlan.R;
+import com.ymid.wakeonlan.monitoring.LauncherIconWorker;
 import com.ymid.wakeonlan.persistence.entities.ActionType;
 import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
@@ -39,6 +40,7 @@ public final class DeviceActionExecutor {
         ActionLogRepository.getInstance(context).log(device.name, ActionType.SHUTDOWN);
         Toast.makeText(context, context.getString(R.string.remote_shutdown_send_command, device.name), Toast.LENGTH_LONG).show();
         NotificationHelper.INSTANCE.sendShutdownSentNotification(context, device.name);
+        LauncherIconWorker.scheduleFollowUp(context);
         return true;
     }
 
@@ -51,6 +53,7 @@ public final class DeviceActionExecutor {
         ActionLogRepository.getInstance(context).log(device.name, ActionType.WAKE);
         Toast.makeText(context, context.getString(R.string.wol_toast_sending_packet, device.name), Toast.LENGTH_LONG).show();
         NotificationHelper.INSTANCE.sendWakeSentNotification(context, device.name);
+        LauncherIconWorker.scheduleFollowUp(context);
         return true;
     }
 }
