@@ -36,13 +36,13 @@ class DeviceWidgetProvider : AppWidgetProvider() {
         fun updateWidget(context: Context, manager: AppWidgetManager, widgetId: Int, deviceId: Int) {
             val views = RemoteViews(context.packageName, R.layout.widget_device)
 
+            setWakeLabel(context, views)
             if (deviceId == -1) {
-                views.setTextViewText(R.id.widget_device_name, context.getString(R.string.widget_device_none))
-                views.setTextViewText(R.id.widget_wake_button, context.getString(R.string.widget_wake))
+                setDeviceName(context, views, context.getString(R.string.widget_device_none))
             } else {
                 val device = runCatching { DeviceRepository.getInstance(context).getById(deviceId) }.getOrNull()
                 if (device != null) {
-                    views.setTextViewText(R.id.widget_device_name, device.name)
+                    setDeviceName(context, views, device.name)
 
                     val wakeIntent = Intent(context, WakeDeviceReceiver::class.java).apply {
                         action = "com.ymid.wakeonlan.ACTION_WAKE"
@@ -53,13 +53,29 @@ class DeviceWidgetProvider : AppWidgetProvider() {
                         PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
                     )
                     views.setOnClickPendingIntent(R.id.widget_wake_button, wakePi)
-                    views.setTextViewText(R.id.widget_wake_button, context.getString(R.string.widget_wake))
                 } else {
-                    views.setTextViewText(R.id.widget_device_name, context.getString(R.string.widget_device_none))
+                    setDeviceName(context, views, context.getString(R.string.widget_device_none))
                 }
             }
 
             manager.updateAppWidget(widgetId, views)
+        }
+
+        private fun setDeviceName(context: Context, views: RemoteViews, name: String) {
+            views.setImageViewBitmap(
+                R.id.widget_device_name,
+                WidgetTextRenderer.render(context, name, R.font.doto_extrabold, 18f, R.color.primaryTextColor)
+            )
+            views.setContentDescription(R.id.widget_device_name, name)
+        }
+
+        private fun setWakeLabel(context: Context, views: RemoteViews) {
+            val label = context.getString(R.string.widget_wake)
+            views.setImageViewBitmap(
+                R.id.widget_wake_label,
+                WidgetTextRenderer.render(context, label, R.font.jetbrains_mono_regular, 13f, R.color.ledOnlineColor)
+            )
+            views.setContentDescription(R.id.widget_wake_button, label)
         }
     }
 }
