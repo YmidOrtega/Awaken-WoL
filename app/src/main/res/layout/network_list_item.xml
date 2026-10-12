@@ -1,61 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginEnd="16dp"
-    android:layout_marginBottom="12dp"
-    app:cardBackgroundColor="@color/surfaceColor"
-    app:cardCornerRadius="20dp"
-    app:strokeColor="@color/cardStrokeColor"
-    app:strokeWidth="1dp">
+    android:background="@drawable/console_row_divider"
+    android:gravity="center_vertical"
+    android:minHeight="64dp"
+    android:orientation="horizontal"
+    android:paddingStart="18dp"
+    android:paddingTop="10dp"
+    android:paddingEnd="14dp"
+    android:paddingBottom="10dp">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:padding="16dp">
-
-        <TextView
-            android:id="@+id/scan_device_name"
-            style="@style/FontMonospaced"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceHeadline6"
-            android:textColor="@color/primaryTextColor"
-            android:textStyle="bold"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toStartOf="@+id/scan_device_add"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:text="Testdevice 1" />
+        android:layout_weight="1"
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/scan_device_ip"
-            style="@style/FontMonospaced"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:textAppearance="?attr/textAppearanceBody2"
-            android:textColor="@color/primaryTextColorMuted"
-            android:maxLines="1"
-            android:ellipsize="end"
-            app:layout_constraintEnd_toStartOf="@+id/scan_device_add"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scan_device_name"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:text="127.0.0.1" />
-
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/scan_device_add"
-            style="@style/Widget.App.Button.ActionPill"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/network_scan_button_add"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:fontFamily="@font/doto_extrabold"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.App.Display"
+            android:textSize="18sp"
+            tools:text="192.168.1.87" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
-</com.google.android.material.card.MaterialCardView>
+        <TextView
+            android:id="@+id/scan_device_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:textAppearance="@style/TextAppearance.App.Meta"
+            tools:text="raspberrypi.local" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/scan_device_add"
+        android:layout_width="wrap_content"
+        android:layout_height="36dp"
+        android:layout_marginStart="12dp"
+        android:background="@drawable/console_outline_button"
+        android:gravity="center"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:text="@string/scan_action_add"
+        android:textColor="@color/primaryTextColor"
+        android:textSize="12sp" />
+</LinearLayout>

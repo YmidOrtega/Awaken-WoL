@@ -102,7 +102,7 @@ public class DeviceListFragment extends Fragment {
         host.setHeaderSubtitle(network + " · " + count);
 
         if (devices.isEmpty()) {
-            host.setHeaderCounter(null);
+            host.setHeaderCounter(null, null);
             return;
         }
         List<Integer> ids = new ArrayList<>();
@@ -110,7 +110,7 @@ public class DeviceListFragment extends Fragment {
             ids.add(device.id);
         }
         int online = DeviceStatusBoard.getInstance().countOnline(ids);
-        host.setHeaderCounter(online + "/" + devices.size());
+        host.setHeaderCounter(online + "/" + devices.size(), getString(R.string.header_online_label));
     }
 
     private void initializeCommandBar() {

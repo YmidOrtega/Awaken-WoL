@@ -143,4 +143,15 @@
         <item quantity="one">%d equipo</item>
         <item quantity="other">%d equipos</item>
     </plurals>
+
+    <!-- Console network scan -->
+    <string name="scan_progress_total">/ %1$d direcciones</string>
+    <string name="scan_action_rescan">› repetir</string>
+    <string name="scan_action_add">› agregar</string>
+    <string name="scan_already_added">ya agregado · %1$s</string>
+    <string name="scan_no_hostname">sin nombre de host</string>
+    <string name="scan_searching">Buscando…</string>
+    <string name="scan_subtitle_running">buscando en %1$s</string>
+    <string name="scan_subtitle_done">escaneo completo · %1$s</string>
+    <string name="scan_found_caption">ENCONTRADOS</string>
 </resources>

@@ -4,10 +4,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Optional;
@@ -21,7 +22,7 @@ public class ScanResultViewHolder extends RecyclerView.ViewHolder {
     private final TextView deviceName;
     private final TextView deviceIp;
 
-    private final Button addDevice;
+    private final TextView addDevice;
 
     public ScanResultViewHolder(@NonNull View itemView) {
         super(itemView);
@@ -31,28 +32,27 @@ public class ScanResultViewHolder extends RecyclerView.ViewHolder {
         addDevice = itemView.findViewById(R.id.scan_device_add);
     }
 
-    public void setIpAddress(String ipAddress) {
-        deviceIp.setText(ipAddress);
-    }
+    /**
+     * @param knownDeviceName name of the saved device at this address, or null when it is new
+     */
+    public void bind(NetworkScanDevice scanDevice, @Nullable String knownDeviceName) {
+        Context context = itemView.getContext();
+        Optional<String> hostName = scanDevice.getName();
+        boolean known = knownDeviceName != null;
 
-    public void setNameIfPresent(Optional<String> name) {
-        if (name.isPresent()) {
-            deviceName.setVisibility(View.VISIBLE);
-            deviceName.setText(name.get());
-            deviceIp.setTextAppearance(com.google.android.material.R.style.TextAppearance_MaterialComponents_Body2);
+        deviceIp.setText(scanDevice.getIpAddress());
+        deviceIp.setTextColor(ContextCompat.getColor(context, known ? R.color.primaryTextColorMuted : R.color.primaryTextColor));
+        if (known) {
+            deviceName.setText(context.getString(R.string.scan_already_added, knownDeviceName));
         } else {
-            deviceName.setVisibility(View.GONE);
-            deviceIp.setTextAppearance(com.google.android.material.R.style.TextAppearance_MaterialComponents_Headline6);
+            deviceName.setText(hostName.orElse(context.getString(R.string.scan_no_hostname)));
         }
-    }
 
-    public void setOnAddClickListener(NetworkScanDevice scanDevice) {
-        addDevice.setOnClickListener(view -> {
-            Context context = view.getContext();
-
+        addDevice.setVisibility(known ? View.GONE : View.VISIBLE);
+        addDevice.setOnClickListener(known ? null : view -> {
             Intent intent = new Intent(context, AddNetworkScanDeviceActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putString(AddNetworkScanDeviceActivity.MACHINE_NAME_KEY, scanDevice.getName().orElse(null));
+            bundle.putString(AddNetworkScanDeviceActivity.MACHINE_NAME_KEY, hostName.orElse(null));
             bundle.putString(AddNetworkScanDeviceActivity.MACHINE_IP_KEY, scanDevice.getIpAddress());
             intent.putExtras(bundle);
             context.startActivity(intent);

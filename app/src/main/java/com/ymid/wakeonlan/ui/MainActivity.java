@@ -114,7 +114,7 @@ public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost
         CharSequence title = id == R.id.deviceListFragment ? getString(R.string.app_name) : destination.getLabel();
         binding.headerTitle.setText(title);
         setHeaderSubtitle(null);
-        setHeaderCounter(null);
+        setHeaderCounter(null, null);
     }
 
     private void showMoreMenu(View anchor) {
@@ -150,8 +150,9 @@ public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost
     }
 
     @Override
-    public void setHeaderCounter(@Nullable CharSequence counter) {
+    public void setHeaderCounter(@Nullable CharSequence counter, @Nullable CharSequence caption) {
         binding.headerCounter.setText(counter);
+        binding.headerCounterCaption.setText(caption);
         binding.headerCounterGroup.setVisibility(counter == null ? View.GONE : View.VISIBLE);
     }
 

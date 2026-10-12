@@ -11,10 +11,15 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
+import com.google.common.base.Strings;
+
 import com.ymid.wakeonlan.R;
+import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.ui.scan.model.NetworkScanDevice;
 import com.ymid.wakeonlan.ui.scan.viewholder.EmptyViewHolder;
 import com.ymid.wakeonlan.ui.scan.viewholder.ListViewType;
@@ -23,6 +28,33 @@ import com.ymid.wakeonlan.ui.scan.viewholder.ScanResultViewHolder;
 public class NetworkScanAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private List<NetworkScanDevice> deviceList = new ArrayList<>(0);
+    private Map<String, String> knownDeviceNames = new HashMap<>();
+    private boolean scanning;
+
+    /** Saved devices by IP address, so results already in the app are marked instead of offered again. */
+    public void setKnownDevices(List<Device> devices) {
+        Map<String, String> names = new HashMap<>();
+        for (Device device : devices) {
+            for (String address : new String[]{device.statusIp, device.sshAddress, device.broadcastAddress}) {
+                if (!Strings.isNullOrEmpty(address)) {
+                    names.put(address, device.name);
+                }
+            }
+        }
+        knownDeviceNames = names;
+        notifyDataSetChanged();
+    }
+
+    public void setScanning(boolean scanning) {
+        this.scanning = scanning;
+        if (deviceList.isEmpty()) {
+            notifyItemChanged(0);
+        }
+    }
+
+    public int getFoundCount() {
+        return deviceList.size();
+    }
 
     public void clearDataset() {
         deviceList = new ArrayList<>();
@@ -94,9 +126,9 @@ public class NetworkScanAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
             NetworkScanDevice networkScanDevice = deviceList.get(position);
 
-            scanResultViewHolder.setNameIfPresent(networkScanDevice.getName());
-            scanResultViewHolder.setIpAddress(networkScanDevice.getIpAddress());
-            scanResultViewHolder.setOnAddClickListener(networkScanDevice);
+            scanResultViewHolder.bind(networkScanDevice, knownDeviceNames.get(networkScanDevice.getIpAddress()));
+        } else {
+            ((EmptyViewHolder) viewHolder).bind(scanning);
         }
     }
 

@@ -8,4 +8,8 @@ public interface ScanCallback {
 
     void onTaskEnd();
 
+    /** Called once per probed address, reachable or not, so the UI can show progress. */
+    default void onAddressScanned() {
+    }
+
 }

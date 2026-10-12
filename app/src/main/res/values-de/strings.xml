@@ -202,4 +202,15 @@
         <item quantity="one">%d Gerät</item>
         <item quantity="other">%d Geräte</item>
     </plurals>
+
+    <!-- Console network scan -->
+    <string name="scan_progress_total">/ %1$d Adressen</string>
+    <string name="scan_action_rescan">› erneut scannen</string>
+    <string name="scan_action_add">› hinzufügen</string>
+    <string name="scan_already_added">bereits hinzugefügt · %1$s</string>
+    <string name="scan_no_hostname">kein Hostname</string>
+    <string name="scan_searching">Suche…</string>
+    <string name="scan_subtitle_running">suche in %1$s</string>
+    <string name="scan_subtitle_done">Scan fertig · %1$s</string>
+    <string name="scan_found_caption">GEFUNDEN</string>
 </resources>

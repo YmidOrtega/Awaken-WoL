@@ -32,6 +32,8 @@ final class ScanRunnable implements Callable<Void> {
                 }
             } catch (Exception e) {
                 Log.e(getClass().getSimpleName(), "Error while scanning " + ipPrefix + i, e);
+            } finally {
+                scanCallback.onAddressScanned();
             }
         }
 

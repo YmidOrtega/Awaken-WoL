@@ -75,10 +75,11 @@
                 tools:text="2/3" />
 
             <TextView
+                android:id="@+id/header_counter_caption"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
-                android:text="@string/header_online_label"
+                tools:text="@string/header_online_label"
                 android:textAppearance="@style/TextAppearance.App.Label"
                 android:textSize="9sp" />
         </LinearLayout>
