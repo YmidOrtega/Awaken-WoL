@@ -217,4 +217,6 @@
         <item quantity="one">%d Aktion protokolliert</item>
         <item quantity="other">%d Aktionen protokolliert</item>
     </plurals>
+    <string name="backup_action_export">› Sicherung exportieren</string>
+    <string name="backup_action_import">› Sicherung importieren</string>
 </resources>

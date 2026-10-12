@@ -278,4 +278,6 @@
         <item quantity="one">%d action logged</item>
         <item quantity="other">%d actions logged</item>
     </plurals>
+    <string name="backup_action_export">› export backup</string>
+    <string name="backup_action_import">› import backup</string>
 </resources>

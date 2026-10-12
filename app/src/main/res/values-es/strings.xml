@@ -158,4 +158,6 @@
         <item quantity="one">%d acción registrada</item>
         <item quantity="other">%d acciones registradas</item>
     </plurals>
+    <string name="backup_action_export">› exportar respaldo</string>
+    <string name="backup_action_import">› importar respaldo</string>
 </resources>
