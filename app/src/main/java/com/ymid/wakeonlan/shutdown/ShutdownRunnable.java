@@ -11,6 +11,10 @@ import net.schmizz.sshj.connection.channel.direct.Session;
 import net.schmizz.sshj.transport.TransportException;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.ConnectException;
+import java.net.NoRouteToHostException;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -45,6 +49,20 @@ public class ShutdownRunnable implements Runnable {
         this.hostKeyVerifier = hostKeyVerifier;
     }
 
+    /**
+     * A host that never answers (timeout) or cannot be routed to fails exactly like a refused
+     * connection from the user's point of view, so all three are reported as ConnectException.
+     */
+    private void connect(SSHClient sshClient) throws IOException {
+        try {
+            sshClient.connect(shutdownModel.getSshAddress(), shutdownModel.getSshPort());
+        } catch (SocketTimeoutException | NoRouteToHostException e) {
+            ConnectException connectException = new ConnectException(e.getMessage());
+            connectException.initCause(e);
+            throw connectException;
+        }
+    }
+
     @Override
     public void run() {
         ByteArrayOutputStream commandOutputStream = new ByteArrayOutputStream();
@@ -56,7 +74,7 @@ public class ShutdownRunnable implements Runnable {
             }
             sshClient.addHostKeyVerifier(hostKeyVerifier);
             sshClient.setConnectTimeout(CONNECT_TIMEOUT);
-            sshClient.connect(shutdownModel.getSshAddress(), shutdownModel.getSshPort());
+            connect(sshClient);
             shutdownExecutorListener.onTargetHostReached();
 
             if (shutdownModel.isKeyAuth()) {
