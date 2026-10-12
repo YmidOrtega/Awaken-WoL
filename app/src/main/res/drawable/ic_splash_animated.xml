@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="utf-8"?>
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt">
+    <aapt:attr name="android:drawable">
+        <vector
+            android:width="108dp"
+            android:height="108dp"
+            android:viewportWidth="108"
+            android:viewportHeight="108">
+            <group android:name="waves2" android:pivotX="54" android:pivotY="54">
+                <path
+                    android:name="wave2"
+                    android:pathData="M77.75,39.16 A28,28 0 0,1 77.75,68.84 M30.25,68.84 A28,28 0 0,1 30.25,39.16"
+                    android:strokeColor="#43D9A3"
+                    android:strokeWidth="4.5"
+                    android:strokeAlpha="0"
+                    android:strokeLineCap="round" />
+            </group>
+            <group android:name="waves1" android:pivotX="54" android:pivotY="54">
+                <path
+                    android:name="wave1"
+                    android:strokeAlpha="0"
+                    android:pathData="M70.96,43.4 A20,20 0 0,1 70.96,64.6 M37.04,64.6 A20,20 0 0,1 37.04,43.4"
+                    android:strokeColor="#43D9A3"
+                    android:strokeWidth="4.5"
+                    android:strokeLineCap="round" />
+            </group>
+            <path
+                android:name="ring"
+                android:trimPathEnd="0"
+                android:pathData="M61.07,45.57 A11,11 0 1,1 46.93,45.57"
+                android:strokeColor="#43D9A3"
+                android:strokeWidth="5"
+                android:strokeLineCap="round" />
+            <group android:name="stemGroup">
+                <path
+                    android:name="stem"
+                    android:strokeAlpha="0"
+                    android:pathData="M54,40 L54,53"
+                    android:strokeColor="#43D9A3"
+                    android:strokeWidth="5"
+                    android:strokeLineCap="round" />
+            </group>
+        </vector>
+    </aapt:attr>
+    <target android:name="ring">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="trimPathEnd"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="450"
+                    android:startOffset="0"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="stemGroup">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="translateY"
+                    android:valueFrom="-7"
+                    android:valueTo="0"
+                    android:valueType="floatType"
+                    android:duration="300"
+                    android:startOffset="300"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="stem">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="strokeAlpha"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="150"
+                    android:startOffset="300"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="waves1">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="300"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="300"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="wave1">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="strokeAlpha"
+                    android:valueFrom="0"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="200"
+                    android:startOffset="550"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="waves2">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="scaleX"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="300"
+                    android:startOffset="700"
+                    android:interpolator="@android:interpolator/overshoot" />
+                <objectAnimator
+                    android:propertyName="scaleY"
+                    android:valueFrom="0.6"
+                    android:valueTo="1"
+                    android:valueType="floatType"
+                    android:duration="300"
+                    android:startOffset="700"
+                    android:interpolator="@android:interpolator/overshoot" />
+            </set>
+        </aapt:attr>
+    </target>
+    <target android:name="wave2">
+        <aapt:attr name="android:animation">
+            <set>
+                <objectAnimator
+                    android:propertyName="strokeAlpha"
+                    android:valueFrom="0"
+                    android:valueTo="0.55"
+                    android:valueType="floatType"
+                    android:duration="200"
+                    android:startOffset="700"
+                    android:interpolator="@android:interpolator/fast_out_slow_in" />
+            </set>
+        </aapt:attr>
+    </target>
+</animated-vector>

@@ -1,4 +1,4 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
     <style name="Theme.WakeOnLan" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Primary brand color. -->
@@ -18,5 +18,9 @@
         <!-- Customize your theme here. -->
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
+        <!-- Launch screen (Android 12+): animated "Onda" icon. -->
+        <item name="android:windowSplashScreenBackground" tools:targetApi="31">@color/backgroundColor</item>
+        <item name="android:windowSplashScreenAnimatedIcon" tools:targetApi="31">@drawable/ic_splash_animated</item>
+        <item name="android:windowSplashScreenAnimationDuration" tools:targetApi="31">1000</item>
     </style>
 </resources>
