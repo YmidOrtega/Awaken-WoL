@@ -683,7 +683,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
             finish();
             return false;
         } else {
-            new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.modify_device_unsaved_changes_title)
                     .setMessage(R.string.modify_device_unsaved_changes_message)
                     .setPositiveButton(R.string.modify_device_unsaved_changes_positive, (dialog, which) -> checkAndPersistDevice())

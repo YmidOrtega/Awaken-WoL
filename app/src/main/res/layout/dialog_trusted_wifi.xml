@@ -11,10 +11,10 @@
         android:id="@+id/trusted_wifi_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/doto_extrabold"
         android:text="@string/pref_trusted_ssids_title"
-        android:textAppearance="?attr/textAppearanceHeadline6"
-        android:textColor="@color/primaryTextColor"
-        android:textStyle="bold"
+        android:textAppearance="@style/TextAppearance.App.Display"
+        android:textSize="22sp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -37,16 +37,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="@string/wifi_scan_empty"
-        android:textAppearance="?attr/textAppearanceBody2"
-        android:textColor="@color/primaryTextColorMuted"
+        android:textAppearance="@style/TextAppearance.App.Meta"
+        android:textSize="12.5sp"
         android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@id/trusted_wifi_title" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/trusted_wifi_done"
-        style="@style/Widget.App.Button.ActionPill"
-        android:layout_width="100dp"
-        android:layout_height="0dp"
+        style="@style/Widget.App.DialogButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:text="@string/trusted_wifi_done"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

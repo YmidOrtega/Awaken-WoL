@@ -19,6 +19,7 @@
         <item name="android:fontFamily">@font/jetbrains_mono</item>
         <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
         <item name="materialButtonStyle">@style/Widget.App.Button</item>
+        <item name="materialAlertDialogTheme">@style/ThemeOverlay.App.MaterialAlertDialog</item>
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
         <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
         <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>

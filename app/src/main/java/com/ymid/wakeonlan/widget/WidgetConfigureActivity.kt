@@ -4,8 +4,8 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.ymid.wakeonlan.R
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository
 import java.util.concurrent.Executors
@@ -29,7 +29,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
             val devices = DeviceRepository.getInstance(this).getAll()
             runOnUiThread {
                 if (devices.isEmpty()) {
-                    AlertDialog.Builder(this)
+                    MaterialAlertDialogBuilder(this)
                         .setMessage(R.string.widget_configure_no_devices)
                         .setPositiveButton(android.R.string.ok) { _, _ -> finish() }
                         .setOnCancelListener { finish() }
@@ -38,7 +38,7 @@ class WidgetConfigureActivity : AppCompatActivity() {
                 }
 
                 val names = devices.map { it.name }.toTypedArray()
-                AlertDialog.Builder(this)
+                MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.widget_configure_title)
                     .setItems(names) { _, index ->
                         val device = devices[index]

@@ -8,6 +8,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.common.base.Strings;
 
 import java.util.Objects;
@@ -90,7 +91,7 @@ public class EditDeviceActivity extends ModifyDeviceActivity {
             checkAndPersistDevice();
             return true;
         } else if (item.getItemId() == R.id.edit_machine_menu_delete) {
-            new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setTitle(R.string.edit_device_delete_title)
                     .setMessage(R.string.edit_device_delete_message)
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {

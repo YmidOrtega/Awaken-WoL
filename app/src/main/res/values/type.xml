@@ -156,6 +156,42 @@
         <item name="android:textSize">11sp</item>
     </style>
 
+    <!-- Dialogs: console surface, dot-matrix title, green text buttons -->
+    <style name="ThemeOverlay.App.MaterialAlertDialog" parent="ThemeOverlay.MaterialComponents.MaterialAlertDialog">
+        <item name="colorSurface">@color/surfaceColor</item>
+        <item name="shapeAppearanceOverlay">@style/ShapeAppearance.App.Dialog</item>
+        <item name="materialAlertDialogTitleTextStyle">@style/MaterialAlertDialog.App.Title</item>
+        <item name="materialAlertDialogBodyTextStyle">@style/MaterialAlertDialog.App.Body</item>
+        <item name="buttonBarPositiveButtonStyle">@style/Widget.App.DialogButton</item>
+        <item name="buttonBarNegativeButtonStyle">@style/Widget.App.DialogButton.Dim</item>
+        <item name="buttonBarNeutralButtonStyle">@style/Widget.App.DialogButton.Dim</item>
+    </style>
+    <style name="ShapeAppearance.App.Dialog" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+    <style name="MaterialAlertDialog.App.Title" parent="MaterialAlertDialog.MaterialComponents.Title.Text">
+        <item name="android:fontFamily">@font/doto_extrabold</item>
+        <item name="android:textSize">22sp</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+    </style>
+    <style name="MaterialAlertDialog.App.Body" parent="MaterialAlertDialog.MaterialComponents.Body.Text">
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:lineSpacingMultiplier">1.3</item>
+        <item name="android:textColor">@color/primaryTextColorMuted</item>
+    </style>
+    <style name="Widget.App.DialogButton" parent="Widget.MaterialComponents.Button.TextButton.Dialog">
+        <!-- The outlined default button style would otherwise leak its stroke in -->
+        <item name="strokeWidth">0dp</item>
+        <item name="android:textColor">@color/ledOnlineColor</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Button</item>
+        <item name="rippleColor">#1F43D9A3</item>
+    </style>
+    <style name="Widget.App.DialogButton.Dim">
+        <item name="android:textColor">@color/primaryTextColorMuted</item>
+    </style>
+
     <!-- Bottom text tabs -->
     <style name="Widget.App.ConsoleTab" parent="">
         <item name="android:layout_width">0dp</item>
@@ -181,6 +217,8 @@
         <item name="android:textSize">12.5sp</item>
     </style>
     <style name="Widget.App.Snackbar.Button" parent="Widget.MaterialComponents.Button.TextButton.Snackbar">
+        <!-- The outlined default button style would otherwise leak its stroke in -->
+        <item name="strokeWidth">0dp</item>
         <item name="android:textColor">@color/ledOnlineColor</item>
     </style>
 </resources>
