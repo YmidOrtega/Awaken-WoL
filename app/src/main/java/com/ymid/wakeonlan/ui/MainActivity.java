@@ -4,23 +4,22 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.annotation.IdRes;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.view.GravityCompat;
+import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.navigation.NavController;
+import androidx.navigation.NavDestination;
+import androidx.navigation.NavOptions;
 import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.google.common.collect.Sets;
-
-import java.util.Set;
 
 import com.ymid.wakeonlan.BuildConfig;
 import com.ymid.wakeonlan.R;
@@ -30,10 +29,15 @@ import com.ymid.wakeonlan.shortcuts.DynamicShortcutManager;
 import com.ymid.wakeonlan.ui.onboarding.OnboardingActivity;
 import com.ymid.wakeonlan.update.InAppUpdateManager;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost {
 
-    private AppBarConfiguration appBarConfiguration;
+    private static final String ISSUES_URL = "https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues";
+    private static final int MORE_BACKUP = 1;
+    private static final int MORE_SETTINGS = 2;
+    private static final int MORE_ISSUES = 3;
+
     private ActivityMainBinding binding;
+    private NavController navController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,67 +52,107 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         getWindow().setStatusBarColor(Color.TRANSPARENT);
-
         setContentView(binding.getRoot());
 
-        binding.drawerLayout.setStatusBarBackgroundColor(Color.TRANSPARENT);
-
-        setVersionInformation();
-
-        setSupportActionBar(binding.toolbar);
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.drawerLayout, (v, insets) -> {
-            int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            binding.appBarLayout.setPadding(
-                    binding.appBarLayout.getPaddingLeft(), topInset,
-                    binding.appBarLayout.getPaddingRight(), binding.appBarLayout.getPaddingBottom());
-            ViewCompat.dispatchApplyWindowInsets(binding.navigationView, insets);
-            return WindowInsetsCompat.CONSUMED;
-        });
+        applyWindowInsets();
 
         LauncherIconManager.ensureValidState(this);
-        initializeNavController();
+        initializeNavigation();
         initializeShortcuts();
         InAppUpdateManager.attach(this);
         InAppUpdateManager.checkForUpdate(this);
     }
 
-    private void setVersionInformation() {
-        View headerView = binding.navigationView.getHeaderView(0);
-
-        TextView versionView = headerView.findViewById(R.id.navigation_header_version);
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.navigationView, (v, insets) -> {
-            int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
-            int extraPadding = getResources().getDimensionPixelSize(R.dimen.navigation_header_top_padding);
-            headerView.setPadding(headerView.getPaddingLeft(), topInset + extraPadding,
-                    headerView.getPaddingRight(), headerView.getPaddingBottom());
-            return insets;
+    private void applyWindowInsets() {
+        int headerTop = binding.consoleHeader.getPaddingTop();
+        ViewCompat.setOnApplyWindowInsetsListener(binding.mainRoot, (v, insets) -> {
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            binding.consoleHeader.setPadding(binding.consoleHeader.getPaddingLeft(), headerTop + bars.top,
+                    binding.consoleHeader.getPaddingRight(), binding.consoleHeader.getPaddingBottom());
+            // While typing a command the tabs step aside so the command bar sits right on the keyboard
+            boolean imeVisible = ime.bottom > bars.bottom;
+            binding.consoleTabs.setVisibility(imeVisible ? View.GONE : View.VISIBLE);
+            binding.consoleTabsDivider.setVisibility(imeVisible ? View.GONE : View.VISIBLE);
+            binding.consoleTabs.setPadding(0, 0, 0, bars.bottom);
+            v.setPadding(bars.left, 0, bars.right, imeVisible ? ime.bottom : 0);
+            return WindowInsetsCompat.CONSUMED;
         });
-
-        versionView.setText(getString(R.string.drawer_menu_header_version, BuildConfig.VERSION_NAME));
     }
 
-    private void initializeNavController() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(getMenuIds()).setOpenableLayout(binding.drawerLayout).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
-        NavigationUI.setupWithNavController(binding.navigationView, navController);
+    private void initializeNavigation() {
+        navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
 
-        setGithubShortcut();
+        binding.tabDevices.setOnClickListener(v -> navigateTo(R.id.deviceListFragment));
+        binding.tabScan.setOnClickListener(v -> navigateTo(R.id.networkScanFragment));
+        binding.tabHistory.setOnClickListener(v -> navigateTo(R.id.historyFragment));
+        binding.tabMore.setOnClickListener(this::showMoreMenu);
+
+        navController.addOnDestinationChangedListener((controller, destination, arguments) -> onDestinationChanged(destination));
     }
 
-    private void setGithubShortcut() {
-        binding.navigationView.getMenu().findItem(R.id.githubShortcut).setOnMenuItemClickListener(item -> {
-            Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues"));
-            startActivity(browserIntent);
-            return false;
-        });
+    private void navigateTo(@IdRes int destinationId) {
+        NavDestination current = navController.getCurrentDestination();
+        if (current != null && current.getId() == destinationId) {
+            return;
+        }
+        NavOptions options = new NavOptions.Builder()
+                .setLaunchSingleTop(true)
+                .setRestoreState(true)
+                .setPopUpTo(navController.getGraph().getStartDestinationId(), false, true)
+                .build();
+        navController.navigate(destinationId, null, options);
+    }
 
-        binding.navigationView.getMenu().findItem(R.id.settingsActivity).setOnMenuItemClickListener(item -> {
-            startActivity(new Intent(this, SettingsActivity.class));
-            return false;
+    private void onDestinationChanged(NavDestination destination) {
+        int id = destination.getId();
+        binding.tabDevices.setSelected(id == R.id.deviceListFragment);
+        binding.tabScan.setSelected(id == R.id.networkScanFragment);
+        binding.tabHistory.setSelected(id == R.id.historyFragment);
+        binding.tabMore.setSelected(id == R.id.backupFragment);
+
+        CharSequence title = id == R.id.deviceListFragment ? getString(R.string.app_name) : destination.getLabel();
+        binding.headerTitle.setText(title);
+        setHeaderSubtitle(null);
+        setHeaderCounter(null);
+    }
+
+    private void showMoreMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        Menu menu = popup.getMenu();
+        menu.add(Menu.NONE, MORE_BACKUP, 0, R.string.drawer_menu_item_backup);
+        menu.add(Menu.NONE, MORE_SETTINGS, 1, R.string.drawer_menu_item_settings);
+        menu.add(Menu.NONE, MORE_ISSUES, 2, R.string.drawer_menu_item_github);
+        menu.add(Menu.NONE, Menu.NONE, 3, getString(R.string.drawer_menu_header_version, BuildConfig.VERSION_NAME)).setEnabled(false);
+        popup.setOnMenuItemClickListener(item -> {
+            switch (item.getItemId()) {
+                case MORE_BACKUP:
+                    navigateTo(R.id.backupFragment);
+                    return true;
+                case MORE_SETTINGS:
+                    startActivity(new Intent(this, SettingsActivity.class));
+                    return true;
+                case MORE_ISSUES:
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(ISSUES_URL)));
+                    return true;
+                default:
+                    return false;
+            }
         });
+        popup.show();
+    }
+
+    @Override
+    public void setHeaderSubtitle(@Nullable CharSequence subtitle) {
+        TextView view = binding.headerSubtitle;
+        view.setText(subtitle);
+        view.setVisibility(subtitle == null ? View.GONE : View.VISIBLE);
+    }
+
+    @Override
+    public void setHeaderCounter(@Nullable CharSequence counter) {
+        binding.headerCounter.setText(counter);
+        binding.headerCounterGroup.setVisibility(counter == null ? View.GONE : View.VISIBLE);
     }
 
     private void initializeShortcuts() {
@@ -116,10 +160,6 @@ public class MainActivity extends AppCompatActivity {
         DeviceRepository.getInstance(this)
                 .getAllAsObservable()
                 .observe(this, devices -> dynamicShortcutManager.updateShortcuts(this, devices));
-    }
-
-    private Set<Integer> getMenuIds() {
-        return Sets.newHashSet(R.id.deviceListFragment, R.id.backupFragment, R.id.networkScanFragment, R.id.historyFragment);
     }
 
     @Override
@@ -139,21 +179,5 @@ public class MainActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         InAppUpdateManager.detach();
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration);
-    }
-
-    @Override
-    public void onBackPressed() {
-        DrawerLayout drawer = binding.drawerLayout;
-        if (drawer.isDrawerOpen(GravityCompat.START)) {
-            drawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
     }
 }

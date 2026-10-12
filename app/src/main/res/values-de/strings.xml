@@ -182,4 +182,11 @@
     <string name="notification_confirm_wake_title">%1$s starten?</string>
     <string name="notification_confirm_shutdown_title">%1$s herunterfahren?</string>
     <string name="notification_confirm_action_body">Tippen, um diese Aktion zu bestätigen</string>
+
+    <!-- Console UI -->
+    <string name="header_online_label">ONLINE</string>
+    <string name="tab_devices">geräte</string>
+    <string name="tab_scan">scannen</string>
+    <string name="tab_history">verlauf</string>
+    <string name="tab_more">mehr</string>
 </resources>

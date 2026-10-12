@@ -240,4 +240,11 @@
     <string name="notification_confirm_wake_title">Wake %1$s?</string>
     <string name="notification_confirm_shutdown_title">Shut down %1$s?</string>
     <string name="notification_confirm_action_body">Tap to confirm this action</string>
+
+    <!-- Console UI -->
+    <string name="header_online_label">ONLINE</string>
+    <string name="tab_devices">devices</string>
+    <string name="tab_scan">scan</string>
+    <string name="tab_history">history</string>
+    <string name="tab_more">more</string>
 </resources>

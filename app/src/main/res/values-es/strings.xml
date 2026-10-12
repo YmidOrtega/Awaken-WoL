@@ -123,4 +123,11 @@
     <string name="notification_confirm_wake_title">¿Encender %1$s?</string>
     <string name="notification_confirm_shutdown_title">¿Apagar %1$s?</string>
     <string name="notification_confirm_action_body">Toca para confirmar esta acción</string>
+
+    <!-- Console UI -->
+    <string name="header_online_label">EN LÍNEA</string>
+    <string name="tab_devices">equipos</string>
+    <string name="tab_scan">escanear</string>
+    <string name="tab_history">historial</string>
+    <string name="tab_more">más</string>
 </resources>
