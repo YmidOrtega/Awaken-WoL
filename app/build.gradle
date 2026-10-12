@@ -26,6 +26,10 @@ android {
             excludes += 'META-INF/LICENSE-notice.md'
         }
     }
+    testOptions {
+        // Robolectric needs merged resources and the manifest to resolve shortcuts.xml for App Actions tests
+        unitTests.includeAndroidResources = true
+    }
     buildToolsVersion '35.0.0'
 }
 
@@ -85,6 +89,9 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:5.23.0'
     testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0'
     testImplementation 'androidx.arch.core:core-testing:2.2.0'
+    testImplementation 'org.robolectric:robolectric:4.14.1'
+    testImplementation 'androidx.test:core:1.6.1'
+    testImplementation 'com.google.assistant.appactions:testing:1.0.0'
 
     androidTestImplementation 'androidx.test.ext:junit:1.2.1'
     androidTestImplementation 'androidx.test:runner:1.6.2'
