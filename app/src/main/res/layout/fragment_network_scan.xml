@@ -49,7 +49,7 @@
                 tools:visibility="visible" />
         </LinearLayout>
 
-        <com.ymid.wakeonlan.ui.scan.SegmentBarView
+        <com.ymid.wakeonlan.ui.SegmentBarView
             android:id="@+id/scan_progress_bar"
             android:layout_width="match_parent"
             android:layout_height="6dp"

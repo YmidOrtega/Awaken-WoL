@@ -132,6 +132,18 @@
         <item name="android:textAppearance">@style/TextAppearance.App.Button</item>
     </style>
 
+    <!-- Filled green button for the one primary action on a screen -->
+    <style name="Widget.App.Button.Primary" parent="Widget.MaterialComponents.Button">
+        <!-- The outlined default button style would otherwise leak its stroke in -->
+        <item name="strokeWidth">0dp</item>
+        <item name="backgroundTint">@color/ledOnlineColor</item>
+        <item name="android:textColor">@color/onAccentColor</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Button</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
     <!-- Dot-matrix screen title for activities that keep a toolbar -->
     <style name="TextAppearance.App.Display.ToolbarTitle">
         <item name="android:textSize">22sp</item>
