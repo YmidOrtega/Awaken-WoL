@@ -202,7 +202,7 @@
     <!-- Widget -->
     <string name="widget_label">Device Wake</string>
     <string name="widget_device_none">No device set</string>
-    <string name="widget_wake">Wake</string>
+    <string name="widget_wake">› wake</string>
     <string name="widget_configure_title">Select a device</string>
     <string name="widget_configure_no_devices">No devices configured. Add a device first.</string>
 

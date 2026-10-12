@@ -144,7 +144,7 @@
     <!-- Widget -->
     <string name="widget_label">Gerät wecken</string>
     <string name="widget_device_none">Kein Gerät</string>
-    <string name="widget_wake">Einschalten</string>
+    <string name="widget_wake">› einschalten</string>
     <string name="widget_configure_title">Gerät auswählen</string>
     <string name="widget_configure_no_devices">Keine Geräte konfiguriert. Füge zuerst ein Gerät hinzu.</string>
 
