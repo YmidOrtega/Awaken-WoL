@@ -47,6 +47,16 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <!-- Invisible trampoline: keeps the calling screen in place instead of sliding to a blank activity. -->
+    <style name="Theme.WakeOnLan.Invisible" parent="Theme.WakeOnLan">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
+
     <style name="Theme.WakeOnLan.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>

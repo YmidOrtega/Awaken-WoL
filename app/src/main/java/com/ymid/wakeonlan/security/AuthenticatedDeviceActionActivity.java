@@ -295,6 +295,13 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
                 == PackageManager.PERMISSION_GRANTED;
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        // The theme drops the window animations; this also covers launchers that apply their own
+        overridePendingTransition(0, 0);
+    }
+
     private void showErrorAndFinish() {
         showActionError();
         finish();

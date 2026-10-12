@@ -88,7 +88,7 @@
         <activity
             android:name=".security.AuthenticatedDeviceActionActivity"
             android:exported="false"
-            android:theme="@style/Theme.WakeOnLan.NoDrawerActivity" />
+            android:theme="@style/Theme.WakeOnLan.Invisible" />
 
         <activity
             android:name=".ui.onboarding.OnboardingActivity"
