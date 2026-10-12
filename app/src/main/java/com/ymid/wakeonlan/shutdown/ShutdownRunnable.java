@@ -48,6 +48,7 @@ public class ShutdownRunnable implements Runnable {
     @Override
     public void run() {
         ByteArrayOutputStream commandOutputStream = new ByteArrayOutputStream();
+        boolean commandSent = false;
 
         try (SSHClient sshClient = new SSHClient()) {
             if (hostKeyVerifier == null) {
@@ -77,6 +78,7 @@ public class ShutdownRunnable implements Runnable {
             }
 
             Session.Command exec = session.exec(shutdownModel.getCommand());
+            commandSent = true;
             new StreamCopier(exec.getInputStream(), commandOutputStream, LoggerFactory.DEFAULT)
                     .bufSize(exec.getLocalMaxPacketSize())
                     .spawn("stdout");
@@ -98,7 +100,7 @@ public class ShutdownRunnable implements Runnable {
                 return;
             }
 
-            if (Throwables.getRootCause(e) instanceof TransportException) {
+            if (commandSent && Throwables.getRootCause(e) instanceof TransportException) {
                 shutdownExecutorListener.onCommandExecuteSuccessful();
                 return;
             }
