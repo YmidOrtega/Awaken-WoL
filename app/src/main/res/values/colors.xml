@@ -28,10 +28,6 @@
     <color name="actionShutdownColor">#F06B7E</color>
     <color name="toolbarColor">#2a3d5b</color>
 
-    <color name="ic_launcher_background_on">#1A2B22</color>
-    <color name="ic_launcher_background_off">#2B2E45</color>
-    <color name="ic_launcher_foreground_color">#F2F2F7</color>
-
     <color name="result_error">#FF5252</color>
     <color name="errorColor">#FF5252</color>
 </resources>
