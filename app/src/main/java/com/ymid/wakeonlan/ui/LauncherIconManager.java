@@ -1,9 +1,15 @@
 package com.ymid.wakeonlan.ui;
 
+import android.app.Activity;
+import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Bundle;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -21,8 +27,53 @@ public final class LauncherIconManager {
     private LauncherIconManager() {
     }
 
-    public static void setAppInForeground(Context context, boolean inForeground) {
-        appContext = context.getApplicationContext();
+    /**
+     * Tracks whether any activity of the app is visible. Switching the launcher alias removes the
+     * task, so icon changes wait until the whole app is in the background, not just MainActivity
+     * (opening Settings or the device editor used to close the app).
+     */
+    public static void register(Application application) {
+        appContext = application.getApplicationContext();
+        application.registerActivityLifecycleCallbacks(new Application.ActivityLifecycleCallbacks() {
+            private int startedActivities = 0;
+
+            @Override
+            public void onActivityStarted(@NonNull Activity activity) {
+                startedActivities++;
+                setAppInForeground(true);
+            }
+
+            @Override
+            public void onActivityStopped(@NonNull Activity activity) {
+                startedActivities = Math.max(0, startedActivities - 1);
+                if (startedActivities == 0 && !activity.isChangingConfigurations()) {
+                    setAppInForeground(false);
+                }
+            }
+
+            @Override
+            public void onActivityCreated(@NonNull Activity activity, @Nullable Bundle savedInstanceState) {
+            }
+
+            @Override
+            public void onActivityResumed(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivityPaused(@NonNull Activity activity) {
+            }
+
+            @Override
+            public void onActivitySaveInstanceState(@NonNull Activity activity, @NonNull Bundle outState) {
+            }
+
+            @Override
+            public void onActivityDestroyed(@NonNull Activity activity) {
+            }
+        });
+    }
+
+    private static void setAppInForeground(boolean inForeground) {
         appInForeground = inForeground;
 
         if (!inForeground && pendingState != null) {

@@ -165,14 +165,7 @@ public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost
     @Override
     protected void onResume() {
         super.onResume();
-        LauncherIconManager.setAppInForeground(this, true);
         InAppUpdateManager.resumeIfUpdateDownloaded(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LauncherIconManager.setAppInForeground(this, false);
     }
 
     @Override

@@ -5,12 +5,14 @@ import com.ymid.wakeonlan.config.RemoteConfigManager
 import com.ymid.wakeonlan.crash.CrashReporter
 import com.ymid.wakeonlan.monitoring.MonitoringScheduler
 import com.ymid.wakeonlan.persistence.DatabaseInstanceManager
+import com.ymid.wakeonlan.ui.LauncherIconManager
 import com.ymid.wakeonlan.ui.notifications.NotificationHelper
 import java.util.concurrent.Executors
 
 class AwekenApplication : Application() {
     override fun onCreate() {
         super.onCreate()
+        LauncherIconManager.register(this)
         CrashReporter.initialize()
         RemoteConfigManager.initialize()
         NotificationHelper.createChannels(this)
