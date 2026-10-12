@@ -22,8 +22,16 @@ public final class ConsoleCommand {
 
     public enum Error { NONE, EMPTY, UNKNOWN_VERB, MISSING_DEVICE, DEVICE_NOT_FOUND }
 
-    private static final Set<String> WAKE_VERBS = verbs("wake", "on", "encender", "prender", "despertar", "wecken", "einschalten");
-    private static final Set<String> SHUTDOWN_VERBS = verbs("off", "shutdown", "apagar", "aus", "herunterfahren");
+    // Infinitives for typed commands, imperatives for spoken ones ("Apaga Ubuntu")
+    private static final Set<String> WAKE_VERBS = verbs("wake", "on", "encender", "enciende", "prender", "prende",
+            "despertar", "despierta", "wecken", "wecke", "einschalten");
+    private static final Set<String> SHUTDOWN_VERBS = verbs("off", "shutdown", "apagar", "apaga", "aus", "herunterfahren");
+    /** Two-word verbs spoken in English, folded into one token before parsing. */
+    private static final String[][] PHRASAL_VERBS = {
+            {"turn on", "on"}, {"power on", "on"}, {"switch on", "on"},
+            {"turn off", "off"}, {"power off", "off"}, {"switch off", "off"}, {"shut down", "off"}};
+    /** Fillers people say before a device name: "apaga mi Ubuntu", "turn on the NAS". */
+    private static final Set<String> FILLERS = verbs("el", "la", "mi", "the", "my", "den", "die", "das", "mein", "meinen");
     private static final Set<String> EDIT_VERBS = verbs("edit", "editar", "bearbeiten");
     private static final Set<String> ADD_VERBS = verbs("add", "new", "agregar", "añadir", "nuevo", "hinzufügen");
 
@@ -51,9 +59,10 @@ public final class ConsoleCommand {
             return new ConsoleCommand(null, null, Error.EMPTY, "");
         }
 
-        String[] parts = text.split("\\s+", 2);
+        String normalized = foldPhrasalVerb(text.replaceAll("\\s+", " "));
+        String[] parts = normalized.split(" ", 2);
         Action action = actionFor(parts[0].toLowerCase(Locale.ROOT));
-        String query = parts.length > 1 ? parts[1].trim() : "";
+        String query = parts.length > 1 ? stripFillers(parts[1].trim()) : "";
         if (action == null) {
             return new ConsoleCommand(null, null, Error.UNKNOWN_VERB, query);
         }
@@ -92,6 +101,25 @@ public final class ConsoleCommand {
             }
         }
         return prefixMatches.size() == 1 ? prefixMatches.get(0) : null;
+    }
+
+    private static String foldPhrasalVerb(String text) {
+        String lower = text.toLowerCase(Locale.ROOT);
+        for (String[] phrasal : PHRASAL_VERBS) {
+            if (lower.equals(phrasal[0]) || lower.startsWith(phrasal[0] + " ")) {
+                return phrasal[1] + text.substring(phrasal[0].length());
+            }
+        }
+        return text;
+    }
+
+    private static String stripFillers(String query) {
+        String[] words = query.split(" ");
+        int start = 0;
+        while (start < words.length - 1 && FILLERS.contains(words[start].toLowerCase(Locale.ROOT))) {
+            start++;
+        }
+        return String.join(" ", Arrays.copyOfRange(words, start, words.length));
     }
 
     @Nullable

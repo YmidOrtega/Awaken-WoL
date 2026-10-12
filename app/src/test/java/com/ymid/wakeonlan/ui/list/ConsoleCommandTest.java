@@ -63,6 +63,36 @@ public class ConsoleCommandTest {
         assertEquals(ConsoleCommand.Error.MISSING_DEVICE, ConsoleCommand.parse("encender", devices).error);
     }
 
+    // ── spoken commands ──────────────────────────────────────────────────────
+
+    @Test
+    public void parse_spanishImperatives_areAccepted() {
+        assertEquals(ConsoleCommand.Action.SHUTDOWN, ConsoleCommand.parse("Apaga Ubuntu", devices).action);
+        assertEquals(ConsoleCommand.Action.WAKE, ConsoleCommand.parse("Enciende Ubuntu", devices).action);
+        assertEquals(ConsoleCommand.Action.WAKE, ConsoleCommand.parse("prende ubuntu", devices).action);
+    }
+
+    @Test
+    public void parse_englishPhrasalVerbs_areFolded() {
+        ConsoleCommand command = ConsoleCommand.parse("turn off gaming pc", devices);
+        assertEquals(ConsoleCommand.Action.SHUTDOWN, command.action);
+        assertSame(gamingPc, command.device);
+        assertEquals(ConsoleCommand.Action.WAKE, ConsoleCommand.parse("Turn On Ubuntu", devices).action);
+        assertEquals(ConsoleCommand.Action.SHUTDOWN, ConsoleCommand.parse("shut down ubuntu", devices).action);
+    }
+
+    @Test
+    public void parse_leadingFillers_areIgnored() {
+        assertSame(ubuntu, ConsoleCommand.parse("apaga mi Ubuntu", devices).device);
+        assertSame(gamingPc, ConsoleCommand.parse("turn on the gaming pc", devices).device);
+    }
+
+    @Test
+    public void parse_fillerAlone_isKeptAsDeviceName() {
+        Device myDevice = device(4, "Mi");
+        assertSame(myDevice, ConsoleCommand.parse("apaga mi", Arrays.asList(ubuntu, myDevice)).device);
+    }
+
     // ── device matching ──────────────────────────────────────────────────────
 
     @Test
