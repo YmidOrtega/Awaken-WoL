@@ -280,4 +280,5 @@
     </plurals>
     <string name="backup_action_export">› export backup</string>
     <string name="backup_action_import">› import backup</string>
+    <string name="settings_navigate_back">Back</string>
 </resources>

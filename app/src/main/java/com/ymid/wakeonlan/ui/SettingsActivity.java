@@ -14,6 +14,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -45,16 +46,19 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         WindowCompat.setDecorFitsSystemWindows(getWindow(), true);
+        setContentView(R.layout.activity_settings);
+        findViewById(R.id.settings_back).setOnClickListener(v -> finish());
         getSupportFragmentManager()
                 .beginTransaction()
-                .replace(android.R.id.content, new SettingsFragment())
+                .replace(R.id.settings_container, new SettingsFragment())
                 .commit();
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+        View root = findViewById(R.id.settings_root);
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
             int topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top;
             v.setPadding(v.getPaddingLeft(), topInset, v.getPaddingRight(), v.getPaddingBottom());
             return insets;
         });
-        ViewCompat.requestApplyInsets(findViewById(android.R.id.content));
+        ViewCompat.requestApplyInsets(root);
     }
 
     public static class SettingsFragment extends PreferenceFragmentCompat implements TrustedWifiDialogFragment.Callback {

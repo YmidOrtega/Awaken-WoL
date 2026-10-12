@@ -219,4 +219,5 @@
     </plurals>
     <string name="backup_action_export">› Sicherung exportieren</string>
     <string name="backup_action_import">› Sicherung importieren</string>
+    <string name="settings_navigate_back">Zurück</string>
 </resources>

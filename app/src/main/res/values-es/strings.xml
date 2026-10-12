@@ -160,4 +160,5 @@
     </plurals>
     <string name="backup_action_export">› exportar respaldo</string>
     <string name="backup_action_import">› importar respaldo</string>
+    <string name="settings_navigate_back">Volver</string>
 </resources>
