@@ -226,4 +226,13 @@
     <string name="shortcut_voice_wake">Schalte %1$s ein</string>
     <string name="shortcut_label_shutdown">%1$s herunterfahren</string>
     <string name="shortcut_voice_shutdown">Schalte %1$s aus</string>
+
+    <!-- Assistant inventory entry for the network scan (res/xml/shortcuts.xml) -->
+    <string name="assistant_feature_scan_short">Scannen</string>
+    <string name="assistant_feature_scan_long">Netzwerk scannen</string>
+    <string-array name="assistant_feature_scan_synonyms">
+        <item>Netzwerkscan</item>
+        <item>Netzwerk scannen</item>
+        <item>Geräte suchen</item>
+    </string-array>
 </resources>

@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
     Voice assistant capability (Google Assistant / Gemini App Actions).
-    The spoken feature ("apagar Ubuntu", "turn on the NAS") reaches DeepLinkHandlerActivity whole
-    and is parsed like a command bar entry. Per-device dynamic shortcuts bind to the same
-    capability with exact phrases, see DeviceShortcutMapper.
+    OPEN_APP_FEATURE only fulfils values from an inline inventory, and passes the matching shortcut
+    id rather than the spoken words: "SCAN" from the static shortcut below, or "wake_<id>" /
+    "shutdown_<id>" from the per-device dynamic shortcuts (DeviceShortcutMapper).
+    DeepLinkHandlerActivity resolves the id through AssistantFeature.
 -->
 <shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
     <capability android:name="actions.intent.OPEN_APP_FEATURE">
@@ -17,4 +18,16 @@
                 android:key="name" />
         </intent>
     </capability>
+
+    <!-- Inventory only: without an <intent> it never shows in the launcher's shortcut menu -->
+    <shortcut
+        android:shortcutId="SCAN"
+        android:shortcutLongLabel="@string/assistant_feature_scan_long"
+        android:shortcutShortLabel="@string/assistant_feature_scan_short">
+        <capability-binding android:key="actions.intent.OPEN_APP_FEATURE">
+            <parameter-binding
+                android:key="feature"
+                android:value="@array/assistant_feature_scan_synonyms" />
+        </capability-binding>
+    </shortcut>
 </shortcuts>

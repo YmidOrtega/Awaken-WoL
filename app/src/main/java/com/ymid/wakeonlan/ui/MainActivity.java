@@ -31,6 +31,8 @@ import com.ymid.wakeonlan.update.InAppUpdateManager;
 
 public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost {
 
+    /** Set by the Assistant's "network scan" feature to land on the scan tab. */
+    public static final String EXTRA_OPEN_SCAN = "openScan";
     private static final String ISSUES_URL = "https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues";
     private static final int MORE_BACKUP = 1;
     private static final int MORE_SETTINGS = 2;
@@ -89,6 +91,20 @@ public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost
         binding.tabMore.setOnClickListener(this::showMoreMenu);
 
         navController.addOnDestinationChangedListener((controller, destination, arguments) -> onDestinationChanged(destination));
+        handleOpenScanRequest(getIntent());
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        handleOpenScanRequest(intent);
+    }
+
+    private void handleOpenScanRequest(@Nullable Intent intent) {
+        if (navController != null && intent != null && intent.getBooleanExtra(EXTRA_OPEN_SCAN, false)) {
+            intent.removeExtra(EXTRA_OPEN_SCAN);
+            navigateTo(R.id.networkScanFragment);
+        }
     }
 
     private void navigateTo(@IdRes int destinationId) {

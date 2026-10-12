@@ -193,6 +193,10 @@
             </intent-filter>
         </receiver>
 
+        <!-- App Actions capability; also declared on the launcher aliases, as the Assistant requires both -->
+        <meta-data
+            android:name="android.app.shortcuts"
+            android:resource="@xml/shortcuts" />
         <meta-data
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />

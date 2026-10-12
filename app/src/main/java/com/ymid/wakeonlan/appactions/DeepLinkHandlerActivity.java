@@ -16,13 +16,14 @@ import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.security.AuthenticatedDeviceActionActivity;
+import com.ymid.wakeonlan.ui.MainActivity;
 import com.ymid.wakeonlan.ui.list.ConsoleCommand;
 
 public class DeepLinkHandlerActivity extends AppCompatActivity {
 
     /**
-     * wakeonlan://action/feature?name=apagar%20ubuntu — the whole phrase an assistant heard,
-     * parsed like a command bar entry so "Apaga Ubuntu" and "turn on the NAS" both work.
+     * wakeonlan://action/feature?name=… from the Assistant's OPEN_APP_FEATURE capability:
+     * a shortcut id (see AssistantFeature) or, failing that, a phrase like "Apaga Ubuntu".
      */
     private static final String FEATURE_ACTION = "feature";
 
@@ -57,7 +58,7 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
 
     private void handleAction(String action, String name, List<Device> devices) {
         if (FEATURE_ACTION.equalsIgnoreCase(action)) {
-            handleSpokenCommand(name, devices);
+            handleAssistantFeature(name, devices);
             return;
         }
 
@@ -84,6 +85,42 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
         }
 
         finish();
+    }
+
+    private void handleAssistantFeature(String value, List<Device> devices) {
+        AssistantFeature feature = AssistantFeature.parse(value);
+        switch (feature.kind) {
+            case WAKE_DEVICE:
+            case SHUTDOWN_DEVICE:
+                Device device = findById(devices, feature.deviceId);
+                if (device == null) {
+                    Toast.makeText(this, getString(R.string.command_device_not_found, value), Toast.LENGTH_LONG).show();
+                } else if (feature.kind == AssistantFeature.Kind.WAKE_DEVICE) {
+                    AuthenticatedDeviceActionActivity.startWake(this, device.id, true);
+                } else {
+                    AuthenticatedDeviceActionActivity.startShutdown(this, device.id, true);
+                }
+                break;
+            case OPEN_SCAN:
+                startActivity(new Intent(this, MainActivity.class)
+                        .putExtra(MainActivity.EXTRA_OPEN_SCAN, true)
+                        .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                break;
+            default:
+                handleSpokenCommand(feature.value, devices);
+                return;
+        }
+        finish();
+    }
+
+    @Nullable
+    private static Device findById(List<Device> devices, int id) {
+        for (Device device : devices) {
+            if (device != null && device.id == id) {
+                return device;
+            }
+        }
+        return null;
     }
 
     private void handleSpokenCommand(String phrase, List<Device> devices) {

@@ -285,4 +285,14 @@
     <string name="shortcut_voice_wake">Turn on %1$s</string>
     <string name="shortcut_label_shutdown">Shut down %1$s</string>
     <string name="shortcut_voice_shutdown">Turn off %1$s</string>
+
+    <!-- Assistant inventory entry for the network scan (res/xml/shortcuts.xml) -->
+    <string name="assistant_feature_scan_short">Scan</string>
+    <string name="assistant_feature_scan_long">Scan the network</string>
+    <string-array name="assistant_feature_scan_synonyms">
+        <item>network scan</item>
+        <item>scan the network</item>
+        <item>scan network</item>
+        <item>find devices</item>
+    </string-array>
 </resources>

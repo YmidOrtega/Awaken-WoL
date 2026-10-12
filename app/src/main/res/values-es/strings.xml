@@ -190,4 +190,14 @@
     <string name="shortcut_voice_wake">Enciende %1$s</string>
     <string name="shortcut_label_shutdown">Apagar %1$s</string>
     <string name="shortcut_voice_shutdown">Apaga %1$s</string>
+
+    <!-- Assistant inventory entry for the network scan (res/xml/shortcuts.xml) -->
+    <string name="assistant_feature_scan_short">Escanear</string>
+    <string name="assistant_feature_scan_long">Escanear la red</string>
+    <string-array name="assistant_feature_scan_synonyms">
+        <item>escaneo de red</item>
+        <item>escanear la red</item>
+        <item>escanear red</item>
+        <item>buscar equipos</item>
+    </string-array>
 </resources>
