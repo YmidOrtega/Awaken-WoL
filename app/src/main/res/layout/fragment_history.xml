@@ -10,7 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
-        android:paddingBottom="16dp"
         android:contentDescription="@string/title_fragment_history" />
 
     <LinearLayout
@@ -26,20 +25,20 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:fontFamily="@font/doto_extrabold"
+            android:gravity="center"
             android:text="@string/history_empty_title"
-            android:textColor="@color/primaryTextColor"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center" />
+            android:textAppearance="@style/TextAppearance.App.Display"
+            android:textSize="20sp" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:gravity="center"
             android:text="@string/history_empty_hint"
-            android:textColor="@color/primaryTextColorMuted"
-            android:textSize="14sp"
-            android:gravity="center" />
+            android:textAppearance="@style/TextAppearance.App.Meta"
+            android:textSize="12sp" />
 
     </LinearLayout>
 

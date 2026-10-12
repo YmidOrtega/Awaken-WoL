@@ -274,4 +274,8 @@
     <string name="scan_subtitle_running">searching %1$s</string>
     <string name="scan_subtitle_done">scan complete · %1$s</string>
     <string name="scan_found_caption">FOUND</string>
+    <plurals name="history_entry_count">
+        <item quantity="one">%d action logged</item>
+        <item quantity="other">%d actions logged</item>
+    </plurals>
 </resources>

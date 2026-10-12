@@ -154,4 +154,8 @@
     <string name="scan_subtitle_running">buscando en %1$s</string>
     <string name="scan_subtitle_done">escaneo completo · %1$s</string>
     <string name="scan_found_caption">ENCONTRADOS</string>
+    <plurals name="history_entry_count">
+        <item quantity="one">%d acción registrada</item>
+        <item quantity="other">%d acciones registradas</item>
+    </plurals>
 </resources>

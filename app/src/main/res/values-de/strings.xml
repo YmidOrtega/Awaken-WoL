@@ -213,4 +213,8 @@
     <string name="scan_subtitle_running">suche in %1$s</string>
     <string name="scan_subtitle_done">Scan fertig · %1$s</string>
     <string name="scan_found_caption">GEFUNDEN</string>
+    <plurals name="history_entry_count">
+        <item quantity="one">%d Aktion protokolliert</item>
+        <item quantity="other">%d Aktionen protokolliert</item>
+    </plurals>
 </resources>
