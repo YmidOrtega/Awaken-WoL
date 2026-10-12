@@ -67,16 +67,9 @@
     <string name="modify_device_test_shutdown">Test shutdown command</string>
 
     <!-- Device List -->
-    <string name="device_list_startup">Turn on</string>
-    <string name="device_list_shutdown">Shutdown</string>
     <string name="device_list_empty_title">No devices set up</string>
     <string name="device_list_empty_hint">Tap the \"+\" icon to add your first device</string>
     <string name="device_list_empty_image">Computer Illustration</string>
-    <string name="device_list_edit">Edit</string>
-    <string name="device_status_online_with_latency">Online · Network: %1$d ms</string>
-    <string name="device_status_online_without_latency">Online · Network: measuring…</string>
-    <string name="device_status_offline">Offline · No response</string>
-    <string name="device_status_unknown">Status unknown</string>
 
     <!-- Tile -->
     <string name="tile_name_device_one">WOL Device 1</string>
@@ -242,9 +235,32 @@
     <string name="notification_confirm_action_body">Tap to confirm this action</string>
 
     <!-- Console UI -->
+    <string name="device_latency_unit" translatable="false">ms</string>
+    <string name="device_status_short_unknown" translatable="false">· · ·</string>
+    <string name="device_list_empty_figure" translatable="false">0/0</string>
+    <string name="device_action_wake">› turn on</string>
+    <string name="device_action_shutdown">› shut down (ssh)</string>
+    <string name="device_action_edit">› edit</string>
+    <string name="device_waking_log">» packet sent · waiting for reply</string>
+    <string name="device_status_short_offline">offline</string>
+    <string name="device_status_short_waking">waking</string>
     <string name="header_online_label">ONLINE</string>
+    <string name="header_network">network %1$s</string>
+    <string name="header_no_network">no local network</string>
     <string name="tab_devices">devices</string>
     <string name="tab_scan">scan</string>
     <string name="tab_history">history</string>
     <string name="tab_more">more</string>
+    <string name="command_hint_default">type a command</string>
+    <string name="command_unknown">Unknown command. Try: wake, off, edit, add</string>
+    <string name="command_device_not_found">No device named “%1$s”</string>
+    <string name="command_shutdown_unavailable">%1$s has no SSH shutdown set up</string>
+    <string name="command_verb_wake">wake</string>
+    <string name="command_verb_off">off</string>
+    <string name="command_verb_edit">edit</string>
+    <string name="command_verb_add">add</string>
+    <plurals name="header_device_count">
+        <item quantity="one">%d device</item>
+        <item quantity="other">%d devices</item>
+    </plurals>
 </resources>

@@ -36,16 +36,9 @@
     <string name="add_device_autofill_broadcast">Broadcast automatisch ausfüllen</string>
     <string name="edit_machine_error_loading">Fehler beim Zugriff auf die Maschine</string>
     <string name="modify_device_test_shutdown">Herunterfahren testen</string>
-    <string name="device_list_startup">Einschalten</string>
-    <string name="device_list_shutdown">Herunterfahren</string>
     <string name="device_list_empty_title">Keine Geräte eingerichtet</string>
     <string name="device_list_empty_hint">Tippen Sie auf das \"+\" Icon um Ihr erstes Gerät hinzuzufügen</string>
     <string name="device_list_empty_image">Computer Illustration</string>
-    <string name="device_list_edit">Bearbeiten</string>
-    <string name="device_status_online_with_latency">Online · Netzwerk: %1$d ms</string>
-    <string name="device_status_online_without_latency">Online · Netzwerk wird gemessen…</string>
-    <string name="device_status_offline">Offline · Keine Antwort</string>
-    <string name="device_status_unknown">Status unbekannt</string>
     <string name="edit_device_delete_title">Gerät löschen</string>
     <string name="edit_device_delete_message">Möchten Sie dieses Gerät wirklich löschen?</string>
     <string name="tile_name_device_one">WOL Gerät 1</string>
@@ -184,9 +177,29 @@
     <string name="notification_confirm_action_body">Tippen, um diese Aktion zu bestätigen</string>
 
     <!-- Console UI -->
+    <string name="device_action_wake">› einschalten</string>
+    <string name="device_action_shutdown">› herunterfahren (ssh)</string>
+    <string name="device_action_edit">› bearbeiten</string>
+    <string name="device_waking_log">» Paket gesendet · warte auf Antwort</string>
+    <string name="device_status_short_offline">aus</string>
+    <string name="device_status_short_waking">weckt</string>
     <string name="header_online_label">ONLINE</string>
+    <string name="header_network">Netz %1$s</string>
+    <string name="header_no_network">kein lokales Netz</string>
     <string name="tab_devices">geräte</string>
     <string name="tab_scan">scannen</string>
     <string name="tab_history">verlauf</string>
     <string name="tab_more">mehr</string>
+    <string name="command_hint_default">Befehl eingeben</string>
+    <string name="command_unknown">Unbekannter Befehl. Versuche: wecken, aus, bearbeiten, hinzufügen</string>
+    <string name="command_device_not_found">Kein Gerät namens „%1$s“</string>
+    <string name="command_shutdown_unavailable">Für %1$s ist kein SSH-Herunterfahren eingerichtet</string>
+    <string name="command_verb_wake">wecken</string>
+    <string name="command_verb_off">aus</string>
+    <string name="command_verb_edit">bearbeiten</string>
+    <string name="command_verb_add">hinzufügen</string>
+    <plurals name="header_device_count">
+        <item quantity="one">%d Gerät</item>
+        <item quantity="other">%d Geräte</item>
+    </plurals>
 </resources>

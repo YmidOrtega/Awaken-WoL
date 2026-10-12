@@ -1,4 +1,14 @@
-<shape xmlns:android="http://schemas.android.com/apk/res/android"
-    android:shape="oval">
-    <solid android:color="#D53C3C" />
-</shape>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Status LED: solid core with a soft halo -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="oval">
+            <solid android:color="#33F06B7E" />
+        </shape>
+    </item>
+    <item android:bottom="3dp" android:left="3dp" android:right="3dp" android:top="3dp">
+        <shape android:shape="oval">
+            <solid android:color="@color/ledOfflineColor" />
+        </shape>
+    </item>
+</layer-list>

@@ -12,6 +12,7 @@ import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
 import com.ymid.wakeonlan.shutdown.ShutdownExecutor;
 import com.ymid.wakeonlan.shutdown.ShutdownModelFactory;
 import com.ymid.wakeonlan.shutdown.listener.IgnoringShutdownExecutorListener;
+import com.ymid.wakeonlan.ui.list.status.DeviceStatusBoard;
 import com.ymid.wakeonlan.ui.notifications.NotificationHelper;
 import com.ymid.wakeonlan.wol.WolSender;
 
@@ -46,6 +47,7 @@ public final class DeviceActionExecutor {
             return false;
         }
         WolSender.sendWolPacket(device);
+        DeviceStatusBoard.getInstance().markWakeSent(device.id);
         ActionLogRepository.getInstance(context).log(device.name, ActionType.WAKE);
         Toast.makeText(context, context.getString(R.string.wol_toast_sending_packet, device.name), Toast.LENGTH_LONG).show();
         NotificationHelper.INSTANCE.sendWakeSentNotification(context, device.name);

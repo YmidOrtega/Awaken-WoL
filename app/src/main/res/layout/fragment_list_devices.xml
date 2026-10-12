@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/device_list_coordinator_layout"
     android:layout_width="match_parent"
@@ -8,26 +7,76 @@
     android:background="@android:color/transparent"
     tools:context=".ui.MainActivity">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/machine_list"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="8dp"
-        android:layout_marginBottom="8dp"
-        android:clipToPadding="false"
-        android:padding="8dp"
-        tools:listitem="@layout/device_list_item" />
+        android:orientation="vertical">
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_device_fab"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="@dimen/fab_margin"
-        android:layout_marginBottom="16dp"
-        android:contentDescription="@string/title_activity_add_device"
-        app:backgroundTint="@color/secondaryColor"
-        app:tint="@color/white"
-        app:srcCompat="@drawable/ic_add" />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/machine_list"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:clipToPadding="false"
+            tools:listitem="@layout/device_list_item" />
+
+        <LinearLayout
+            android:id="@+id/command_bar"
+            android:layout_width="match_parent"
+            android:layout_height="48dp"
+            android:layout_margin="12dp"
+            android:background="@drawable/console_command_background"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingStart="14dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:importantForAccessibility="no"
+                android:text="$"
+                android:textColor="@color/ledOnlineColor"
+                android:textSize="13sp"
+                tools:ignore="HardcodedText" />
+
+            <AutoCompleteTextView
+                android:id="@+id/command_input"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:background="@null"
+                android:completionThreshold="1"
+                android:dropDownVerticalOffset="8dp"
+                android:imeOptions="actionGo"
+                android:importantForAutofill="no"
+                android:inputType="text|textNoSuggestions"
+                android:maxLines="1"
+                android:textColor="@color/primaryTextColor"
+                android:textColorHint="@color/primaryTextColorMuted"
+                android:textCursorDrawable="@drawable/console_cursor"
+                android:textSize="13sp"
+                tools:hint="encender ubuntu" />
+
+            <View
+                android:layout_width="1dp"
+                android:layout_height="match_parent"
+                android:background="@color/consoleLineColor" />
+
+            <TextView
+                android:id="@+id/add_device_button"
+                android:layout_width="48dp"
+                android:layout_height="match_parent"
+                android:background="?attr/selectableItemBackground"
+                android:contentDescription="@string/title_activity_add_device"
+                android:gravity="center"
+                android:text="+"
+                android:fontFamily="@font/doto_extrabold"
+                android:textAppearance="@style/TextAppearance.App.Display"
+                android:textColor="@color/ledOnlineColor"
+                android:textSize="24sp"
+                tools:ignore="HardcodedText" />
+        </LinearLayout>
+    </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -17,6 +17,6 @@ public class GroupHeaderViewHolder extends RecyclerView.ViewHolder {
     }
 
     public void bind(String groupName) {
-        label.setText(groupName);
+        label.setText("# " + groupName);
     }
 }

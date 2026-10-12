@@ -1,16 +1,15 @@
 package com.ymid.wakeonlan.ui.list.viewholder;
 
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.TransitionDrawable;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.view.animation.AlphaAnimation;
 import android.view.animation.Animation;
-import android.widget.Button;
+import android.view.animation.AlphaAnimation;
 import android.widget.TextView;
 
 import androidx.appcompat.content.res.AppCompatResources;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.common.base.Strings;
 
 import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.persistence.models.Device;
@@ -20,6 +19,8 @@ import com.ymid.wakeonlan.security.AuthenticatedDeviceActionActivity;
 import com.ymid.wakeonlan.ui.LauncherIconManager;
 import com.ymid.wakeonlan.ui.ObfuscatedTextView;
 import com.ymid.wakeonlan.ui.list.DeviceClickedCallback;
+import com.ymid.wakeonlan.ui.list.SparklineView;
+import com.ymid.wakeonlan.ui.list.status.DeviceStatusBoard;
 import com.ymid.wakeonlan.ui.list.status.DeviceStatusListener;
 import com.ymid.wakeonlan.ui.list.status.DeviceStatusSnapshot;
 import com.ymid.wakeonlan.ui.list.status.pool.StatusTestType;
@@ -27,26 +28,39 @@ import com.ymid.wakeonlan.ui.list.status.pool.StatusTesterPool;
 
 public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
 
+    private enum RowState { UNKNOWN, ONLINE, OFFLINE, WAKING }
+
     private final View deviceStatus;
     private final TextView deviceName;
     private final ObfuscatedTextView deviceMacAddress;
+    private final TextView deviceIp;
     private final TextView deviceStatusDetails;
+    private final TextView deviceLatencyUnit;
+    private final SparklineView latencySparkline;
+    private final TextView wakeLog;
 
-    private final Button editButton;
-    private final Button sendWolButton;
-    private final Button shutdownButton;
+    private final TextView editButton;
+    private final TextView sendWolButton;
+    private final TextView shutdownButton;
     private final DeviceClickedCallback deviceClickedCallback;
     private final StatusTesterPool statusTesterPool;
+    private final DeviceStatusBoard statusBoard = DeviceStatusBoard.getInstance();
 
     private Device device;
     private boolean drivesLauncherIcon;
+    private boolean shutdownAvailable;
+    private RowState shownState;
 
     public DeviceItemViewHolder(View view, DeviceClickedCallback deviceClickedCallback, StatusTesterPool statusTesterPool) {
         super(view);
         deviceStatus = view.findViewById(R.id.device_status);
         deviceName = view.findViewById(R.id.device_name);
         deviceMacAddress = view.findViewById(R.id.device_mac);
+        deviceIp = view.findViewById(R.id.device_ip);
         deviceStatusDetails = view.findViewById(R.id.device_status_details);
+        deviceLatencyUnit = view.findViewById(R.id.device_latency_unit);
+        latencySparkline = view.findViewById(R.id.device_latency_sparkline);
+        wakeLog = view.findViewById(R.id.device_wake_log);
 
         editButton = view.findViewById(R.id.edit);
         sendWolButton = view.findViewById(R.id.send_wol);
@@ -61,10 +75,13 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
 
         deviceName.setText(device.name);
         deviceMacAddress.setObfuscatedText(device.macAddress);
+        // Without a status IP there is no meaningful address to show; the broadcast address would mislead
+        deviceIp.setText(device.statusIp);
+        deviceIp.setVisibility(Strings.isNullOrEmpty(device.statusIp) ? View.GONE : View.VISIBLE);
 
         setOnClickHandler(device);
         setOnEditClickHandler(device);
-        setShutdownVisibilityAndClickHandler(device);
+        setShutdownClickHandler(device);
         startDeviceStatusQuery(device);
     }
 
@@ -81,55 +98,118 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
         });
     }
 
-    public void setShutdownVisibilityAndClickHandler(Device device) {
-        boolean shutdownConfigurationValid = ShutdownModelFactory.fromDevice(device).isPresent();
-
-        shutdownButton.setVisibility(shutdownConfigurationValid ? View.VISIBLE : View.GONE);
-
-        if (shutdownConfigurationValid) {
+    public void setShutdownClickHandler(Device device) {
+        shutdownAvailable = ShutdownModelFactory.fromDevice(device).isPresent();
+        if (shutdownAvailable) {
             shutdownButton.setOnClickListener(v -> {
                 AuthenticatedDeviceActionActivity.startShutdown(v.getContext(), device.id);
             });
+        } else {
+            shutdownButton.setOnClickListener(null);
         }
     }
 
     public void startDeviceStatusQuery(Device device) {
-        deviceStatus.clearAnimation();
-        deviceStatus.setBackground(AppCompatResources.getDrawable(itemView.getContext(), R.drawable.device_status_unknown));
-        deviceStatusDetails.setText(R.string.device_status_unknown);
+        shownState = null;
+        render(statusBoard.isWaking(device.id) ? RowState.WAKING : RowState.UNKNOWN, null);
 
+        final int deviceId = device.id;
         statusTesterPool.schedule(device, new DeviceStatusListener() {
             @Override
             public void onStatusAvailable(DeviceStatus deviceStatus) {
-                updateStatusDetails(new DeviceStatusSnapshot(deviceStatus, null));
+                updateStatusDetails(deviceId, new DeviceStatusSnapshot(deviceStatus, null));
             }
 
             @Override
             public void onStatusSnapshotAvailable(DeviceStatusSnapshot statusSnapshot) {
-                updateStatusDetails(statusSnapshot);
+                updateStatusDetails(deviceId, statusSnapshot);
             }
         }, StatusTestType.LIST);
     }
 
-    private void updateStatusDetails(DeviceStatusSnapshot statusSnapshot) {
+    private void updateStatusDetails(int deviceId, DeviceStatusSnapshot statusSnapshot) {
         itemView.post(() -> {
+            statusBoard.record(deviceId, statusSnapshot);
+            // The row may have been rebound to another device while the check was running
+            if (device == null || device.id != deviceId) {
+                return;
+            }
+
             DeviceStatus status = statusSnapshot.getStatus();
             if (status == DeviceStatus.ONLINE) {
                 updateLauncherIconIfNeeded(true);
-                setAlphaAnimationIfNotSet();
-                setStatusDrawable(R.drawable.device_status_online);
-                setOnlineStatusDetails(statusSnapshot);
+                render(RowState.ONLINE, statusSnapshot.getLatencyMs());
             } else if (status == DeviceStatus.OFFLINE) {
                 updateLauncherIconIfNeeded(false);
-                setAlphaAnimationIfNotSet();
-                setStatusDrawable(R.drawable.device_status_offline);
-                deviceStatusDetails.setText(R.string.device_status_offline);
+                render(statusBoard.isWaking(deviceId) ? RowState.WAKING : RowState.OFFLINE, null);
             } else {
-                deviceStatus.clearAnimation();
-                deviceStatus.setBackground(AppCompatResources.getDrawable(itemView.getContext(), R.drawable.device_status_unknown));
-                deviceStatusDetails.setText(R.string.device_status_unknown);
+                render(RowState.UNKNOWN, null);
             }
         });
+    }
+
+    private void render(RowState state, Long latencyMs) {
+        if (state == RowState.ONLINE) {
+            deviceStatusDetails.setText(latencyMs == null ? "--" : String.valueOf(latencyMs));
+            latencySparkline.setValues(statusBoard.getLatencyHistory(device.id));
+        }
+        if (state == shownState) {
+            return;
+        }
+        shownState = state;
+
+        int figureColor;
+        int ledDrawable;
+        switch (state) {
+            case ONLINE:
+                ledDrawable = R.drawable.device_status_online;
+                figureColor = R.color.ledOnlineColor;
+                break;
+            case OFFLINE:
+                ledDrawable = R.drawable.device_status_offline;
+                figureColor = R.color.ledOfflineColor;
+                deviceStatusDetails.setText(R.string.device_status_short_offline);
+                break;
+            case WAKING:
+                ledDrawable = R.drawable.device_status_waking;
+                figureColor = R.color.ledWakingColor;
+                deviceStatusDetails.setText(R.string.device_status_short_waking);
+                break;
+            default:
+                ledDrawable = R.drawable.device_status_unknown;
+                figureColor = R.color.primaryTextColorMuted;
+                deviceStatusDetails.setText(R.string.device_status_short_unknown);
+                break;
+        }
+
+        deviceStatus.setBackground(AppCompatResources.getDrawable(itemView.getContext(), ledDrawable));
+        deviceStatusDetails.setTextColor(ContextCompat.getColor(itemView.getContext(), figureColor));
+        // Figures read large; status words stay smaller so they don't shout
+        deviceStatusDetails.setTextSize(state == RowState.ONLINE ? 22 : 15);
+        deviceLatencyUnit.setVisibility(state == RowState.ONLINE ? View.VISIBLE : View.GONE);
+
+        latencySparkline.setColor(ContextCompat.getColor(itemView.getContext(),
+                state == RowState.ONLINE ? R.color.ledOnlineColor : R.color.primaryTextColorMuted));
+        if (state != RowState.ONLINE) {
+            latencySparkline.setValues(statusBoard.getLatencyHistory(device.id));
+        }
+
+        // Offer only the actions that make sense for the current state
+        boolean waking = state == RowState.WAKING;
+        sendWolButton.setVisibility(state == RowState.OFFLINE || state == RowState.UNKNOWN ? View.VISIBLE : View.GONE);
+        shutdownButton.setVisibility(shutdownAvailable && (state == RowState.ONLINE || state == RowState.UNKNOWN) ? View.VISIBLE : View.GONE);
+        editButton.setVisibility(waking ? View.GONE : View.VISIBLE);
+        wakeLog.setVisibility(waking ? View.VISIBLE : View.GONE);
+
+        if (waking) {
+            AlphaAnimation blink = new AlphaAnimation(1f, 0.2f);
+            blink.setDuration(450);
+            blink.setRepeatMode(Animation.REVERSE);
+            blink.setRepeatCount(Animation.INFINITE);
+            deviceStatus.startAnimation(blink);
+        } else {
+            deviceStatus.clearAnimation();
+        }
     }
 
     private void updateLauncherIconIfNeeded(boolean online) {
@@ -137,38 +217,6 @@ public class DeviceItemViewHolder extends RecyclerView.ViewHolder {
             return;
         }
         LauncherIconManager.updateLauncherIcon(itemView.getContext(), online);
-    }
-
-    private void setOnlineStatusDetails(DeviceStatusSnapshot statusSnapshot) {
-        Long latencyMs = statusSnapshot.getLatencyMs();
-        if (latencyMs == null) {
-            deviceStatusDetails.setText(R.string.device_status_online_without_latency);
-            return;
-        }
-
-        deviceStatusDetails.setText(itemView.getContext().getString(R.string.device_status_online_with_latency, latencyMs));
-    }
-
-    private void setStatusDrawable(int statusDrawable) {
-        Drawable[] drawables = {
-                deviceStatus.getBackground(),
-                AppCompatResources.getDrawable(itemView.getContext(), statusDrawable)
-        };
-
-        TransitionDrawable transitionDrawable = new TransitionDrawable(drawables);
-        deviceStatus.setBackground(transitionDrawable);
-        transitionDrawable.startTransition(600);
-    }
-
-    private void setAlphaAnimationIfNotSet() {
-        if (deviceStatus.getAnimation() == null) {
-            AlphaAnimation alphaAnimation = new AlphaAnimation(1.0f, 0.4f);
-            alphaAnimation.setDuration(1500);
-            alphaAnimation.setRepeatCount(Animation.INFINITE);
-            alphaAnimation.setInterpolator(new AccelerateInterpolator());
-            alphaAnimation.setRepeatMode(Animation.REVERSE);
-            deviceStatus.startAnimation(alphaAnimation);
-        }
     }
 
     public void cancelStatusUpdates() {
