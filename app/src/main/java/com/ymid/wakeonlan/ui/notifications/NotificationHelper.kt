@@ -17,6 +17,7 @@ object NotificationHelper {
     const val CHANNEL_ACTIONS = "actions"
 
     fun createChannels(context: Context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
         val manager = NotificationManagerCompat.from(context)
         manager.createNotificationChannel(
             NotificationChannel(
