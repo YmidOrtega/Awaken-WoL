@@ -17,6 +17,8 @@
         <item name="android:navigationBarColor">@color/backgroundColor</item>
         <!-- Console typography: JetBrains Mono everywhere, Doto for display text -->
         <item name="android:fontFamily">@font/jetbrains_mono</item>
+        <item name="textInputStyle">@style/Widget.App.TextInputLayout</item>
+        <item name="materialButtonStyle">@style/Widget.App.Button</item>
         <item name="snackbarStyle">@style/Widget.App.Snackbar</item>
         <item name="snackbarTextViewStyle">@style/Widget.App.Snackbar.TextView</item>
         <item name="snackbarButtonStyle">@style/Widget.App.Snackbar.Button</item>
@@ -50,7 +52,7 @@
     </style>
 
     <style name="FontMonospaced">
-        <item name="android:fontFamily">monospace</item>
+        <item name="android:fontFamily">@font/jetbrains_mono</item>
     </style>
 
     <style name="Theme.WakeOnLan.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark" />

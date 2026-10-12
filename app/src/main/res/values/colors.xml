@@ -24,12 +24,9 @@
     <color name="cardBackgroundColor">#141A18</color>
     <color name="cardStrokeColor">#22302B</color>
     <color name="consoleLineColor">#22302B</color>
-    <color name="backgroundGradientStart">#0D1110</color>
-    <color name="backgroundGradientEnd">#0D1110</color>
     <color name="actionEditColor">#8FA39C</color>
     <color name="actionWakeColor">#43D9A3</color>
     <color name="actionShutdownColor">#F06B7E</color>
-    <color name="toolbarColor">#0D1110</color>
 
     <!-- Device status LEDs -->
     <color name="ledOnlineColor">#43D9A3</color>

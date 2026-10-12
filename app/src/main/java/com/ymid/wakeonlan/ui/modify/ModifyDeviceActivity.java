@@ -55,6 +55,7 @@ import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
 import com.ymid.wakeonlan.shutdown.exception.SshHostKeyMismatchException;
 import com.ymid.wakeonlan.shutdown.listener.ShutdownExecutorListener;
 import com.ymid.wakeonlan.shutdown.test.ShutdownCommandTester;
+import com.ymid.wakeonlan.ui.ConsoleTypeface;
 import com.ymid.wakeonlan.ui.ObfuscatedEditText;
 import com.ymid.wakeonlan.ui.modify.watcher.autocomplete.MacAddressAutocomplete;
 import com.ymid.wakeonlan.ui.modify.watcher.validator.ConditionalInputNotEmptyValidator;
@@ -107,6 +108,7 @@ public abstract class ModifyDeviceActivity extends AppCompatActivity {
         getWindow().setStatusBarColor(Color.TRANSPARENT);
 
         setContentView(binding.getRoot());
+        ConsoleTypeface.applyToTextInputs(binding.getRoot());
 
         devicePorts = binding.device.devicePorts;
         deviceMacInput = binding.device.deviceMac;

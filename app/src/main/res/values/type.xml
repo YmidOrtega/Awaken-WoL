@@ -106,6 +106,44 @@
         <item name="android:focusable">true</item>
     </style>
 
+    <!-- Outlined text fields: hairline box that turns green on focus -->
+    <style name="Widget.App.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+        <item name="boxStrokeColor">@color/console_input_stroke</item>
+        <item name="boxBackgroundColor">@color/surfaceColor</item>
+        <item name="boxCornerRadiusTopStart">6dp</item>
+        <item name="boxCornerRadiusTopEnd">6dp</item>
+        <item name="boxCornerRadiusBottomStart">6dp</item>
+        <item name="boxCornerRadiusBottomEnd">6dp</item>
+        <item name="hintTextColor">@color/ledOnlineColor</item>
+        <item name="android:textColorHint">@color/primaryTextColorMuted</item>
+        <item name="hintTextAppearance">@style/TextAppearance.App.Caption</item>
+        <item name="helperTextTextAppearance">@style/TextAppearance.App.Caption</item>
+        <item name="helperTextTextColor">@color/primaryTextColorMuted</item>
+        <item name="errorTextAppearance">@style/TextAppearance.App.Caption</item>
+    </style>
+
+    <!-- Default MaterialButton: outlined, console colours -->
+    <style name="Widget.App.Button" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="strokeColor">@color/consoleLineColor</item>
+        <item name="android:textColor">@color/primaryTextColor</item>
+        <item name="iconTint">@color/ledOnlineColor</item>
+        <item name="cornerRadius">6dp</item>
+        <item name="rippleColor">#1F43D9A3</item>
+        <item name="android:textAppearance">@style/TextAppearance.App.Button</item>
+    </style>
+
+    <!-- Dot-matrix screen title for activities that keep a toolbar -->
+    <style name="TextAppearance.App.Display.ToolbarTitle">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textAllCaps">true</item>
+    </style>
+
+    <!-- Section label inside forms, e.g. "GENERAL" -->
+    <style name="TextAppearance.App.SectionLabel" parent="TextAppearance.App.Label">
+        <item name="android:textColor">@color/ledOnlineColor</item>
+        <item name="android:textSize">11sp</item>
+    </style>
+
     <!-- Bottom text tabs -->
     <style name="Widget.App.ConsoleTab" parent="">
         <item name="android:layout_width">0dp</item>

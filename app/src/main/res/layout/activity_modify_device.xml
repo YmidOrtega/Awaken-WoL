@@ -4,14 +4,14 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/app_background_gradient"
+    android:background="@color/backgroundColor"
     android:fitsSystemWindows="true"
     tools:context=".ui.modify.ModifyDeviceActivity">
 <com.google.android.material.appbar.AppBarLayout
     android:id="@+id/app_bar_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@drawable/toolbar_background"
+    android:background="@drawable/console_row_divider"
     android:elevation="0dp"
     android:theme="@style/Theme.WakeOnLan.AppBarOverlay">
 
@@ -22,6 +22,7 @@
         android:background="@android:color/transparent"
         app:navigationIconTint="@color/primaryTextColor"
         app:popupTheme="@style/Theme.WakeOnLan.PopupOverlay"
+        app:titleTextAppearance="@style/TextAppearance.App.Display.ToolbarTitle"
         app:titleTextColor="@color/primaryTextColor" />
 
 </com.google.android.material.appbar.AppBarLayout>
