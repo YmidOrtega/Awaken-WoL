@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Selected tab gets a 2dp accent line on top; all tabs ripple on touch -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="#1F43D9A3">
+    <item>
+        <selector>
+            <item android:state_selected="true">
+                <layer-list>
+                    <item android:gravity="top" android:height="2dp">
+                        <shape android:shape="rectangle">
+                            <solid android:color="@color/ledOnlineColor" />
+                        </shape>
+                    </item>
+                </layer-list>
+            </item>
+            <item>
+                <color android:color="@android:color/transparent" />
+            </item>
+        </selector>
+    </item>
+</ripple>

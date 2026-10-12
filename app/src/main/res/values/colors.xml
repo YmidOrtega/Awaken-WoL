@@ -1,32 +1,40 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primaryColor">#3A345F</color>
-    <color name="primaryLightColor">#4C4A7A</color>
-    <color name="primaryDarkColor">#25243A</color>
-    <color name="secondaryColor">#4A90E2</color>
-    <color name="secondaryColorDark">#3578C8</color>
-    <color name="secondaryLightColor">#73B3FF</color>
-    <color name="secondaryVariantColor">#6C63FF</color>
-    <color name="secondaryVariantDarkColor">#4C43C6</color>
+    <!-- Console palette: green-black surfaces, phosphor green accent -->
+    <color name="primaryColor">#141A18</color>
+    <color name="primaryLightColor">#1A2220</color>
+    <color name="primaryDarkColor">#0D1110</color>
+    <color name="secondaryColor">#43D9A3</color>
+    <color name="secondaryColorDark">#2FB386</color>
+    <color name="secondaryLightColor">#7BE8C1</color>
+    <color name="secondaryVariantColor">#2FB386</color>
+    <color name="secondaryVariantDarkColor">#238A67</color>
+    <color name="onAccentColor">#06140F</color>
 
-    <color name="primaryTextColor">#F2F2F7</color>
-    <color name="primaryTextColorLight">#F2F2F7</color>
-    <color name="primaryTextColorMuted">#B3B5C8</color>
+    <color name="primaryTextColor">#D6E2DD</color>
+    <color name="primaryTextColorLight">#D6E2DD</color>
+    <color name="primaryTextColorMuted">#7C8E87</color>
 
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
 
-    <color name="backgroundColor">#1B1C29</color>
-    <color name="surfaceColor">#2B2E45</color>
-    <color name="surfaceVariantColor">#343851</color>
-    <color name="cardBackgroundColor">#2C2F46</color>
-    <color name="cardStrokeColor">#3A3D55</color>
-    <color name="backgroundGradientStart">#3A2D6A</color>
-    <color name="backgroundGradientEnd">#1B1C29</color>
-    <color name="actionEditColor">#7D6BFF</color>
+    <color name="backgroundColor">#0D1110</color>
+    <color name="surfaceColor">#141A18</color>
+    <color name="surfaceVariantColor">#1A2220</color>
+    <color name="cardBackgroundColor">#141A18</color>
+    <color name="cardStrokeColor">#22302B</color>
+    <color name="consoleLineColor">#22302B</color>
+    <color name="backgroundGradientStart">#0D1110</color>
+    <color name="backgroundGradientEnd">#0D1110</color>
+    <color name="actionEditColor">#8FA39C</color>
     <color name="actionWakeColor">#43D9A3</color>
     <color name="actionShutdownColor">#F06B7E</color>
-    <color name="toolbarColor">#2a3d5b</color>
+    <color name="toolbarColor">#0D1110</color>
+
+    <!-- Device status LEDs -->
+    <color name="ledOnlineColor">#43D9A3</color>
+    <color name="ledOfflineColor">#F06B7E</color>
+    <color name="ledWakingColor">#E8C46A</color>
 
     <color name="result_error">#FF5252</color>
     <color name="errorColor">#FF5252</color>

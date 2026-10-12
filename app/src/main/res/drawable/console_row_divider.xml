@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 1dp line along the bottom edge of a console row -->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <color android:color="@color/consoleLineColor" />
+    </item>
+    <item android:bottom="1dp">
+        <color android:color="@color/backgroundColor" />
+    </item>
+</layer-list>
