@@ -161,4 +161,27 @@
     <string name="backup_action_export">› exportar respaldo</string>
     <string name="backup_action_import">› importar respaldo</string>
     <string name="settings_navigate_back">Volver</string>
+
+    <!-- Remote shutdown test -->
+    <string name="remote_shutdown_send_command">Enviando comando de apagado a %1$s</string>
+    <string name="remote_shutdown_send_command_dialog_title">Prueba de apagado remoto</string>
+    <string name="test_shutdown_initial_destination">Conectando con el equipo…</string>
+    <string name="test_shutdown_successful_destination">Conexión con el equipo establecida</string>
+    <string name="test_shutdown_initial_authorization">Autenticando usuario…</string>
+    <string name="test_shutdown_successful_authorization">Usuario autenticado</string>
+    <string name="test_shutdown_initial_session">Creando sesión en el equipo…</string>
+    <string name="test_shutdown_successful_session">Sesión de usuario creada</string>
+    <string name="test_shutdown_initial_command_execute">Ejecutando comando de apagado…</string>
+    <string name="test_shutdown_successful_command_execute">Comando ejecutado correctamente</string>
+    <string name="test_shutdown_error_connect_exception">No se pudo conectar con %1$s en el puerto %2$d</string>
+    <string name="test_shutdown_error_auth_exception">No se pudo autenticar al usuario %1$s en %2$s</string>
+    <string name="test_shutdown_error_execution_exception">El comando \"%1$s\" terminó con el código %2$d (%3$s)</string>
+    <string name="test_shutdown_error_execution_timeout">El comando \"%1$s\" tardó demasiado o pidió la contraseña de sudo</string>
+    <string name="test_shutdown_error_execution_sudo_prompt">El comando \"%1$s\" pidió la contraseña de sudo.\nPermite ejecutarlo sin que sudo pida contraseña.</string>
+    <string name="test_shutdown_error_unknown_host">Host desconocido \"%1$s\"</string>
+    <string name="test_shutdown_error_unknown_exception">Error desconocido: %1$s</string>
+    <string name="execution_error_command_not_found">Comando no encontrado</string>
+    <string name="execution_error_command_not_executable">El comando no es ejecutable</string>
+    <string name="execution_error_unknown">Desconocido</string>
+    <string name="test_shutdown_error_dangerous_command">El comando \"%1$s\" apagaría el equipo. Se canceló la ejecución por seguridad.</string>
 </resources>
