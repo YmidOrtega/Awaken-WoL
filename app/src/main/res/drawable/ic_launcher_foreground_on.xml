@@ -4,12 +4,75 @@
     android:height="108dp"
     android:viewportWidth="108"
     android:viewportHeight="108">
-    <!-- Power button ring: 300° arc with 60° gap at top (green = device online) -->
+    <!-- Onda: power button emitting network waves (device online) -->
+    <!-- Soft glow behind the glyph -->
     <path
-        android:fillColor="#43D9A3"
-        android:pathData="M67,31.49 A26,26 0 1,1 41,31.49 L44,36.68 A20,20 0 1,0 64,36.68 Z" />
-    <!-- Power button stem with rounded top -->
+        android:pathData="M77.75,39.16 A28,28 0 0,1 77.75,68.84 M30.25,68.84 A28,28 0 0,1 30.25,39.16"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="12.5"
+        android:strokeAlpha="0.03"
+        android:strokeLineCap="round" />
     <path
-        android:fillColor="#43D9A3"
-        android:pathData="M51,25 A3,3 0 0,0 57,25 L57,54 L51,54 Z" />
+        android:pathData="M70.96,43.4 A20,20 0 0,1 70.96,64.6 M37.04,64.6 A20,20 0 0,1 37.04,43.4"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="12.5"
+        android:strokeAlpha="0.06"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M61.07,45.57 A11,11 0 1,1 46.93,45.57"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="13"
+        android:strokeAlpha="0.06"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M54,40 L54,53"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="13"
+        android:strokeAlpha="0.06"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M77.75,39.16 A28,28 0 0,1 77.75,68.84 M30.25,68.84 A28,28 0 0,1 30.25,39.16"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="8"
+        android:strokeAlpha="0.08"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M70.96,43.4 A20,20 0 0,1 70.96,64.6 M37.04,64.6 A20,20 0 0,1 37.04,43.4"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="8"
+        android:strokeAlpha="0.14"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M61.07,45.57 A11,11 0 1,1 46.93,45.57"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="8.5"
+        android:strokeAlpha="0.14"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M54,40 L54,53"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="8.5"
+        android:strokeAlpha="0.14"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M77.75,39.16 A28,28 0 0,1 77.75,68.84 M30.25,68.84 A28,28 0 0,1 30.25,39.16"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="4.5"
+        android:strokeAlpha="0.55"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M70.96,43.4 A20,20 0 0,1 70.96,64.6 M37.04,64.6 A20,20 0 0,1 37.04,43.4"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="4.5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M61.07,45.57 A11,11 0 1,1 46.93,45.57"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
+    <path
+        android:pathData="M54,40 L54,53"
+        android:strokeColor="#43D9A3"
+        android:strokeWidth="5"
+        android:strokeLineCap="round" />
 </vector>
