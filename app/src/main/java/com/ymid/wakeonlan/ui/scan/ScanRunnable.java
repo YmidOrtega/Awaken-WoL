@@ -23,19 +23,16 @@ final class ScanRunnable implements Callable<Void> {
 
     @Override
     public Void call() {
-        try {
-            for (int i = beginIpInclusive; i <= endIp; i++) {
-                String testIp = ipPrefix + i;
-
-                InetAddress address = InetAddress.getByName(testIp);
-                boolean reachable = address.isReachable(400);
-
-                if (reachable) {
+        for (int i = beginIpInclusive; i <= endIp; i++) {
+            // One failing address must not skip the rest of the batch
+            try {
+                InetAddress address = InetAddress.getByName(ipPrefix + i);
+                if (address.isReachable(400)) {
                     scanCallback.onDeviceFound(address.getHostAddress(), address.getHostName());
                 }
+            } catch (Exception e) {
+                Log.e(getClass().getSimpleName(), "Error while scanning " + ipPrefix + i, e);
             }
-        } catch (Exception e) {
-            Log.e(getClass().getSimpleName(), "Error while scanning network", e);
         }
 
         return null;

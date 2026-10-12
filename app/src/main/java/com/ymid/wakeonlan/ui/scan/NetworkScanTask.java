@@ -18,6 +18,9 @@ import com.ymid.wakeonlan.ui.scan.callbacks.ScanCallback;
 
 public class NetworkScanTask {
 
+    /** Host addresses probed per scan: .1 through .254 of the current /24. */
+    public static final int ADDRESS_COUNT = 254;
+
     private final ScanCallback scanCallback;
 
     private final ExecutorService executorService = Executors.newFixedThreadPool(25);
@@ -46,8 +49,8 @@ public class NetworkScanTask {
 
         String prefix = ipString.substring(0, ipString.lastIndexOf(".") + 1);
 
-        for (int i = 1; i < 255; i = i + 5) {
-            batchScanRunnables.add(new ScanRunnable(prefix, i, i + 4, scanCallback));
+        for (int i = 1; i <= ADDRESS_COUNT; i = i + 5) {
+            batchScanRunnables.add(new ScanRunnable(prefix, i, Math.min(i + 4, ADDRESS_COUNT), scanCallback));
         }
 
         return batchScanRunnables;
