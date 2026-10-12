@@ -177,4 +177,9 @@
     <!-- Update-Snackbar -->
     <string name="update_downloaded_message">Update heruntergeladen. Neu starten zum Installieren.</string>
     <string name="update_downloaded_action">Neu starten</string>
+    <string name="notification_channel_action_requests">Aktionsanfragen</string>
+    <string name="notification_channel_action_requests_desc">Bestätigung für Start- oder Herunterfahranfragen von Routinen und anderen Apps</string>
+    <string name="notification_confirm_wake_title">%1$s starten?</string>
+    <string name="notification_confirm_shutdown_title">%1$s herunterfahren?</string>
+    <string name="notification_confirm_action_body">Tippen, um diese Aktion zu bestätigen</string>
 </resources>

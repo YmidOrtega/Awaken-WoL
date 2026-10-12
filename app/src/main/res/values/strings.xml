@@ -235,4 +235,9 @@
     <!-- In-app update snackbar -->
     <string name="update_downloaded_message">Update downloaded. Restart to install.</string>
     <string name="update_downloaded_action">Restart</string>
+    <string name="notification_channel_action_requests">Action requests</string>
+    <string name="notification_channel_action_requests_desc">Ask to confirm wake or shutdown requests from routines and other apps</string>
+    <string name="notification_confirm_wake_title">Wake %1$s?</string>
+    <string name="notification_confirm_shutdown_title">Shut down %1$s?</string>
+    <string name="notification_confirm_action_body">Tap to confirm this action</string>
 </resources>

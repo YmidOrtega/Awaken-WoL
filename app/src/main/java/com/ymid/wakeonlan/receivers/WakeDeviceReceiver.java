@@ -25,8 +25,8 @@ public class WakeDeviceReceiver extends BroadcastReceiver {
         Consumer<Device> callback = device -> {
             try {
                 if (device != null && device.macAddress != null && !device.macAddress.isEmpty()) {
-                    AuthenticatedDeviceActionActivity.startWake(context, device.id, true);
-                    Log.i("WakeDeviceReceiver", "Authentication requested for WoL: " + device.name);
+                    AuthenticatedDeviceActionActivity.requestFromBackground(context, device, AuthenticatedDeviceActionActivity.ACTION_WAKE);
+                    Log.i("WakeDeviceReceiver", "WoL requested: " + device.name);
                 } else {
                     Log.w("WakeDeviceReceiver", "Device not found or missing MAC");
                 }

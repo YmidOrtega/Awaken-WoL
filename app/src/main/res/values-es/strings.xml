@@ -118,4 +118,9 @@
     <string name="update_downloaded_action">Reiniciar</string>
 
     <string name="test_shutdown_error_host_key_mismatch">La identidad SSH de \"%1$s\" ha cambiado. La conexión fue rechazada para proteger tus credenciales. Si el servidor fue reinstalado legítimamente, guarda este dispositivo de nuevo para confiar en su nueva clave.</string>
+    <string name="notification_channel_action_requests">Solicitudes de acción</string>
+    <string name="notification_channel_action_requests_desc">Pide confirmar las solicitudes de encendido o apagado de rutinas y otras apps</string>
+    <string name="notification_confirm_wake_title">¿Encender %1$s?</string>
+    <string name="notification_confirm_shutdown_title">¿Apagar %1$s?</string>
+    <string name="notification_confirm_action_body">Toca para confirmar esta acción</string>
 </resources>

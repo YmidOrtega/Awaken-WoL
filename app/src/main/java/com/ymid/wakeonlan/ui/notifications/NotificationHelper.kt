@@ -3,9 +3,11 @@ package com.ymid.wakeonlan.ui.notifications
 import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
@@ -15,6 +17,7 @@ object NotificationHelper {
 
     const val CHANNEL_DEVICE_STATUS = "device_status"
     const val CHANNEL_ACTIONS = "actions"
+    const val CHANNEL_ACTION_REQUESTS = "action_requests"
 
     fun createChannels(context: Context) {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
@@ -32,6 +35,13 @@ object NotificationHelper {
                 context.getString(R.string.notification_channel_actions),
                 NotificationManager.IMPORTANCE_LOW
             ).apply { description = context.getString(R.string.notification_channel_actions_desc) }
+        )
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ACTION_REQUESTS,
+                context.getString(R.string.notification_channel_action_requests),
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply { description = context.getString(R.string.notification_channel_action_requests_desc) }
         )
     }
 
@@ -77,6 +87,29 @@ object NotificationHelper {
             .setAutoCancel(true)
             .build()
         NotificationManagerCompat.from(context).notify(("shutdown_$deviceName").hashCode(), n)
+    }
+
+    fun sendActionConfirmationNotification(
+        context: Context,
+        deviceName: String,
+        shutdown: Boolean,
+        confirmIntent: PendingIntent
+    ) {
+        if (!hasPostNotificationsPermission(context)) {
+            Log.w("NotificationHelper", "Cannot request confirmation for $deviceName: notifications not allowed")
+            return
+        }
+        val title = if (shutdown) R.string.notification_confirm_shutdown_title else R.string.notification_confirm_wake_title
+        val n = NotificationCompat.Builder(context, CHANNEL_ACTION_REQUESTS)
+            .setSmallIcon(R.drawable.ic_notification)
+            .setContentTitle(context.getString(title, deviceName))
+            .setContentText(context.getString(R.string.notification_confirm_action_body))
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setCategory(NotificationCompat.CATEGORY_REMINDER)
+            .setContentIntent(confirmIntent)
+            .setAutoCancel(true)
+            .build()
+        NotificationManagerCompat.from(context).notify(("confirm_$deviceName").hashCode(), n)
     }
 
     private fun hasPostNotificationsPermission(context: Context): Boolean {

@@ -25,8 +25,8 @@ public class ShutdownDeviceReceiver extends BroadcastReceiver {
         Consumer<Device> callback = device -> {
             try {
                 if (device != null && device.remoteShutdownEnabled) {
-                    AuthenticatedDeviceActionActivity.startShutdown(context, device.id, true);
-                    Log.i("ShutdownDeviceReceiver", "Authentication requested for shutdown: " + device.name);
+                    AuthenticatedDeviceActionActivity.requestFromBackground(context, device, AuthenticatedDeviceActionActivity.ACTION_SHUTDOWN);
+                    Log.i("ShutdownDeviceReceiver", "Shutdown requested: " + device.name);
                 } else {
                     Log.w("ShutdownDeviceReceiver", "Device not found or shutdown not enabled");
                 }

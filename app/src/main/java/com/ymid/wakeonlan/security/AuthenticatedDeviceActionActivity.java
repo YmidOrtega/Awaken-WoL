@@ -1,6 +1,7 @@
 package com.ymid.wakeonlan.security;
 
 import android.app.KeyguardManager;
+import android.app.PendingIntent;
 import android.content.SharedPreferences;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -28,16 +30,10 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import com.ymid.wakeonlan.R;
-import com.ymid.wakeonlan.persistence.entities.ActionType;
 import com.ymid.wakeonlan.persistence.models.Device;
-import com.ymid.wakeonlan.persistence.repository.ActionLogRepository;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
-import com.ymid.wakeonlan.shutdown.ShutdownExecutor;
-import com.ymid.wakeonlan.shutdown.listener.IgnoringShutdownExecutorListener;
-import com.ymid.wakeonlan.shutdown.ShutdownModelFactory;
 import com.ymid.wakeonlan.ui.modify.EditDeviceActivity;
 import com.ymid.wakeonlan.ui.notifications.NotificationHelper;
-import com.ymid.wakeonlan.wol.WolSender;
 
 public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
 
@@ -48,6 +44,9 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
     public static final String ACTION_WAKE = "wake";
     public static final String ACTION_SHUTDOWN = "shutdown";
     public static final String ACTION_EDIT = "edit";
+
+    private static final String TAG = "AuthDeviceAction";
+    private static final String PREF_REQUIRE_AUTH = "pref_require_auth";
 
     private static final int AUTHENTICATORS = BiometricManager.Authenticators.BIOMETRIC_STRONG
             | BiometricManager.Authenticators.DEVICE_CREDENTIAL;
@@ -72,11 +71,41 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
         start(context, deviceId, ACTION_EDIT, false);
     }
 
-    private static void start(Context context, int deviceId, String action, boolean externalOrigin) {
+    public static void requestFromBackground(Context context, Device device, String action) {
+        if (!isAuthRequired(context)) {
+            if (!DeviceActionExecutor.execute(context, device, action)) {
+                Log.w(TAG, "Could not execute " + action + " for " + device.name);
+            }
+            return;
+        }
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+            start(context, device.id, action, true);
+            return;
+        }
+
+        Intent intent = createIntent(context, device.id, action, true);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, (action + "_" + device.id).hashCode(),
+                intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
+        NotificationHelper.INSTANCE.sendActionConfirmationNotification(context, device.name,
+                ACTION_SHUTDOWN.equals(action), pendingIntent);
+    }
+
+    private static boolean isAuthRequired(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(PREF_REQUIRE_AUTH, true);
+    }
+
+    private static Intent createIntent(Context context, int deviceId, String action, boolean externalOrigin) {
         Intent intent = new Intent(context, AuthenticatedDeviceActionActivity.class);
         intent.putExtra(EXTRA_DEVICE_ID, deviceId);
         intent.putExtra(EXTRA_DEVICE_ACTION, action);
         intent.putExtra(EXTRA_EXTERNAL_ORIGIN, externalOrigin);
+        return intent;
+    }
+
+    private static void start(Context context, int deviceId, String action, boolean externalOrigin) {
+        Intent intent = createIntent(context, deviceId, action, externalOrigin);
         if (!(context instanceof android.app.Activity)) {
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         }
@@ -108,7 +137,7 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
 
     private void handleDeviceAction(Device device, String action) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean requireAuth = prefs.getBoolean("pref_require_auth", true);
+        boolean requireAuth = prefs.getBoolean(PREF_REQUIRE_AUTH, true);
         boolean externalOrigin = getIntent().getBooleanExtra(EXTRA_EXTERNAL_ORIGIN, false);
         if (!ACTION_EDIT.equals(action)) {
             if (!requireAuth || (!externalOrigin && shouldSkipAuthentication(prefs))) {
@@ -192,27 +221,9 @@ public class AuthenticatedDeviceActionActivity extends AppCompatActivity {
             startActivity(intent);
             return;
         }
-        if (ACTION_SHUTDOWN.equals(action)) {
-            if (!ShutdownModelFactory.fromDevice(device).isPresent()) {
-                showActionError();
-                return;
-            }
-            ShutdownExecutor.shutdownDevice(this, device, device.shutdownOs == null ? "linux" : device.shutdownOs, new IgnoringShutdownExecutorListener());
-            ActionLogRepository.getInstance(this).log(device.name, ActionType.SHUTDOWN);
-            Toast.makeText(this, getString(R.string.remote_shutdown_send_command, device.name), Toast.LENGTH_LONG).show();
-            NotificationHelper.INSTANCE.sendShutdownSentNotification(this, device.name);
-            return;
-        }
-
-        if (!ACTION_WAKE.equals(action) || Strings.isNullOrEmpty(device.macAddress)) {
+        if (!DeviceActionExecutor.execute(this, device, action)) {
             showActionError();
-            return;
         }
-
-        WolSender.sendWolPacket(device);
-        ActionLogRepository.getInstance(this).log(device.name, ActionType.WAKE);
-        Toast.makeText(this, getString(R.string.wol_toast_sending_packet, device.name), Toast.LENGTH_LONG).show();
-        NotificationHelper.INSTANCE.sendWakeSentNotification(this, device.name);
     }
 
     private void showActionError() {
