@@ -54,39 +54,68 @@ public class DatabaseInstanceManager {
 
     private static void migrateToEncryptedIfNeeded(Context context) {
         File dbFile = context.getDatabasePath(DB_NAME);
+        File tempFile = new File(dbFile.getParent(), DB_NAME + "_temp_encrypted");
+        File backupFile = new File(dbFile.getParent(), DB_NAME + "_plaintext_backup");
+
+        recoverInterruptedMigration(dbFile, tempFile, backupFile);
+
         if (!dbFile.exists()) return;
 
         if (isAlreadyEncrypted(dbFile)) {
             Log.d(TAG, "Database is already encrypted, skipping migration.");
+            deleteIfExists(backupFile);
             return;
         }
 
         Log.i(TAG, "Plaintext database detected, encrypting...");
         try {
             String passphrase = DatabaseKeyManager.getOrCreatePassphrase(context);
-            File tempFile = new File(dbFile.getParent(), DB_NAME + "_temp_encrypted");
+            deleteIfExists(tempFile);
 
             SQLiteDatabase plainDb = SQLiteDatabase.openOrCreateDatabase(
                     dbFile, "", null, null, null);
+            try {
+                plainDb.execSQL(String.format(
+                        "ATTACH DATABASE '%s' AS encrypted KEY '%s'",
+                        tempFile.getAbsolutePath(), passphrase));
+                plainDb.execSQL("SELECT sqlcipher_export('encrypted')");
+                plainDb.execSQL("DETACH DATABASE encrypted");
+            } finally {
+                plainDb.close();
+            }
 
-            plainDb.execSQL(String.format(
-                    "ATTACH DATABASE '%s' AS encrypted KEY '%s'",
-                    tempFile.getAbsolutePath(), passphrase));
-            plainDb.execSQL("SELECT sqlcipher_export('encrypted')");
-            plainDb.execSQL("DETACH DATABASE encrypted");
-            plainDb.close();
-
-            if (!dbFile.delete()) {
-                throw new RuntimeException("Could not delete plaintext database");
+            if (!dbFile.renameTo(backupFile)) {
+                throw new RuntimeException("Could not move plaintext database aside");
             }
             if (!tempFile.renameTo(dbFile)) {
+                if (!backupFile.renameTo(dbFile)) {
+                    Log.e(TAG, "Could not restore plaintext database from " + backupFile.getName());
+                }
                 throw new RuntimeException("Could not rename encrypted database");
             }
+            deleteIfExists(backupFile);
 
             Log.i(TAG, "Database encryption migration completed successfully.");
         } catch (Exception e) {
+            deleteIfExists(tempFile);
             Log.e(TAG, "Failed to encrypt existing database", e);
             throw new RuntimeException("Database encryption migration failed", e);
+        }
+    }
+
+    private static void recoverInterruptedMigration(File dbFile, File tempFile, File backupFile) {
+        if (dbFile.exists() || !backupFile.exists()) return;
+
+        if (tempFile.exists() && tempFile.renameTo(dbFile)) {
+            Log.w(TAG, "Recovered encrypted database from interrupted migration.");
+        } else if (backupFile.renameTo(dbFile)) {
+            Log.w(TAG, "Restored plaintext database after interrupted migration.");
+        }
+    }
+
+    private static void deleteIfExists(File file) {
+        if (file.exists() && !file.delete()) {
+            Log.w(TAG, "Could not delete " + file.getName());
         }
     }
 
