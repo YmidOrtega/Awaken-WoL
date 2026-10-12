@@ -81,8 +81,6 @@
     <!-- Misc -->
     <string name="wol_toast_sending_packet">Magic Packet sent to %1$s</string>
     <string name="shutdown_toast_sending_command">Sending shutdown to %s…</string>
-    <string name="shortcut_action_wake">Wake</string>
-    <string name="shortcut_action_shutdown">Shutdown</string>
 
     <!-- Backup Fragment -->
     <string name="backup_description">Export your currently configured devices to a JSON file or import an existing dataset</string>
@@ -281,4 +279,10 @@
     <string name="backup_action_export">› export backup</string>
     <string name="backup_action_import">› import backup</string>
     <string name="settings_navigate_back">Back</string>
+
+    <!-- Launcher shortcuts and the phrases voice assistants match them by -->
+    <string name="shortcut_label_wake">Wake %1$s</string>
+    <string name="shortcut_voice_wake">Turn on %1$s</string>
+    <string name="shortcut_label_shutdown">Shut down %1$s</string>
+    <string name="shortcut_voice_shutdown">Turn off %1$s</string>
 </resources>

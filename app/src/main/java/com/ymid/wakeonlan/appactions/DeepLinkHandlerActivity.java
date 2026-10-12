@@ -12,11 +12,19 @@ import com.google.common.base.Strings;
 
 import java.util.List;
 
+import com.ymid.wakeonlan.R;
 import com.ymid.wakeonlan.persistence.models.Device;
 import com.ymid.wakeonlan.persistence.repository.DeviceRepository;
 import com.ymid.wakeonlan.security.AuthenticatedDeviceActionActivity;
+import com.ymid.wakeonlan.ui.list.ConsoleCommand;
 
 public class DeepLinkHandlerActivity extends AppCompatActivity {
+
+    /**
+     * wakeonlan://action/feature?name=apagar%20ubuntu — the whole phrase an assistant heard,
+     * parsed like a command bar entry so "Apaga Ubuntu" and "turn on the NAS" both work.
+     */
+    private static final String FEATURE_ACTION = "feature";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -48,6 +56,11 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
     }
 
     private void handleAction(String action, String name, List<Device> devices) {
+        if (FEATURE_ACTION.equalsIgnoreCase(action)) {
+            handleSpokenCommand(name, devices);
+            return;
+        }
+
         Device matched = null;
         for (Device d : devices) {
             if (d != null && d.name != null && d.name.equalsIgnoreCase(name)) {
@@ -70,6 +83,20 @@ public class DeepLinkHandlerActivity extends AppCompatActivity {
             Toast.makeText(this, "Unknown action: " + action, Toast.LENGTH_SHORT).show();
         }
 
+        finish();
+    }
+
+    private void handleSpokenCommand(String phrase, List<Device> devices) {
+        ConsoleCommand command = ConsoleCommand.parse(phrase, devices);
+        if (command.error == ConsoleCommand.Error.DEVICE_NOT_FOUND) {
+            Toast.makeText(this, getString(R.string.command_device_not_found, command.query), Toast.LENGTH_LONG).show();
+        } else if (command.device != null && command.action == ConsoleCommand.Action.WAKE) {
+            AuthenticatedDeviceActionActivity.startWake(this, command.device.id, true);
+        } else if (command.device != null && command.action == ConsoleCommand.Action.SHUTDOWN) {
+            AuthenticatedDeviceActionActivity.startShutdown(this, command.device.id, true);
+        } else {
+            Toast.makeText(this, R.string.command_unknown, Toast.LENGTH_LONG).show();
+        }
         finish();
     }
 }

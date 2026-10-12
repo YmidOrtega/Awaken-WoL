@@ -220,4 +220,10 @@
     <string name="backup_action_export">› Sicherung exportieren</string>
     <string name="backup_action_import">› Sicherung importieren</string>
     <string name="settings_navigate_back">Zurück</string>
+
+    <!-- Launcher shortcuts and the phrases voice assistants match them by -->
+    <string name="shortcut_label_wake">%1$s einschalten</string>
+    <string name="shortcut_voice_wake">Schalte %1$s ein</string>
+    <string name="shortcut_label_shutdown">%1$s herunterfahren</string>
+    <string name="shortcut_voice_shutdown">Schalte %1$s aus</string>
 </resources>

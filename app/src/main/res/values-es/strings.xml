@@ -184,4 +184,10 @@
     <string name="execution_error_command_not_executable">El comando no es ejecutable</string>
     <string name="execution_error_unknown">Desconocido</string>
     <string name="test_shutdown_error_dangerous_command">El comando \"%1$s\" apagaría el equipo. Se canceló la ejecución por seguridad.</string>
+
+    <!-- Launcher shortcuts and the phrases voice assistants match them by -->
+    <string name="shortcut_label_wake">Encender %1$s</string>
+    <string name="shortcut_voice_wake">Enciende %1$s</string>
+    <string name="shortcut_label_shutdown">Apagar %1$s</string>
+    <string name="shortcut_voice_shutdown">Apaga %1$s</string>
 </resources>

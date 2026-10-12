@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Voice assistant capability (Google Assistant / Gemini App Actions).
+    The spoken feature ("apagar Ubuntu", "turn on the NAS") reaches DeepLinkHandlerActivity whole
+    and is parsed like a command bar entry. Per-device dynamic shortcuts bind to the same
+    capability with exact phrases, see DeviceShortcutMapper.
+-->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <capability android:name="actions.intent.OPEN_APP_FEATURE">
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetClass="com.ymid.wakeonlan.appactions.DeepLinkHandlerActivity"
+            android:targetPackage="com.ymid.wakeonlan">
+            <url-template android:value="wakeonlan://action/feature{?name}" />
+            <parameter
+                android:name="feature"
+                android:key="name" />
+        </intent>
+    </capability>
+</shortcuts>
