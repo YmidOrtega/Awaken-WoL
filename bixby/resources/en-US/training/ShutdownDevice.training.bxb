@@ -1,6 +1,6 @@
 training {
   // Pattern: explicit device name
-  "[shut down|shutdown|turn off|power off] [my|the] #{value(ShutdownDevice.deviceName)} [in Aweken|using Aweken|with Aweken]" {
+  "[shut down|shutdown|turn off|power off] [my|the] #{value(ShutdownDevice.deviceName)} [in Janus|using Janus|with Janus]" {
     goal: ShutdownDevice
     value-set {
       ShutdownDevice.deviceName = #{value(ShutdownDevice.deviceName)}
@@ -8,7 +8,7 @@ training {
   }
 
   // Pattern: generic without a name — Bixby will ask which device
-  "[shut down|shutdown|turn off|power off] [my|the] [PC|computer|laptop|device|machine] [in Aweken|using Aweken|with Aweken]" {
+  "[shut down|shutdown|turn off|power off] [my|the] [PC|computer|laptop|device|machine] [in Janus|using Janus|with Janus]" {
     goal: ShutdownDevice
   }
 

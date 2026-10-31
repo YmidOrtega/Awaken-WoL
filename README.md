@@ -1,16 +1,17 @@
-# Awaken
+# Janus
 
 **Turn your computers on from home and off from anywhere.** An Android app that wakes machines with a
 Wake-on-LAN magic packet, shuts them down over SSH, and pings them over ICMP, without root, to show
-which ones are online.
+which ones are online. Janus is the Roman god of doors, beginnings and endings, with two faces: one turns
+your machines on, the other turns them off, and the door is your home network.
 
-[![Java CI](https://github.com/YmidOrtega/Awaken-WoL/actions/workflows/build.yml/badge.svg)](https://github.com/YmidOrtega/Awaken-WoL/actions/workflows/build.yml)
+[![Java CI](https://github.com/YmidOrtega/Janus/actions/workflows/build.yml/badge.svg)](https://github.com/YmidOrtega/Janus/actions/workflows/build.yml)
 [![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android)](https://developer.android.com/)
 [![Target SDK](https://img.shields.io/badge/targetSdk-36-3DDC84)](shared-build.gradle)
 [![License](https://img.shields.io/badge/License-GPL--2.0-blue.svg)](LICENSE)
 
 <p align="center">
-  <img src="docs/img/devices.webp" alt="Device list on an emulator: workstation and nas online at 1 ms and 0 ms with their ping history, media-server and lab-node offline with a turn on action, grouped under Home and Lab, and the command bar suggesting wake workstation" width="360" />
+  <img src="docs/img/devices.webp" alt="Device list on an emulator: workstation and nas online at 3 ms and 0 ms with their ping history, media-server and lab-node offline with a turn on action, grouped under Home and Lab, and the command bar suggesting wake workstation" width="360" />
 </p>
 
 <sub>The device list on an emulator. The two online devices answer a real ICMP ping, and the line under each
@@ -18,7 +19,7 @@ one is its recent latency. The command bar takes typed commands like `wake works
 
 ## Waking is easy, shutting down is not
 
-Wake-on-LAN only goes one way: there is no magic packet that turns a machine off. Awaken closes the loop
+Wake-on-LAN only goes one way: there is no magic packet that turns a machine off. Janus closes the loop
 with SSH. It logs into the machine with a password or a private key and runs the shutdown command you set
 for that device, for example `sudo shutdown -h now`. Remote shutdown works on Linux machines.
 
@@ -35,7 +36,7 @@ The app stores what it takes to log into your machines, so it treats them that w
   random, generated on first launch, and kept in the Android Keystore, never in the code. A plaintext
   database from an older version is encrypted in place on startup.
 - **Host keys pinned on first use.** The first SSH connection stores the host key fingerprint. If it ever
-  changes, Awaken refuses to connect instead of sending your password to a machine that may not be yours.
+  changes, Janus refuses to connect instead of sending your password to a machine that may not be yours.
 - **Biometrics or PIN before acting.** Editing a device always asks. Waking and shutting down skip it only
   on Wi-Fi networks you mark as trusted, and never when the request comes from outside the app (voice, a
   tile, a shortcut).
@@ -65,8 +66,8 @@ Firebase (Crashlytics, Analytics, Remote Config) is optional: the app builds and
 JDK 17 and the Android SDK (compileSdk 36):
 
 ```bash
-git clone https://github.com/YmidOrtega/Awaken-WoL.git
-cd Awaken-WoL
+git clone https://github.com/YmidOrtega/Janus.git
+cd Janus
 ./gradlew assembleDebug        # app/build/outputs/apk/debug/app-debug.apk
 ```
 
@@ -110,8 +111,8 @@ bixby/              Bixby capsule
 | Document | Content |
 |---|---|
 | [`AGENTS.md`](AGENTS.md) | Guide for agents and contributors: architecture, persistence and gotchas |
-| [DeepWiki](https://deepwiki.com/YmidOrtega/Awaken-WoL) | Generated walkthrough of the codebase |
-| [ymid.me](https://www.ymid.me/projects/awaken-wol) | The story behind it, with a video on a real phone |
+| [DeepWiki](https://deepwiki.com/YmidOrtega/Janus) | Generated walkthrough of the codebase |
+| [ymid.me](https://www.ymid.me/projects/janus) | The story behind it, with a video on a real phone |
 
 ## License
 

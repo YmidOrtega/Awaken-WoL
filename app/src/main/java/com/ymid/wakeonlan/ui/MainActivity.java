@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements ConsoleHeaderHost
 
     /** Set by the Assistant's "network scan" feature to land on the scan tab. */
     public static final String EXTRA_OPEN_SCAN = "openScan";
-    private static final String ISSUES_URL = "https://github.com/YmidOrtega/Awaken-Wake-On-Lan-/issues";
+    private static final String ISSUES_URL = "https://github.com/YmidOrtega/Janus/issues";
     private static final int MORE_BACKUP = 1;
     private static final int MORE_SETTINGS = 2;
     private static final int MORE_ISSUES = 3;

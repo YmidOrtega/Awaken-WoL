@@ -23,7 +23,7 @@
         android:fontFamily="@font/doto_extrabold"
         android:textAppearance="@style/TextAppearance.App.Display"
         android:textSize="30sp"
-        tools:text="Bienvenido a Aweken" />
+        tools:text="Bienvenido a Janus" />
 
     <TextView
         android:id="@+id/onboarding_description"

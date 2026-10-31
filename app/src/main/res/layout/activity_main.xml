@@ -39,7 +39,7 @@
                 app:autoSizeMaxTextSize="30sp"
                 app:autoSizeMinTextSize="16sp"
                 app:autoSizeTextType="uniform"
-                tools:text="AWEKEN" />
+                tools:text="JANUS" />
 
             <TextView
                 android:id="@+id/header_subtitle"

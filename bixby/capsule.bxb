@@ -1,4 +1,5 @@
 capsule {
+  // The capsule id from when the app was called Aweken; changing it registers a new capsule
   id (ymid.aweken)
   version (1.0.0)
   format (v2)

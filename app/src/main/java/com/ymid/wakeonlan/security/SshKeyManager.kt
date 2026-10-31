@@ -21,6 +21,7 @@ object SshKeyManager {
     private const val ECDSA_KEY_TYPE = "ecdsa-sha2-nistp256"
     private const val ECDSA_CURVE_NAME = "nistp256"
     private const val EC_COORDINATE_LENGTH = 32
+    // The app was called Aweken: keys already in the Keystore live under this prefix
     const val ALIAS_PREFIX = "aweken_ssh_"
 
     @JvmStatic
@@ -54,9 +55,9 @@ object SshKeyManager {
         val entry = keyStore.getEntry(alias, null) as? KeyStore.PrivateKeyEntry
         when (val pubKey = entry?.certificate?.publicKey) {
             is ECPublicKey ->
-                "$ECDSA_KEY_TYPE ${Base64.encodeToString(encodeSshEcdsa(pubKey), Base64.NO_WRAP)} aweken"
+                "$ECDSA_KEY_TYPE ${Base64.encodeToString(encodeSshEcdsa(pubKey), Base64.NO_WRAP)} janus"
             is RSAPublicKey ->
-                "ssh-rsa ${Base64.encodeToString(encodeSshRsa(pubKey), Base64.NO_WRAP)} aweken"
+                "ssh-rsa ${Base64.encodeToString(encodeSshRsa(pubKey), Base64.NO_WRAP)} janus"
             else -> null
         }
     } catch (_: Exception) { null }

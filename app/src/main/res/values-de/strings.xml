@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Aweken</string>
-    <string name="title_activity_main">Aweken</string>
+    <string name="app_name">Janus</string>
+    <string name="title_activity_main">Janus</string>
     <string name="title_activity_add_device">Gerät hinzufügen</string>
     <string name="title_activity_edit_device">Gerät bearbeiten</string>
     <string name="add_device_name">Name</string>
@@ -134,7 +134,7 @@
     <string name="onboarding_skip">Überspringen</string>
     <string name="onboarding_next">Weiter</string>
     <string name="onboarding_finish">Loslegen</string>
-    <string name="onboarding_slide1_title">Willkommen bei Aweken</string>
+    <string name="onboarding_slide1_title">Willkommen bei Janus</string>
     <string name="onboarding_slide1_description">Schalten Sie Ihren PC von überall im Netzwerk ein und aus</string>
     <string name="onboarding_slide2_title">WOL &amp; SSH</string>
     <string name="onboarding_slide2_description">Senden Sie Wake‑on‑LAN-Pakete und führen Sie Remote-Shutdown-Befehle per SSH aus</string>
