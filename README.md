@@ -1,82 +1,123 @@
-## Aweken
+# Awaken
 
-Aweken is an Android Wake-on-LAN controller that lets you wake and shut down your devices remotely. It supports Magic Packet (WOL), SSH remote shutdown, live status monitoring, and a set of Android system integrations to control your machines from anywhere on your network.
+**Turn your computers on from home and off from anywhere.** An Android app that wakes machines with a
+Wake-on-LAN magic packet, shuts them down over SSH, and pings them over ICMP, without root, to show
+which ones are online.
 
-### Features
+[![Java CI](https://github.com/YmidOrtega/Awaken-WoL/actions/workflows/build.yml/badge.svg)](https://github.com/YmidOrtega/Awaken-WoL/actions/workflows/build.yml)
+[![Android](https://img.shields.io/badge/Android-7.0%2B-3DDC84?logo=android)](https://developer.android.com/)
+[![Target SDK](https://img.shields.io/badge/targetSdk-36-3DDC84)](shared-build.gradle)
+[![License](https://img.shields.io/badge/License-GPL--2.0-blue.svg)](LICENSE)
 
-- Wake devices with Magic Packet (WOL) via LAN or WAN.
-- Live online/offline status with ICMP ping latency.
-- Remote shutdown over SSH — password or SSH key authentication.
-- Background device monitoring with online/offline push notifications.
-- Action history log (wake and shutdown events).
-- Network scan to discover devices on the LAN and add them directly.
-- Export/import device configuration as JSON.
-- Biometric/PIN authentication to protect device actions.
-- Trusted Wi-Fi networks: skip authentication on known SSIDs.
-- Device groups to organize your device list.
-- Dynamic launcher icon that reflects device state (on/off).
+<p align="center">
+  <img src="docs/img/devices.webp" alt="Device list on an emulator: workstation and nas online at 1 ms and 0 ms with their ping history, media-server and lab-node offline with a turn on action, grouped under Home and Lab, and the command bar suggesting wake workstation" width="360" />
+</p>
 
-### Android Integrations
+<sub>The device list on an emulator. The two online devices answer a real ICMP ping, and the line under each
+one is its recent latency. The command bar takes typed commands like `wake workstation`.</sub>
 
-- **Quick Settings Tiles** — up to 3 configurable WOL tiles in the notification shade.
-- **Device Controls (Quick Access)** — stateful and stateless controls via the Android Device Controls panel.
-- **Home Screen Widget** — wake a device directly from the home screen.
-- **Dynamic Shortcuts** — per-device Wake and Shutdown launcher shortcuts.
-- **Google App Actions / Deep Links** — `wakeonlan://action` deep links and Google Assistant integration.
-- **Boot-completed receiver** — restores state and shortcuts after reboot.
-- **In-app updates** — Play Store flexible update flow with download snackbar.
-- **In-app review** — Play Store review prompt at appropriate moments.
+## Waking is easy, shutting down is not
 
-### Firebase
+Wake-on-LAN only goes one way: there is no magic packet that turns a machine off. Awaken closes the loop
+with SSH. It logs into the machine with a password or a private key and runs the shutdown command you set
+for that device, for example `sudo shutdown -h now`. Remote shutdown works on Linux machines.
 
-- Crashlytics for crash reporting.
-- Analytics for usage insights.
-- Remote Config for feature flags (e.g., background monitoring toggle).
+At home both directions are direct: the magic packet goes out as a broadcast and SSH goes to the local IP.
+From outside, the intended route for shutting down is a VPN into your network, such as WireGuard on the
+same PC, so SSH is never exposed to the internet. A WAN address and port can be set per device for routers
+that forward the magic packet.
 
-Firebase integration is optional: the app builds and runs without `google-services.json`.
+## Credentials that can't leak
 
-### Modules
+The app stores what it takes to log into your machines, so it treats them that way:
 
-- **app**: Main Android application — UI, persistence, WOL, SSH shutdown, shortcuts, widgets, monitoring.
-- **ping**: Low-level ICMP ping library used for device status checks.
+- **Encrypted database.** Devices and their SSH credentials live in Room on SQLCipher. The passphrase is
+  random, generated on first launch, and kept in the Android Keystore, never in the code. A plaintext
+  database from an older version is encrypted in place on startup.
+- **Host keys pinned on first use.** The first SSH connection stores the host key fingerprint. If it ever
+  changes, Awaken refuses to connect instead of sending your password to a machine that may not be yours.
+- **Biometrics or PIN before acting.** Editing a device always asks. Waking and shutting down skip it only
+  on Wi-Fi networks you mark as trusted, and never when the request comes from outside the app (voice, a
+  tile, a shortcut).
+- `allowBackup` is off, so the database never leaves the phone in a cloud backup.
 
-### Tech Stack
+## What it does
 
-- Java + Kotlin (mixed codebase)
-- Room + SQLCipher (encrypted database via AndroidKeyStore)
-- RxJava 2 + Kotlin Coroutines
-- WorkManager for background monitoring
-- sshj + Bouncy Castle for SSH
-- AndroidX Navigation, ViewPager2, DataBinding, Biometric, Preference
+- **Wake** with a magic packet over LAN or WAN, with an optional SecureOn password.
+- **Shut down** over SSH, with a password or a key, and a step-by-step connection test.
+- **Live status.** Unprivileged ICMP sockets from the `ping` module, falling back to
+  `InetAddress.isReachable`; a background check every 15 minutes notifies you when a device comes up or
+  goes down.
+- **Network scan** that discovers devices on the LAN and marks the ones already saved.
+- **Command bar.** `wake workstation`, `off nas`, `apagar ubuntu`: verbs in English, Spanish and German.
+- **Voice.** Google Assistant App Actions (`OPEN_APP_FEATURE` with per-device shortcuts) and a Bixby
+  capsule.
+- **Without opening the app.** Three Quick Settings tiles, Device Controls, a home screen widget, per-device
+  launcher shortcuts and a launcher icon that shows whether your devices are on.
+- **History** of every wake and shutdown, groups, and JSON export and import.
+- English, Spanish and German.
 
-### Build
+Firebase (Crashlytics, Analytics, Remote Config) is optional: the app builds and runs without
+`google-services.json`. Remote Config can switch background monitoring off without shipping an update.
+
+## Build it
+
+JDK 17 and the Android SDK (compileSdk 36):
 
 ```bash
-# Debug APK
-./gradlew assembleDebug
-
-# Release bundle + APK
-./gradlew bundleRelease assembleRelease
-
-# Unit tests
-./gradlew :app:test
+git clone https://github.com/YmidOrtega/Awaken-WoL.git
+cd Awaken-WoL
+./gradlew assembleDebug        # app/build/outputs/apk/debug/app-debug.apk
 ```
 
-### CI/CD
+Release builds read their signing config from Gradle properties: `UPLOAD_KEYSTORE_PATH`,
+`KEYSTORE_PASSWORD`, `KEY_ALIAS` and `KEY_PASSWORD`.
 
-Jenkins pipeline (`Jenkinsfile`) with four stages:
+## Testing
 
-1. **Unit Tests** — runs `:app:test` and publishes JUnit results.
-2. **Build** — parallel clean + `bundleRelease assembleRelease`.
-3. **Archive Artifacts** — archives `.aab` and `.apk`.
-4. **Publish to Play Store** — uploads via the Android Publisher plugin:
-   - `master` → Beta (20% rollout)
-   - `release` → Internal (100%)
-   - `develop` / `feature/*` → Internal (allowed to fail)
+```bash
+./gradlew :app:testDebugUnitTest     # 144 JVM tests
+./gradlew connectedAndroidTest       # UI tests on a device or emulator
+```
 
-### Localization
+The unit tests cover the magic packet, MAC, address, port and SecureOn validation, the command bar parser,
+App Actions fulfillment and the shutdown model.
 
-English (default), German (`de`), Spanish (`es`).
+GitHub Actions builds every push. The `Jenkinsfile` runs the unit tests, builds the release bundle and
+publishes it to Google Play: `master` to beta at 20 %, `release` and `develop` to internal testing.
+
+## Project layout
+
+```
+app/src/main/java/com/ymid/wakeonlan/
+├── wol/            Magic packet builder and sender
+├── shutdown/       SSH shutdown (sshj) and the connection test
+├── security/       Biometric gate, Keystore keys, host key pinning
+├── persistence/    Room + SQLCipher, migrations, repositories
+├── monitoring/     Background reachability and launcher icon workers
+├── ui/             Device list, scan, history, backup, onboarding, settings
+├── appactions/     Google Assistant deep links
+├── quicksettings/  Quick Settings tiles
+├── quickaccess/    Device Controls
+├── widget/         Home screen widget
+└── shortcuts/      Dynamic launcher shortcuts
+ping/               Unprivileged ICMP ping library
+bixby/              Bixby capsule
+```
+
+## Documentation
+
+| Document | Content |
+|---|---|
+| [`AGENTS.md`](AGENTS.md) | Guide for agents and contributors: architecture, persistence and gotchas |
+| [DeepWiki](https://deepwiki.com/YmidOrtega/Awaken-WoL) | Generated walkthrough of the codebase |
+| [ymid.me](https://www.ymid.me/projects/awaken-wol) | The story behind it, with a video on a real phone |
+
+## License
+
+GPL-2.0. See [LICENSE](LICENSE).
+
+---
 
 <div align="center">
 
@@ -89,4 +130,4 @@ English (default), German (`de`), Spanish (`es`).
 
 *If you found this project useful, consider giving it a ⭐!*
 
-**© 2026 Ymid Ortega. All Rights Reserved.**
+</div>
