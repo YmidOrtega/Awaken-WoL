@@ -77,7 +77,7 @@ Release builds read their signing config from Gradle properties: `UPLOAD_KEYSTOR
 ## Testing
 
 ```bash
-./gradlew :app:testDebugUnitTest     # 144 JVM tests
+./gradlew :app:testDebugUnitTest     # 147 JVM tests
 ./gradlew connectedAndroidTest       # UI tests on a device or emulator
 ```
 

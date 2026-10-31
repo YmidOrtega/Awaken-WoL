@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.google.common.base.Throwables;
 
+import net.schmizz.sshj.DefaultConfig;
 import net.schmizz.sshj.SSHClient;
 import net.schmizz.sshj.common.LoggerFactory;
 import net.schmizz.sshj.common.StreamCopier;
@@ -20,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import com.ymid.wakeonlan.security.AndroidKeyStoreKeyProvider;
+import com.ymid.wakeonlan.security.KeystoreEcdsaSignature;
 import com.ymid.wakeonlan.security.TofuHostKeyVerifier;
 import com.ymid.wakeonlan.shutdown.exception.CommandExecuteException;
 import com.ymid.wakeonlan.shutdown.exception.SshHostKeyMismatchException;
@@ -68,7 +70,12 @@ public class ShutdownRunnable implements Runnable {
         ByteArrayOutputStream commandOutputStream = new ByteArrayOutputStream();
         boolean commandSent = false;
 
-        try (SSHClient sshClient = new SSHClient()) {
+        DefaultConfig config = new DefaultConfig();
+        if (shutdownModel.isKeyAuth()) {
+            config.setKeyAlgorithms(KeystoreEcdsaSignature.replaceIn(config.getKeyAlgorithms()));
+        }
+
+        try (SSHClient sshClient = new SSHClient(config)) {
             if (hostKeyVerifier == null) {
                 throw new IllegalStateException("A host key verifier is required to open SSH connections");
             }
