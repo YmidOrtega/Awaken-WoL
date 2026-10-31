@@ -10,7 +10,7 @@ import com.ymid.wakeonlan.ui.LauncherIconManager
 import com.ymid.wakeonlan.ui.notifications.NotificationHelper
 import java.util.concurrent.Executors
 
-class AwekenApplication : Application() {
+class JanusApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         LauncherIconManager.register(this)

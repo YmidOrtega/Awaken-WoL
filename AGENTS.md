@@ -1,7 +1,7 @@
 # AGENTS: Guidance for AI coding agents working on WakeOnLan
 
 This document gives focused, actionable knowledge for an AI code agent to become productive quickly in this repository.
-App name: Mi PC. Base package/applicationId: `com.ymid.wakeonlan`.
+App name: Janus. Base package/applicationId: `com.ymid.wakeonlan`.
 
 1) Quick checklist (first actions)
 - Build the project: `./gradlew assembleDebug` (root). If you only want the app module: `./gradlew :app:assembleDebug`.

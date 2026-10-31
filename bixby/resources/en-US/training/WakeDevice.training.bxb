@@ -1,6 +1,6 @@
 training {
   // Pattern: explicit device name
-  "[wake|turn on|start|boot] [my|the] #{value(WakeDevice.deviceName)} [in Aweken|using Aweken|with Aweken]" {
+  "[wake|turn on|start|boot] [my|the] #{value(WakeDevice.deviceName)} [in Janus|using Janus|with Janus]" {
     goal: WakeDevice
     value-set {
       WakeDevice.deviceName = #{value(WakeDevice.deviceName)}
@@ -8,7 +8,7 @@ training {
   }
 
   // Pattern: "wake my PC" without a specific name — Bixby will ask which device
-  "[wake|turn on|start|boot] [my|the] [PC|computer|laptop|device|machine] [in Aweken|using Aweken|with Aweken]" {
+  "[wake|turn on|start|boot] [my|the] [PC|computer|laptop|device|machine] [in Janus|using Janus|with Janus]" {
     goal: WakeDevice
   }
 

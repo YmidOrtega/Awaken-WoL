@@ -1,7 +1,7 @@
 <resources>
     <!-- Titles -->
-    <string name="app_name">Aweken</string>
-    <string name="title_activity_main">Aweken</string>
+    <string name="app_name">Janus</string>
+    <string name="title_activity_main">Janus</string>
     <string name="title_activity_add_device">Add Device</string>
     <string name="title_activity_edit_device">Edit Device</string>
     <string name="title_fragment_device_list">Devices</string>
@@ -190,7 +190,7 @@
     <string name="onboarding_skip">Skip</string>
     <string name="onboarding_next">Next</string>
     <string name="onboarding_finish">Get started</string>
-    <string name="onboarding_slide1_title">Welcome to Aweken</string>
+    <string name="onboarding_slide1_title">Welcome to Janus</string>
     <string name="onboarding_slide1_description">Wake up and shut down your PC from anywhere on your network</string>
     <string name="onboarding_slide2_title">WOL &amp; SSH</string>
     <string name="onboarding_slide2_description">Send Wake‑on‑LAN magic packets and execute remote shutdown commands via SSH</string>
